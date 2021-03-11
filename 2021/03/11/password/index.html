@@ -1,11 +1,11 @@
 <!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content=""><title>密碼保護 | Yu's Blog</title><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/very-simple.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><meta name="generator" content="Hexo 5.4.0"></head><body><!-- include the sidebar--><!-- include ./includes/sidebar.jade--><!-- Blog title and subtitle--><header><div class="container header"><a id="logo" href="/." class="title">Yu's Blog</a><span class="subtitle">Learning, Writing and Sharing</span><label id="toggle-menu" for="menu" onclick><i class="fa fa-bars"></i></label></div></header><!-- use checkbox hack for toggle nav-bar on small screens--><input id="menu" type="checkbox"><!-- Navigation Links--><nav id="nav"><div class="container"><a href="/" class="sidebar-nav-item active">Home</a><a href="/archives" class="sidebar-nav-item">Archives</a></div></nav><div id="header-margin-bar"></div><!-- gallery that comes before the header--><div class="wrapper"><div class="container post-header"><h1>密碼保護</h1></div></div><div class="wrapper"><div class="container meta"><div class="post-time">2021-03-11</div><div class="post-tags"><a class="post-tag-none-link" href="/tags/%E5%8A%A0%E5%AF%86/" rel="tag">加密</a>/<a class="post-tag-none-link" href="/tags/%E7%B7%A8%E7%A2%BC/" rel="tag">編碼</a>/<a class="post-tag-none-link" href="/tags/%E8%B3%87%E8%A8%8A%E5%AE%89%E5%85%A8/" rel="tag">資訊安全</a>/<a class="post-tag-none-link" href="/tags/%E9%9B%9C%E6%B9%8A/" rel="tag">雜湊</a></div></div></div><article><div class="container post"><p>當我們把帳號密碼都存在資料庫當中，有個最大的隱憂就是，一旦資料庫遭駭，駭客就可以拿到所有的帳號密碼，造成資訊安全上的危害。</p>
 <p>以下簡單簡介常見的幾種密碼保護方式：</p>
-<h3 id="編碼"><a href="#編碼" class="headerlink" title="編碼"></a>編碼</h3><blockquote>
+<h2 id="編碼"><a href="#編碼" class="headerlink" title="編碼"></a>編碼</h2><blockquote>
 <p>編碼，encode；解碼，decode</p>
 </blockquote>
 <p>編碼並不會修改資料、也沒有任何加密的效果，單純就是換個方式來表達資料而已。最常見的就是摩斯密碼。</p>
 <p>對資訊安全，一點幫助都沒有。</p>
-<h3 id="加密"><a href="#加密" class="headerlink" title="加密"></a>加密</h3><blockquote>
+<h2 id="加密"><a href="#加密" class="headerlink" title="加密"></a>加密</h2><blockquote>
 <p>加密，encryption</p>
 </blockquote>
 <p>資料加密之前叫做「明文 plaintext」，加密之後叫做「密文 ciphertext」。「加密」是明文變密文，「解密」是密文變明文。</p>
@@ -15,13 +15,13 @@
 <li>需要密鑰 (key) 才可以進行加密及解密。</li>
 <li>分為對稱加密及不對稱加密。<ul>
 <li>對稱加密只會有一把密鑰。常見的對稱加密法是 AES。</li>
-<li>不對稱加密會有兩把密鑰，一把公鑰 ( public key ) 一把私鑰 ( private key )，公鑰負責加密，私鑰負責解密。常見的不對稱加密法是 RSA。<h3 id="雜湊"><a href="#雜湊" class="headerlink" title="雜湊"></a>雜湊</h3><blockquote>
+<li>不對稱加密會有兩把密鑰，一把公鑰 ( public key ) 一把私鑰 ( private key )，公鑰負責加密，私鑰負責解密。常見的不對稱加密法是 RSA。</li>
+</ul>
+</li>
+</ul>
+<h2 id="雜湊"><a href="#雜湊" class="headerlink" title="雜湊"></a>雜湊</h2><blockquote>
 <p>雜湊，Hash function，又稱雜湊函式或是雜湊演算法</p>
 </blockquote>
-</li>
-</ul>
-</li>
-</ul>
 <p>雜湊有幾個特性：</p>
 <ul>
 <li>是單向函式 / 演算法，不能從輸出還原出原本的輸入。</li>
