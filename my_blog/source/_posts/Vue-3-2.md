@@ -231,24 +231,21 @@ export default {
 
 ```typescript=
 // parent.vue
-
 <template>
-    // 這邊記得要加上 v-model
-    <ChildComponent v-model:val="value" />
+  // 這邊記得要加上 v-model
+  <ChildComponent v-model:val="value" />
 </template>
 
 <script setup>
 const value = ref('test');
 </script>
 ```
-    
 
 ```typescript=
 // ChildComponent.vue
-
 <template>
-    // 綁定 v-model
-    <input v-model.lazy="inputVal" />
+  // 綁定 v-model
+  <input v-model.lazy="inputVal" />
 </template>
 
 <script setup>
