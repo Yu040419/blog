@@ -41,10 +41,8 @@ SDL 是建立 GraphQL Schema 的語言，而 Schema 則是定義 GraphQL API 的
 - directive 指令以 `@` 宣告
 - 是一種語法糖
 - 可以 custom directive
-- [原生](https://www.apollographql.com/docs/apollo-server/schema/directives/#default-directives)有三個指令，一個用在 schema 就是 `@deprecated(reason: String!)`，另外兩個用在 query，分別是 `@include(if: boolean)` 跟 `@skip(if: boolean)`：
+- [原生](https://www.apollographql.com/docs/apollo-server/schema/directives/#default-directives)有三個指令，一個用在 schema 就是 `@deprecated(reason: String!)`，另外兩個指令可參照 [如何透過 GraphQL 存取資料 － Query](https://yu040419.github.io/blog/article/GraphQL-query/)。
   - `@deprecated(reason: String!)`：schema 使用，是用來呈現在文件上，告訴 client 端盡量不要存取該欄位的用法，因此一定需要帶上 reason 的值。
-  - `@include(if: boolean)`：query 時使用，如果是 boolean 是 true 的話，就存取這個欄位，一般會透過變數管理 boolean
-  - `@skip(if: boolean)`：query 時使用，如果是 boolean 是 true 的話，就略過這個欄位，也就是不存取，一般會透過變數管理 boolean
 
 ---
 
@@ -93,8 +91,8 @@ schema {
 
 ### Type / Field
 
-> type 是宣告 Object Type 的關鍵字。
-> Object Type 中若有可選的欄位，則是 `Field`。
+> `type` 是宣告 `Object Type` 的關鍵字。
+> `Object Type` 中若有可選的欄位，則是 `Field`。
 
 底下範例中：
 * Query 是 Object Type 的名字，供查詢。
