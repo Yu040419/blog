@@ -129,6 +129,47 @@ fragment userData on User {
 }
 ```
 
+### inline fragment
+當今天若是想要 query 的資料型別，不是 object type / field，而是 Interface 跟 Union type 時，這時候就會需要透過 inline fragment 進行存取。
+
+拿上一篇提到的範例來說：
+```graphql
+# Schema
+union Device = Mobile | PC
+
+type Mobile {
+  id: String!
+  price: Float!
+}
+
+type PC {
+  id: String!
+  price: Float!
+}
+
+type Query {
+  getDevice: [Device]
+}
+```
+在 query 的時候，就會以 inline fragment 呈現：
+```graphql
+query ExampleQuery {
+  getDevice {
+    Device {
+      ... on Mobile {
+        id
+        price
+      }
+      ... on PC {
+        id
+        price
+      }
+    }
+  }
+}
+
+```
+
 ### directive 指令
 在上一篇文章中有提到官方原生有三個 directive 指令，schema 中會使用一個。而在 query 中會使用到剩餘的兩個。
 
