@@ -36,16 +36,7 @@ SDL 是建立 GraphQL Schema 的語言，而 Schema 則是定義 GraphQL API 的
 
 除了以上的型別外，也可以自訂型別，常見的有 Date, URL, Email, JSON 等等。可以動手 [實作](https://ithelp.ithome.com.tw/articles/10206366)，也可以透過 [套件](https://www.npmjs.com/package/graphql-custom-types)。
 
-## directive 指令
-
-- directive 指令以 `@` 宣告
-- 是一種語法糖
-- 可以 custom directive
-- [原生](https://www.apollographql.com/docs/apollo-server/schema/directives/#default-directives)有三個指令，一個用在 schema 就是 `@deprecated(reason: String!)`，另外兩個指令可參照 [如何透過 GraphQL 存取資料 － Query](https://yu040419.github.io/blog/article/GraphQL-query/)。
-  - `@deprecated(reason: String!)`：schema 使用，是用來呈現在文件上，告訴 client 端盡量不要存取該欄位的用法，因此一定需要帶上 reason 的值。
-
 ---
-
 ## Syntax 語法
 
 在了解以上基礎後，接下來就可以直接來看看，如何透過 SDL 訂定 GraphQL 的 Schema。
@@ -72,6 +63,47 @@ SDL 的註解方式分成三種，分別是 `#`、`"` 及 `"""`。
 """
 這個多行註解會出現在文件中
 """
+```
+
+### non-nullable !
+`!` 在 SDL 當中，代表一個不能為 `null` 的值。GraphQL 會保證傳來的資料，不會是 `null`。
+
+- `String!`：這個值不可為 `null`，而且 scalar type 是字串
+- `[User!]`：這個值可能為 `null`，但陣列中不可為 `null`，且陣列中的 object type 為 User
+- `[User]!`：這個值不可能為 `null`，但陣列中可為 `null`，且陣列中的 object type 為 User
+- `[User!]!`：這個值不可為 `null`，且陣列中也不可為 `null`，陣列中的 object type 為 User
+
+值得注意的是，假設今天設定資料為 `myField: [String!]`，那可以猜猜看，以下哪個是合法的資料，哪個是不合法的：
+
+```graphql
+# 如果資料要求為 myField: [String!]
+myField: null
+myField: []
+myField: ['a', 'b']
+myField: ['a', null, 'b']
+
+# 如果資料要求為 myField: [String]!
+myField: null
+myField: []
+myField: ['a', 'b']
+myField: ['a', null, 'b']
+```
+
+為了不爆雷，答案在最下方，可以先想一下有答案後，再往下滑。
+
+### directive 指令
+
+- directive 指令以 `@` 宣告
+- 是一種語法糖
+- 可以 custom directive
+- [原生](https://www.apollographql.com/docs/apollo-server/schema/directives/#default-directives)有三個指令，一個用在 schema 就是 `@deprecated(reason: String!)`，另外兩個指令可參照 [如何透過 GraphQL 存取資料 － Query](https://yu040419.github.io/blog/article/GraphQL-query/)。
+  - `@deprecated(reason: String!)`：schema 使用，是用來呈現在文件上，告訴 client 端盡量不要存取該欄位的用法，因此一定需要帶上 reason 的值。
+
+```graphql
+type User {
+  "體重"
+  weight(unit: WeightUnit = KILOGRAM): Float @deprecated (reason: "It's secret.")
+}
 ```
 
 ### Schema
@@ -255,6 +287,22 @@ type UserError {
   code: Int
   message: String!
 }
+```
+
+## Answer
+
+```graphql
+# 如果資料要求為 myField: [String!]
+myField: null // valid
+myField: [] // valid
+myField: ['a', 'b'] // valid
+myField: ['a', null, 'b'] // error
+
+# 如果資料要求為 myField: [String]!
+myField: null // error
+myField: [] // valid
+myField: ['a', 'b'] // valid
+myField: ['a', null, 'b'] // valid
 ```
 
 ## Reference
