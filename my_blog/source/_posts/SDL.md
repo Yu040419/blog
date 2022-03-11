@@ -6,7 +6,20 @@ tags: GraphQL
 
 SDL 是建立 GraphQL Schema 的語言，而 Schema 則是定義 GraphQL API 的重要骨幹，包含資料架構格式和型別。
 
-在還不太清楚前，可以先簡略的將 GraphQL Schema 想像成 DB Schema。一個 DB 可以有多個 Table，而一個 Schema 可以有多個 type；DB 中的 table 中有多個欄位，可分別設置資料型別，而 GraphQL type 也可以有多個 field (欄位)，每個欄位的資料也可設定型別。
+在了解 Schema 之前，先來了解 GraphQL 是什麼。
+
+## GraphQL
+> GraphQL 是一個用來查詢 API 的語言 (Query Language)，也是一個基於型別系統來執行及查詢的 server-side runtime。
+
+GraphQL 是設計用來快速開發高彈性、對開發者友善的 API。在開發完 API 後，會自動建立出一個線上的 IDE，在這個 IDE 中，可以測試發送 request，並得到相關的 response。在這個 IDE 中，也可以看得到完整的 API 文件。這邊有 Github 提供的 [範例 IDE](https://graphql.org/swapi-graphql?query=%23%20Welcome%20to%20GraphiQL%0A%23%0A%23%20GraphiQL%20is%20an%20in-browser%20tool%20for%20writing%2C%20validating%2C%20and%0A%23%20testing%20GraphQL%20queries.%0A%23%0A%23%20Type%20queries%20into%20this%20side%20of%20the%20screen%2C%20and%20you%20will%20see%20intelligent%0A%23%20typeaheads%20aware%20of%20the%20current%20GraphQL%20type%20schema%20and%20live%20syntax%20and%0A%23%20validation%20errors%20highlighted%20within%20the%20text.%0A%23%0A%0Aquery%20getAllFilms%20%7B%0A%20%20allFilms%20%7B%0A%20%20%20%20films%20%7B%0A%20%20%20%20%20%20title%0A%20%20%20%20%20%20episodeID%0A%20%20%20%20%20%20director%0A%20%20%20%20%20%20producers%0A%20%20%20%20%7D%0A%20%20%7D%0A%7D&operationName=getAllFilms)，有興趣的可以玩玩看～
+
+在上方的 IDE 中，可以看到版面被切分成三個區塊。左邊是供 client 端撰寫的 query。Query 區塊下方可以寫入 query 要帶上的變數，並設定 request header。若要執行 query，可以按上方的播放鍵執行，執行後得到的結果就會出現在中間的區塊。而最右邊的就是自動建立出來的 API 文件。
+
+當 GraphQL 的服務架起來時，便可以接受 GraphQL query，開始進行驗證及執行相關操作。GraphQL 會先確認 query 的型別與內容是否符合 Schema，驗證成功後才會執行 API 的資料存取。除此之外，GraphQL 還可以串接 RESTful API，詳細可以參考 [官方教學 - Wrapping a REST API in GraphQL](https://graphql.org/blog/rest-api-graphql-wrapper/)。
+
+GraphQL 不依賴於任何特定的資料庫或是 storage engine，而是建立在開發者所撰寫出來的 code 及數據。透過 GraphQL 開發 API 時，首先要了解的就是他的 type System，以及該如何自定義型別 (define type)，並依據每個 type 實作相對應的 resolver（可以理解成實作 API 的地方）。
+
+所以接下來，就來看看建立 GraphQL 的 Type System 的 SDL。
 
 ## 存取方式
 
@@ -36,7 +49,6 @@ SDL 是建立 GraphQL Schema 的語言，而 Schema 則是定義 GraphQL API 的
 
 除了以上的型別外，也可以自訂型別，常見的有 Date, URL, Email, JSON 等等。可以動手 [實作](https://ithelp.ithome.com.tw/articles/10206366)，也可以透過 [套件](https://www.npmjs.com/package/graphql-custom-types)。
 
----
 ## Syntax 語法
 
 在了解以上基礎後，接下來就可以直接來看看，如何透過 SDL 訂定 GraphQL 的 Schema。
@@ -107,6 +119,7 @@ type User {
 ```
 
 ### Schema
+在還不太清楚前，可以先簡略的將 GraphQL Schema 想像成 DB Schema。一個 DB 可以有多個 Table，而一個 Schema 可以有多個 type；DB 中的 table 中有多個欄位，可分別設置資料型別，而 GraphQL type 也可以有多個 field (欄位)，每個欄位的資料也可設定型別。
 
 GraphQL 中的語法關鍵字 `Schema` 被官方稱為 Root Types，可以理解成所有存取資料的 entry point 進入點。在上面我們有提到存取方式有三種，因此 `Schema` 最多也只會包含三種類型：
 

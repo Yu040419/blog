@@ -22,8 +22,8 @@ query operationName($id: ID! = "93he", $type: string!) {
   }
 }
 
-"query variable"
 ------------------------------
+# variable
 {
   "id": "39d0"
 }
