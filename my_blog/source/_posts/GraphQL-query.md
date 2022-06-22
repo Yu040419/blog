@@ -1,10 +1,10 @@
 ---
-title: 如何透過 GraphQL 存取資料 － Query
+title: GraphQL 系列文（二）：透過 Query 存取資料
 date: 2022-03-09 21:05:02
 tags: GraphQL
 ---
 
-在上一篇文章 [The Schema Definition Language (SDL) - 撰寫 GraphQL Schema](https://yu040419.github.io/blog/article/SDL/) 中有提到，GraphQL 有三種存取資料的方式 (operation type)，主要常被使用的是 Query 查詢資料，以及 Mutation 新增、編輯、刪除資料。
+在上一篇文章 [GraphQL 系列文（一）：透過 The Schema Definition Language (SDL) 撰寫 GraphQL Schema](https://yu040419.github.io/blog/article/SDL/) 中有提到，GraphQL 有三種存取資料的方式 (operation type)，主要常被使用的是 Query 查詢資料，以及 Mutation 新增、編輯、刪除資料。
 
 因為底下會直接使用 GraphQL 的相關名詞，不會對名詞進行解釋，因此建議先閱讀過上一篇文章，對 GraphQL 有基礎理解後，再繼續往下看。
 

@@ -1,5 +1,5 @@
 ---
-title: The Schema Definition Language (SDL) - 撰寫 GraphQL Schema
+title: GraphQL 系列文（一）：透過 The Schema Definition Language (SDL) 撰寫 GraphQL Schema
 date: 2022-01-13 21:48:44
 tags: GraphQL
 ---
