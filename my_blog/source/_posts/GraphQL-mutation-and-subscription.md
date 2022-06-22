@@ -195,7 +195,7 @@ Library 名稱是 subscriptions-transport-ws 的 `Sec-WebSocket-Protocol` 名稱
 
 是的，你沒看錯，他們的 Library 名稱跟 Protocol 名稱剛好顛倒，非常容易造成混淆 QQ
 
-而 Library 名稱是 subscriptions-transport-ws 目前已經不再維護了。不管是 Apollo 官方及 subscriptions-transport-ws Libray 本身，都推薦使用 graphql-ws 作為溝通的 Protocol。所以毫無懸念，就下載 graphql-ws 吧！
+而 Library 名稱是 subscriptions-transport-ws 目前已經不再維護了。不管是 Apollo 官方及 subscriptions-transport-ws Libray 本身，都推薦使用 graphql-ws 這個 Libray。所以毫無懸念，就下載 graphql-ws 吧！
 
 graphql-ws 相關的設定，可以參考 [Apollo 官方文件](https://www.apollographql.com/docs/react/data/subscriptions/#setting-up-the-transport)。
 
