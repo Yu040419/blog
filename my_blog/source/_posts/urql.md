@@ -4,7 +4,7 @@ date: 2022-06-23 23:47:49
 tags: GraphQL
 ---
 
-[URQL](https://formidable.com/open-source/urql/)，全名為 Universal React Query Libray。從名稱就可以看得出來，最初是基於 React 而生的 Libray。
+[URQL](https://formidable.com/open-source/urql/)，全名為 Universal React Query Library。從名稱就可以看得出來，最初是基於 React 而生的 Library。
 
 為什麼我說是「最初」呢？就是因為其強大的團隊，也開發出了支援 Vue (3) 及 Svelte 等其他前端框架。在整合度非常高的狀況下，卻又以輕便、高度客製化、多功能、簡單好上手等多樣特色聞名。
 
@@ -119,7 +119,7 @@ export default {
       // pause, resume, executeQuery 都是 function
       const { data, fetching, error, isPaused, pause, resume, executeQuery } = useQuery({
         query: gql`
-          query ($from: Int!, $limit: Int!, $isFinished: Boolean!){
+          query GetTodos($from: Int!, $limit: Int!, $isFinished: Boolean!){
             todos (from: $from, limit: $limit, isFinished: $isFinished) {
               id
               title
