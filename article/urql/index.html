@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="zh-tw">
+    <head>
+    <meta charset="utf-8">
+
+    
+
+    <!-- 渲染优化 -->
+    <meta name="renderer" content="webkit">
+    <meta name="force-rendering" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <meta name="HandheldFriendly" content="True" >
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <!--icon-->
+
+    
+    
+    
+    
+    
+
+
+    <!-- meta -->
+
+
+<title>URQL 的基本介紹與常見應用 | Yu&#39;s Blog</title>
+
+
+    <meta name="keywords" content="GraphQL">
+
+
+
+
+    <!-- OpenGraph -->
+ 
+    <meta name="description" content="URQL，全名為 Universal React Query Library。從名稱就可以看得出來，最初是基於 React 而生的 Library。 為什麼我說是「最初」呢？就是因為其強大的團隊，也開發出了支援 Vue (3) 及 Svelte 等其他前端框架。在整合度非常高的狀況下，卻又以輕便、高度客製化、多功能、簡單好上手等多樣特色聞名。  整合性高：除了支援前端的 React, Vue, S">
+<meta property="og:type" content="article">
+<meta property="og:title" content="URQL 的基本介紹與常見應用">
+<meta property="og:url" content="https://yu040419.github.io/blog/article/urql/index.html">
+<meta property="og:site_name" content="Yu&#39;s Blog">
+<meta property="og:description" content="URQL，全名為 Universal React Query Library。從名稱就可以看得出來，最初是基於 React 而生的 Library。 為什麼我說是「最初」呢？就是因為其強大的團隊，也開發出了支援 Vue (3) 及 Svelte 等其他前端框架。在整合度非常高的狀況下，卻又以輕便、高度客製化、多功能、簡單好上手等多樣特色聞名。  整合性高：除了支援前端的 React, Vue, S">
+<meta property="og:locale" content="zh_TW">
+<meta property="article:published_time" content="2022-06-23T15:47:49.000Z">
+<meta property="article:modified_time" content="2024-02-13T09:52:07.718Z">
+<meta property="article:author" content="Yu">
+<meta property="article:tag" content="GraphQL">
+<meta name="twitter:card" content="summary_large_image">
+
+
+    
+<link rel="stylesheet" href="/blog/css/style/main.css">
+ 
+
+    
+    
+        <link rel="stylesheet" id="hl-default-theme" href="https://cdn.jsdelivr.net/npm/hexo-theme-cards@1.2/dist/css/highlight/default.min.css" media="none" >
+        
+            <link rel="stylesheet" id="hl-dark-theme" href="https://cdn.jsdelivr.net/npm/hexo-theme-cards@1.2/dist/css/highlight/dark.min.css" media="none">
+        
+    
+
+    
+    
+
+    
+    
+<link rel="stylesheet" href="/blog/css/style/dark.css">
+
+    
+<script src="/blog/js/darkmode.js"></script>
+
+
+
+     
+
+    <!-- custom head -->
+
+<meta name="generator" content="Hexo 5.4.2"></head>
+
+    <body>
+        <div id="app" tabindex="-1">
+            <header class="header">
+    <div class="header__left">
+        <a href="/blog/" class="button">
+            <span class="logo__text">Yu&#39;s Blog</span>
+        </a>
+    </div>
+    <div class="header__right">
+        
+            <div class="navbar__menus">
+                
+                    <a href="/blog/" class="navbar-menu button">首頁</a>
+                
+                    <a href="/blog/archives/" class="navbar-menu button">所有文章</a>
+                
+                    <a href="/blog/tags/" class="navbar-menu button">標籤</a>
+                
+                    <a href="/blog/about/" class="navbar-menu button">關於我</a>
+                
+            </div>
+        
+        
+        
+    <a href="/blog/search/" id="btn-search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="24" height="24" fill="currentColor" stroke="currentColor" stroke-width="32"><path d="M192 448c0-141.152 114.848-256 256-256s256 114.848 256 256-114.848 256-256 256-256-114.848-256-256z m710.624 409.376l-206.88-206.88A318.784 318.784 0 0 0 768 448c0-176.736-143.264-320-320-320S128 271.264 128 448s143.264 320 320 320a318.784 318.784 0 0 0 202.496-72.256l206.88 206.88 45.248-45.248z"></path></svg>
+    </a>
+
+
+        
+        
+    <a href="javaScript:void(0);" id="btn-toggle-dark">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+    </a>
+
+
+        
+            <a class="dropdown-icon button" id="btn-dropdown" tabindex="0"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width='24' height='24' fill="none" stroke="currentColor" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round"><path fill="currentColor" d="M3.314,4.8h13.372c0.41,0,0.743-0.333,0.743-0.743c0-0.41-0.333-0.743-0.743-0.743H3.314c-0.41,0-0.743,0.333-0.743,0.743C2.571,4.467,2.904,4.8,3.314,4.8z M16.686,15.2H3.314c-0.41,0-0.743,0.333-0.743,0.743s0.333,0.743,0.743,0.743h13.372c0.41,0,0.743-0.333,0.743-0.743S17.096,15.2,16.686,15.2z M16.686,9.257H3.314c-0.41,0-0.743,0.333-0.743,0.743s0.333,0.743,0.743,0.743h13.372c0.41,0,0.743-0.333,0.743-0.743S17.096,9.257,16.686,9.257z"></path></svg></a>
+            <div class="dropdown-menus" id="dropdown-menus">
+                
+                    <a href="/blog/" class="dropdown-menu button">首頁</a>
+                
+                    <a href="/blog/archives/" class="dropdown-menu button">所有文章</a>
+                
+                    <a href="/blog/tags/" class="dropdown-menu button">標籤</a>
+                
+                    <a href="/blog/about/" class="dropdown-menu button">關於我</a>
+                
+            </div>
+        
+    </div>
+</header>
+
+
+            <main class="main">
+    
+
+<div class="post-title">
+    <h1 class="post-title__text">
+        URQL 的基本介紹與常見應用
+    </h1>
+    <div class="post-title__meta">
+        <a href="/blog/archives/2022/06/" class="post-meta__date button">2022-06-23</a>
+        
+ 
+        
+    
+    
+
+
+ 
+
+ 
+    </div>
+</div>
+
+
+    <aside class="post-side">
+        <div class="post-side__toc">
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Install"><span class="toc-text">Install</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Setting"><span class="toc-text">Setting</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Request-Policy"><span class="toc-text">Request Policy</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#useQuery"><span class="toc-text">useQuery</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#data"><span class="toc-text">data</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#fetching"><span class="toc-text">fetching</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#error"><span class="toc-text">error</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#networkError"><span class="toc-text">networkError</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#graphQLErrors"><span class="toc-text">graphQLErrors</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#isPaused"><span class="toc-text">isPaused</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#pause"><span class="toc-text">pause</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#resume"><span class="toc-text">resume</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#executeQuery"><span class="toc-text">executeQuery</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#useMutation"><span class="toc-text">useMutation</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#useSubscription"><span class="toc-text">useSubscription</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Setting-1"><span class="toc-text">Setting</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Usage"><span class="toc-text">Usage</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Conclusion"><span class="toc-text">Conclusion</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Reference"><span class="toc-text">Reference</span></a></li></ol>
+        </div>
+    </aside>
+    <a class="btn-toc button" id="btn-toc" tabindex="0">
+        <svg viewBox="0 0 1024 1024" width="32" height="32" xmlns="http://www.w3.org/2000/svg">
+            <path d="M128 256h64V192H128zM320 256h576V192H320zM128 544h64v-64H128zM320 544h576v-64H320zM128 832h64v-64H128zM320 832h576v-64H320z" fill="currentColor"></path>
+        </svg>
+    </a>
+    <div class="toc-menus" id="toc-menus">
+        <div class="toc-title">文章目錄</div>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Install"><span class="toc-text">Install</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Setting"><span class="toc-text">Setting</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Request-Policy"><span class="toc-text">Request Policy</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#useQuery"><span class="toc-text">useQuery</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#data"><span class="toc-text">data</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#fetching"><span class="toc-text">fetching</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#error"><span class="toc-text">error</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#networkError"><span class="toc-text">networkError</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#graphQLErrors"><span class="toc-text">graphQLErrors</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#isPaused"><span class="toc-text">isPaused</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#pause"><span class="toc-text">pause</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#resume"><span class="toc-text">resume</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#executeQuery"><span class="toc-text">executeQuery</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#useMutation"><span class="toc-text">useMutation</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#useSubscription"><span class="toc-text">useSubscription</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Setting-1"><span class="toc-text">Setting</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Usage"><span class="toc-text">Usage</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Conclusion"><span class="toc-text">Conclusion</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Reference"><span class="toc-text">Reference</span></a></li></ol>
+    </div>
+
+
+<article class="post post__with-toc content-card">
+    <div class="post__header"></div>
+    <div class="post__content">
+        <p><a target="_blank" rel="noopener" href="https://formidable.com/open-source/urql/">URQL</a>，全名為 Universal React Query Library。從名稱就可以看得出來，最初是基於 React 而生的 Library。</p>
+<p>為什麼我說是「最初」呢？就是因為其強大的團隊，也開發出了支援 Vue (3) 及 Svelte 等其他前端框架。在整合度非常高的狀況下，卻又以輕便、高度客製化、多功能、簡單好上手等多樣特色聞名。</p>
+<ol>
+<li><strong>整合性高</strong>：除了支援前端的 React, Vue, Svelte 框架外，URQL 本身還提供 devtool 可供使用者開發 debug 使用。</li>
+<li><strong>輕便</strong>：bundle size 僅 7.1 kb，相較其他 GraphQL Client Library，<a target="_blank" rel="noopener" href="https://www.apollographql.com/docs/react/">Apollo Client</a> 最迷你的版本也需要 32 kb，<a target="_blank" rel="noopener" href="https://relay.dev/">React Relay</a> 也要 34 kb。</li>
+<li><strong>多功能</strong>：URQL 本身提供非常多樣化的功能，官方有提供一張 <a target="_blank" rel="noopener" href="https://formidable.com/open-source/urql/docs/comparison/">比較</a> URQL 與其他 GraphQL Client 的表格，就可以看到支援相當多的功能，包含 Stale while Revalidate &#x2F; Focus Refetching &#x2F; Dependent Query 等等。</li>
+</ol>
+<p>接下來就來看看，該如何實際應用 URQL 吧！</p>
+<h2 id="Install"><a href="#Install" class="headerlink" title="Install"></a>Install</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yarn add @urql/vue graphql</span><br></pre></td></tr></table></figure>
+
+<h2 id="Setting"><a href="#Setting" class="headerlink" title="Setting"></a>Setting</h2><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// graphql/index.ts</span></span><br><span class="line"><span class="keyword">import</span> &#123; getAuthToken &#125; <span class="keyword">from</span> <span class="string">&quot;@/hooks/useAuthentication&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">interface</span> Headers &#123;</span><br><span class="line">  authorization: <span class="built_in">string</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">interface</span> ReturnObject &#123;</span><br><span class="line">  headers: Headers;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> urqlSetting = &#123;</span><br><span class="line">  <span class="comment">// GraphQL API Endpoint</span></span><br><span class="line">  url: <span class="string">&quot;http://your-api/graphql&quot;</span>,</span><br><span class="line"></span><br><span class="line">  fetchOptions: (): <span class="function"><span class="params">ReturnObject</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="comment">// 將 token 帶入 header</span></span><br><span class="line">    <span class="keyword">const</span> token = getAuthToken();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> &#123;</span><br><span class="line">      headers: &#123;</span><br><span class="line">        authorization: token ? <span class="string">`Bearer <span class="subst">$&#123;token&#125;</span>`</span> : <span class="string">&quot;&quot;</span>,</span><br><span class="line">      &#125;,</span><br><span class="line">    &#125;;</span><br><span class="line">  &#125;,</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 快取設定</span></span><br><span class="line">  requestPolicy: <span class="string">&quot;cache-and-network&quot;</span>,</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> urqlSetting;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// main.ts</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> &#123; createApp &#125; <span class="keyword">from</span> <span class="string">&quot;vue&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> App <span class="keyword">from</span> <span class="string">&quot;./App.vue&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; router &#125; <span class="keyword">from</span> <span class="string">&quot;./router&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> urql <span class="keyword">from</span> <span class="string">&quot;@urql/vue&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> urqlSetting <span class="keyword">from</span> <span class="string">&quot;@/graphql&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> app = createApp(App);</span><br><span class="line">app.use(urql, urqlSetting);</span><br><span class="line">app.use(router);</span><br><span class="line">app.mount(<span class="string">&quot;#app&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<h2 id="Request-Policy"><a href="#Request-Policy" class="headerlink" title="Request Policy"></a>Request Policy</h2><p>URQL 的請求政策共分成四種，分別是：</p>
+<ul>
+<li><strong>cache-first</strong>：預設值，有快取的時候從快取拿值，沒有快取的時候，就發送請求取得資料。</li>
+<li><strong>cache-and-network</strong>：會先回傳快取資料，並同時在背後發送請求。一般推薦以這個方式，可以達到使用者體驗與取得正確資料的平衡。<ul>
+<li>當有快取資料，發送請求時，<code>isFetching</code> 值會是 false。所以使用者會優先看到快取資料，不會顯示 loading 內容。</li>
+</ul>
+</li>
+<li><strong>network-only</strong>：忽略快取，每次都會發送請求。</li>
+<li><strong>cache-only</strong>：只回傳快取資料，若是沒有快取資料，會回傳 <code>null</code>。</li>
+</ul>
+<h2 id="useQuery"><a href="#useQuery" class="headerlink" title="useQuery"></a>useQuery</h2><blockquote>
+<p>GET</p>
+</blockquote>
+<p>query 內容或是變數有變動時，會自動發出 request。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> &#123; data, fetching, error, isPaused, pause, resume &#125; = useQuery(&#123; <span class="attr">query</span>: <span class="string">`...`</span>, <span class="attr">varaiables</span>: &#123; ... &#125;, <span class="attr">pause</span>: boolean&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>範例：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">template</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span> <span class="attr">v-if</span>=<span class="string">&quot;fetching&quot;</span>&gt;</span>Loading...<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span> <span class="attr">v-else-if</span>=<span class="string">&quot;error&quot;</span>&gt;</span>Oh no... &#123;&#123;error&#125;&#125;<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span> <span class="attr">v-else</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">ul</span> <span class="attr">v-if</span>=<span class="string">&quot;data&quot;</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">li</span> <span class="attr">v-for</span>=<span class="string">&quot;todo in data.todos&quot;</span> <span class="attr">:key</span>=<span class="string">&quot;todo.id&quot;</span>&gt;</span>&#123;&#123; todo.title &#125;&#125;<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">ul</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">button</span> @<span class="attr">click</span>=<span class="string">&quot;isPaused ? resume() : pause()&quot;</span>&gt;</span>Toggle Query<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">button</span> @<span class="attr">click</span>=<span class="string">&quot;refresh&quot;</span>&gt;</span>Query Again<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">template</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line">&lt;script&gt;</span><br><span class="line"><span class="keyword">import</span> &#123; useQuery, gql &#125; <span class="keyword">from</span> <span class="string">&#x27;@urql/vue&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span><br><span class="line">    <span class="function"><span class="title">setup</span>(<span class="params">props</span>)</span> &#123;</span><br><span class="line">      <span class="keyword">const</span> <span class="keyword">from</span> = ref(<span class="number">0</span>);</span><br><span class="line">      <span class="keyword">const</span> limit = ref(<span class="number">10</span>);</span><br><span class="line"></span><br><span class="line">      <span class="comment">// pause, resume, executeQuery 都是 function</span></span><br><span class="line">      <span class="keyword">const</span> &#123; data, fetching, error, isPaused, pause, resume, executeQuery &#125; = useQuery(&#123;</span><br><span class="line">        query: gql<span class="string">`</span></span><br><span class="line"><span class="string">          query GetTodos($from: Int!, $limit: Int!, $isFinished: Boolean!)&#123;</span></span><br><span class="line"><span class="string">            todos (from: $from, limit: $limit, isFinished: $isFinished) &#123;</span></span><br><span class="line"><span class="string">              id</span></span><br><span class="line"><span class="string">              title</span></span><br><span class="line"><span class="string">            &#125;</span></span><br><span class="line"><span class="string">          &#125;</span></span><br><span class="line"><span class="string">        `</span>,</span><br><span class="line">        variables: &#123;</span><br><span class="line">          <span class="keyword">from</span>,</span><br><span class="line">          limit,</span><br><span class="line">          isFinished: props.isFinished</span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="comment">// pause 值是 true 的話停止執行該 query</span></span><br><span class="line">        pause: computed(<span class="function">() =&gt;</span> !<span class="keyword">from</span>.value || !limit.value)</span><br><span class="line">      &#125;);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">      <span class="comment">// 直接這樣取值的時候，因為 call API 後，response 還沒回來，所以會是 undefined</span></span><br><span class="line">      <span class="comment">// 所以 return 出去到 template 的時候都要篩選</span></span><br><span class="line">      <span class="built_in">console</span>.log(data.value.todos.title);</span><br><span class="line"></span><br><span class="line">      watch(data, <span class="function">(<span class="params">newVal</span>) =&gt;</span> &#123;</span><br><span class="line">        <span class="comment">// 這邊就可以拿到值</span></span><br><span class="line">        <span class="built_in">console</span>.log(newVal.todos.title);</span><br><span class="line">      &#125;)</span><br><span class="line"></span><br><span class="line">      <span class="comment">// 手動立即執行 query</span></span><br><span class="line">      <span class="keyword">const</span> refresh = <span class="function">() =&gt;</span> &#123;</span><br><span class="line">        executeQuery(&#123;</span><br><span class="line">          requestPolicy: <span class="string">&#x27;network-only&#x27;</span>,</span><br><span class="line">        &#125;);</span><br><span class="line">      &#125;;</span><br><span class="line"></span><br><span class="line">      <span class="keyword">return</span> &#123;</span><br><span class="line">        fetching,</span><br><span class="line">        data,</span><br><span class="line">        error,</span><br><span class="line">        refresh,</span><br><span class="line">        isPaused,</span><br><span class="line">        pause,</span><br><span class="line">        resume,</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="data"><a href="#data" class="headerlink" title="data"></a>data</h3><blockquote>
+<p>ref 值，最重要的資料</p>
+</blockquote>
+<p>存取時可透過 <code>.value</code> 存取 data 值。要記得再 . 存取 query 內容的值，詳細可看上方範例。</p>
+<h3 id="fetching"><a href="#fetching" class="headerlink" title="fetching"></a>fetching</h3><blockquote>
+<p>ref 值，Boolean，<code>true</code> 表示正在抓取資料</p>
+</blockquote>
+<p>轉變過程：undefined -&gt; true -&gt; false</p>
+<h3 id="error"><a href="#error" class="headerlink" title="error"></a>error</h3><blockquote>
+<p>ref 值，沒有錯誤的時候拿到的值會是 undefined</p>
+</blockquote>
+<p><a target="_blank" rel="noopener" href="https://formidable.com/open-source/urql/docs/basics/errors/">文件</a> 中把錯誤稱為 combinedError，因為 error 包含兩種狀況，分別是 networkError 以及 graphQLErrors。</p>
+<p>可以透過 <code>error.value.message </code> 拿到錯誤訊息，這個錯誤訊息會合併兩種錯誤情況，</p>
+<p><code>error.value.name</code> 會拿到錯誤名稱，名稱會是 <code>&#39;networkError&#39;</code> 或 <code>&#39;graphQLErrors&#39;</code>。</p>
+<p>error 可以跟 data 共存，也就是說有可能出現，同時有 data 也有 error 的狀況，因為 GraphQL query 可以是部分失敗的。error 這時候就會拿到 graphQLErrors。</p>
+<h4 id="networkError"><a href="#networkError" class="headerlink" title="networkError"></a>networkError</h4><p>任何跟網路連線相關的錯誤，就會被歸類到 networkError。存取時是透過 <code>error.value.networkError</code> 存取。</p>
+<p>networkError 中又包含兩個 property，分別是 <code>message</code> 及 <code>networkError</code>。</p>
+<h4 id="graphQLErrors"><a href="#graphQLErrors" class="headerlink" title="graphQLErrors"></a>graphQLErrors</h4><p>跟 GraphQL 相關的錯誤就會被歸類到這裡，舉凡 scalar type 不對、缺少某些 field 或是 variables，GraphQL 格式不對等等。</p>
+<p>graphQLErrors 中也包含兩個 property，分別是 <code>message</code> 及 <code>graphQLErrors</code>。</p>
+<p>跟 <code>networkError</code> 不一樣的是，<code>graphQLErrors</code> value 的 type 是一個陣列，因為可能併發多種 GraphQL 的錯誤。</p>
+<h3 id="isPaused"><a href="#isPaused" class="headerlink" title="isPaused"></a>isPaused</h3><blockquote>
+<p>ref 值，Boolean，true 代表目前 query 有被暫停</p>
+</blockquote>
+<h3 id="pause"><a href="#pause" class="headerlink" title="pause"></a>pause</h3><blockquote>
+<p>function，如果 query 可執行，可用來暫停執行 query。</p>
+</blockquote>
+<p>pause 是用來提供在 setup 外、也就是 template，也可以暫停執行 query。</p>
+<h3 id="resume"><a href="#resume" class="headerlink" title="resume"></a>resume</h3><blockquote>
+<p>function，如果 query 被暫停執行，可用來啟動執行 query。</p>
+</blockquote>
+<p>resume 是用來提供在 setup 外、也就是 template，也可以啟動執行 query ( 但不是立即執行，只是可以執行 )。</p>
+<h3 id="executeQuery"><a href="#executeQuery" class="headerlink" title="executeQuery"></a>executeQuery</h3><blockquote>
+<p>function，立即執行 query，</p>
+</blockquote>
+<p>執行此 function 的情況，通常都是用來希望可以重新取得最新資料，所以一般都會在參數內放入 <code>requestPolicy: &#39;network-only&#39;</code>，詳細可參考上方範例。</p>
+<h2 id="useMutation"><a href="#useMutation" class="headerlink" title="useMutation"></a>useMutation</h2><blockquote>
+<p>CREATE &#x2F; UPDATE &#x2F; DELETE</p>
+</blockquote>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> &#123; <span class="attr">executeMutation</span>: rename, data, error &#125; = useMutation(<span class="string">`...`</span>);</span><br><span class="line"></span><br><span class="line">rename(&#123; input &#125;).then(...)</span><br></pre></td></tr></table></figure>
+
+<p>範例：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 變數</span></span><br><span class="line"><span class="keyword">const</span> newTodoInput = reactive(&#123;</span><br><span class="line">  todo: <span class="string">&quot;sleep&quot;</span>,</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">// useMutation 只有單一參數 string</span></span><br><span class="line"><span class="comment">// 這邊跟 query 一樣，都可以拿到 request 完之後的 data、fetching 以及 error</span></span><br><span class="line"><span class="comment">// executeMutation 基本上都會改名</span></span><br><span class="line"><span class="keyword">const</span> &#123;</span><br><span class="line">  executeMutation: addTodo,</span><br><span class="line">  data,</span><br><span class="line">  fetching,</span><br><span class="line">&#125; = useMutation(gql<span class="string">`</span></span><br><span class="line"><span class="string">  mutation addNewTodo($newTodoInput: NewTodoInput!) &#123;</span></span><br><span class="line"><span class="string">    addTodo(input: $newTodoInput) &#123;</span></span><br><span class="line"><span class="string">      addTodo &#123;</span></span><br><span class="line"><span class="string">        id</span></span><br><span class="line"><span class="string">      &#125;</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string">`</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 變數包在 &#123;&#125; 中當成參數傳給 addField</span></span><br><span class="line"><span class="comment">// data 就是 request 成功後的回傳值，編輯、新增時都可以拿得到</span></span><br><span class="line">addTodo(&#123; newTodoInput &#125;).then(<span class="function">(<span class="params">&#123; data, error &#125;</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="comment">// 取值需要很落落長...</span></span><br><span class="line">  <span class="comment">// 第一個 addTodo 是 Field Name</span></span><br><span class="line">  <span class="comment">// 第二個 addTodo 是 addTodo 成功後回傳的內容</span></span><br><span class="line">  <span class="built_in">console</span>.log(data.addTodo.addTodo.id);</span><br><span class="line">  <span class="comment">// 這邊的 error 格式跟 useQuery 回傳的 error 格式相同</span></span><br><span class="line">  <span class="built_in">console</span>.log(error?.message);</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 也可以透過 async / await 取值</span></span><br><span class="line"><span class="keyword">const</span> addNewTodo = <span class="keyword">async</span> () =&gt; &#123;</span><br><span class="line">  <span class="keyword">const</span> &#123; data, error &#125; = <span class="keyword">await</span> addTodo(&#123; newTodoInput &#125;);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>useMutation 跟 useQuery 大同小異，比較特別的是，有兩種方式可以取得 response：</p>
+<ol>
+<li>透過 <code>useMutation</code> 回傳的 data</li>
+<li>執行 function 後，透過 <code>.then((&#123; data &#125;) =&gt; &#123;&#125;)</code> 或是 <code>async / await</code> 取得</li>
+</ol>
+<p>一般來說會比較推薦透過第二種方式取值。</p>
+<h2 id="useSubscription"><a href="#useSubscription" class="headerlink" title="useSubscription"></a>useSubscription</h2><blockquote>
+<p>基於 websocket 所實作</p>
+</blockquote>
+<p>在使用 <code>useSubscription</code> 之前，需要先做好設定，並下載相關 package。</p>
+<h3 id="Setting-1"><a href="#Setting-1" class="headerlink" title="Setting"></a>Setting</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; Client, defaultExchanges, subscriptionExchange &#125; <span class="keyword">from</span> <span class="string">&quot;urql&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; SubscriptionClient &#125; <span class="keyword">from</span> <span class="string">&quot;subscriptions-transport-ws&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> WEBSOCKET_URL = <span class="string">&quot;wss://websocket.example/&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> subscriptionClient = <span class="keyword">new</span> SubscriptionClient(WEBSOCKET_URL, &#123;</span><br><span class="line">  reconnect: <span class="literal">true</span>,</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> client = <span class="keyword">new</span> Client(&#123;</span><br><span class="line">  url: <span class="string">&quot;http://api.example/graphql&quot;</span>,</span><br><span class="line">  exchanges: [</span><br><span class="line">    ...defaultExchanges,</span><br><span class="line">    subscriptionExchange(&#123;</span><br><span class="line">      forwardSubscription: <span class="function">(<span class="params">operation</span>) =&gt;</span> subscriptionClient.request(operation),</span><br><span class="line">    &#125;),</span><br><span class="line">  ],</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<h3 id="Usage"><a href="#Usage" class="headerlink" title="Usage"></a>Usage</h3><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">template</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span> <span class="attr">v-if</span>=<span class="string">&quot;error&quot;</span>&gt;</span>Oh no... &#123;&#123;error&#125;&#125;<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span> <span class="attr">v-else</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">ul</span> <span class="attr">v-if</span>=<span class="string">&quot;data&quot;</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">li</span> <span class="attr">v-for</span>=<span class="string">&quot;msg in data&quot;</span>&gt;</span>&#123;&#123; msg.from &#125;&#125;: &quot;&#123;&#123; msg.text &#125;&#125;&quot;<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">ul</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">template</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">&lt;script&gt;</span><br><span class="line"><span class="keyword">import</span> &#123; useSubscription &#125; <span class="keyword">from</span> <span class="string">&#x27;@urql/vue&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span><br><span class="line">  <span class="function"><span class="title">setup</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">    <span class="keyword">const</span> handleSubscription = <span class="function">(<span class="params">messages = [], response</span>) =&gt;</span> &#123;</span><br><span class="line">      <span class="keyword">return</span> [response.newMessages, ...messages];</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">const</span> &#123; data, error &#125; = useSubscription(&#123;</span><br><span class="line">      query: <span class="string">`</span></span><br><span class="line"><span class="string">        subscription MessageSub &#123;</span></span><br><span class="line"><span class="string">          newMessages &#123;</span></span><br><span class="line"><span class="string">            id</span></span><br><span class="line"><span class="string">            from</span></span><br><span class="line"><span class="string">            text</span></span><br><span class="line"><span class="string">          &#125;</span></span><br><span class="line"><span class="string">        &#125;</span></span><br><span class="line"><span class="string">      `</span></span><br><span class="line">    &#125;, handleSubscription)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> &#123;</span><br><span class="line">      data,</span><br><span class="line">      error,</span><br><span class="line">    &#125;;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br><span class="line">&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>URQL 簡單介紹就到這邊告一個段落，這邊介紹到的都是一些常用到、基礎的功能，這邊大概可以涵括到實際應用場景的七八成。沒有提到的部分，包含像是 URQL 的快取機制，有分成 Document Cache 及 Normalized Caching，之後有機會再介紹給大家～</p>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://formidable.com/open-source/urql/docs/">URQL 官網</a></li>
+</ul>
+
+    </div>
+     
+    <div class="post-footer__meta"><p>更新於 2024-02-13</p></div> 
+    <div class="post-entry__tags"><a href="/blog/tags/GraphQL/" class="post-tags__link button"># GraphQL</a></div> 
+</article>
+
+
+    <div class="nav">
+        <div class="nav__prev">
+            
+                <a href="/blog/article/Securing-Your-Web-Content-with-Content-Security-Policy-CSP/" class="nav__link">
+                    <div>
+                        <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="24" height="24"><path d="M589.088 790.624L310.464 512l278.624-278.624 45.248 45.248L400.96 512l233.376 233.376z" fill="#808080"></path></svg>
+                    </div>
+                    <div>
+                        <div class="nav__label">
+                            上一篇
+                        </div>
+                        <div class="nav__title">
+                            Securing Your Web Content with Content Security Policy (CSP)
+                        </div>
+                    </div>
+                </a>
+            
+        </div>
+        <div class="nav__next">
+            
+                <a href="/blog/article/GraphQL-mutation-and-subscription/" class="nav__link">
+                    <div>
+                        <div class="nav__label">
+                            下一篇
+                        </div>
+                        <div class="nav__title">
+                            GraphQL 系列文（三）：Mutation &amp; Subscription
+                        </div>
+                    </div>
+                    <div>
+                        <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="24" height="24"><path d="M434.944 790.624l-45.248-45.248L623.04 512l-233.376-233.376 45.248-45.248L713.568 512z" fill="#808080"></path></svg>
+                    </div>
+                </a>
+            
+        </div>
+    </div>
+
+
+
+    <div class="post__comments post__with-toc content-card" id="comment">
+        
+    <h4>評論</h4>
+    
+    <div id="disqus_thread">無法加載 Disqus 評論系統，請確保您的網絡能夠正常訪問。</div>
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
+
+    </div>
+
+
+
+</main>
+
+            <footer class="footer">
+     
+    <a href="#" class="button" id="b2t" aria-label="回到頂部" title="回到頂部">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="32" height="32">
+            <path d="M233.376 722.752L278.624 768 512 534.624 745.376 768l45.248-45.248L512 444.128zM192 352h640V288H192z" fill="currentColor"></path>
+        </svg>
+    </a>
+
+    
+
+
+    
+     
+ 
+
+ 
+    
+        
+        <p class="footer-copyright">
+            Copyright © 2024 <a href="/blog/">Yu&#39;s Blog</a>
+        </p>
+    
+    
+    <p>Powered by <a href="https://hexo.io" target="_blank">Hexo</a> | Theme - <a href="https://github.com/ChrAlpha/hexo-theme-cards" target="_blank">Cards</a></p>
+</footer>
+
+        </div>
+         
+
+ 
+
+ 
+
+ 
+
+ 
+
+
+
+ 
+
+
+
+ 
+
+
+    
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+
+    
+    <script>
+        function loadComment() {
+            window.disqus_config = function () {
+                this.page.url = 'https://yu040419.github.io/blog/article/urql/';
+                this.page.identifier = 'article/urql/';
+            };
+            (function(){
+                var dsq = document.createElement('script');
+                dsq.type = 'text/javascript';
+                dsq.async = true;
+                dsq.src = '//' + 'yu040419' + '.disqus.com/embed.js';
+                (document.head || document.body).appendChild(dsq);
+            })();
+        }
+    
+        var runningOnBrowser = typeof window !== "undefined";
+        var isBot = runningOnBrowser && !("onscroll" in window) || typeof navigator !== "undefined" && /(gle|ing|ro|msn)bot|crawl|spider|yand|duckgo/i.test(navigator.userAgent);
+        var supportsIntersectionObserver = runningOnBrowser && "IntersectionObserver" in window;
+    
+        setTimeout(function () {
+            if (!isBot && supportsIntersectionObserver) {
+                var comment_observer = new IntersectionObserver(function(entries) {
+                    if (entries[0].isIntersecting) {
+                        loadComment();
+                        comment_observer.disconnect();
+                    }
+                }, { threshold: [0] });
+                comment_observer.observe(document.getElementById('comment'));
+            } else {
+                loadComment();
+            }
+        }, 1);
+    </script>
+
+
+    
+
+    
+    
+
+    
+    
+    
+    
+    
+
+    
+    
+    
+    
+    
+
+    
+    
+    
+
+
+
+    </body>
+</html>

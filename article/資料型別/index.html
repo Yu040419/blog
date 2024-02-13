@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="zh-tw">
+    <head>
+    <meta charset="utf-8">
+
+    
+
+    <!-- 渲染优化 -->
+    <meta name="renderer" content="webkit">
+    <meta name="force-rendering" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <meta name="HandheldFriendly" content="True" >
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <!--icon-->
+
+    
+    
+    
+    
+    
+
+
+    <!-- meta -->
+
+
+<title>JavaScript 資料型別 | Yu&#39;s Blog</title>
+
+
+    <meta name="keywords" content="JavaScript">
+
+
+
+
+    <!-- OpenGraph -->
+ 
+    <meta name="description" content="JavaScript 資料型別有七種，又分為原始型別及物件型別。 介紹原始型別有六種：  Boolean 布林，例如：true、false Null 空值 Undefined 未定義 Number 數字，例如：12345 String 字串，例如：&#39;Hello World&#39; Symbol（ES2015 新增） 符號  其他的都是物件型別：  Object 物件，包含（物件 Obje">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JavaScript 資料型別">
+<meta property="og:url" content="https://yu040419.github.io/blog/article/%E8%B3%87%E6%96%99%E5%9E%8B%E5%88%A5/index.html">
+<meta property="og:site_name" content="Yu&#39;s Blog">
+<meta property="og:description" content="JavaScript 資料型別有七種，又分為原始型別及物件型別。 介紹原始型別有六種：  Boolean 布林，例如：true、false Null 空值 Undefined 未定義 Number 數字，例如：12345 String 字串，例如：&#39;Hello World&#39; Symbol（ES2015 新增） 符號  其他的都是物件型別：  Object 物件，包含（物件 Obje">
+<meta property="og:locale" content="zh_TW">
+<meta property="article:published_time" content="2021-03-09T15:29:02.000Z">
+<meta property="article:modified_time" content="2024-02-13T09:52:07.718Z">
+<meta property="article:author" content="Yu">
+<meta property="article:tag" content="JavaScript">
+<meta name="twitter:card" content="summary_large_image">
+
+
+    
+<link rel="stylesheet" href="/blog/css/style/main.css">
+ 
+
+    
+    
+        <link rel="stylesheet" id="hl-default-theme" href="https://cdn.jsdelivr.net/npm/hexo-theme-cards@1.2/dist/css/highlight/default.min.css" media="none" >
+        
+            <link rel="stylesheet" id="hl-dark-theme" href="https://cdn.jsdelivr.net/npm/hexo-theme-cards@1.2/dist/css/highlight/dark.min.css" media="none">
+        
+    
+
+    
+    
+
+    
+    
+<link rel="stylesheet" href="/blog/css/style/dark.css">
+
+    
+<script src="/blog/js/darkmode.js"></script>
+
+
+
+     
+
+    <!-- custom head -->
+
+<meta name="generator" content="Hexo 5.4.2"></head>
+
+    <body>
+        <div id="app" tabindex="-1">
+            <header class="header">
+    <div class="header__left">
+        <a href="/blog/" class="button">
+            <span class="logo__text">Yu&#39;s Blog</span>
+        </a>
+    </div>
+    <div class="header__right">
+        
+            <div class="navbar__menus">
+                
+                    <a href="/blog/" class="navbar-menu button">首頁</a>
+                
+                    <a href="/blog/archives/" class="navbar-menu button">所有文章</a>
+                
+                    <a href="/blog/tags/" class="navbar-menu button">標籤</a>
+                
+                    <a href="/blog/about/" class="navbar-menu button">關於我</a>
+                
+            </div>
+        
+        
+        
+    <a href="/blog/search/" id="btn-search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="24" height="24" fill="currentColor" stroke="currentColor" stroke-width="32"><path d="M192 448c0-141.152 114.848-256 256-256s256 114.848 256 256-114.848 256-256 256-256-114.848-256-256z m710.624 409.376l-206.88-206.88A318.784 318.784 0 0 0 768 448c0-176.736-143.264-320-320-320S128 271.264 128 448s143.264 320 320 320a318.784 318.784 0 0 0 202.496-72.256l206.88 206.88 45.248-45.248z"></path></svg>
+    </a>
+
+
+        
+        
+    <a href="javaScript:void(0);" id="btn-toggle-dark">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+    </a>
+
+
+        
+            <a class="dropdown-icon button" id="btn-dropdown" tabindex="0"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width='24' height='24' fill="none" stroke="currentColor" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round"><path fill="currentColor" d="M3.314,4.8h13.372c0.41,0,0.743-0.333,0.743-0.743c0-0.41-0.333-0.743-0.743-0.743H3.314c-0.41,0-0.743,0.333-0.743,0.743C2.571,4.467,2.904,4.8,3.314,4.8z M16.686,15.2H3.314c-0.41,0-0.743,0.333-0.743,0.743s0.333,0.743,0.743,0.743h13.372c0.41,0,0.743-0.333,0.743-0.743S17.096,15.2,16.686,15.2z M16.686,9.257H3.314c-0.41,0-0.743,0.333-0.743,0.743s0.333,0.743,0.743,0.743h13.372c0.41,0,0.743-0.333,0.743-0.743S17.096,9.257,16.686,9.257z"></path></svg></a>
+            <div class="dropdown-menus" id="dropdown-menus">
+                
+                    <a href="/blog/" class="dropdown-menu button">首頁</a>
+                
+                    <a href="/blog/archives/" class="dropdown-menu button">所有文章</a>
+                
+                    <a href="/blog/tags/" class="dropdown-menu button">標籤</a>
+                
+                    <a href="/blog/about/" class="dropdown-menu button">關於我</a>
+                
+            </div>
+        
+    </div>
+</header>
+
+
+            <main class="main">
+    
+
+<div class="post-title">
+    <h1 class="post-title__text">
+        JavaScript 資料型別
+    </h1>
+    <div class="post-title__meta">
+        <a href="/blog/archives/2021/03/" class="post-meta__date button">2021-03-09</a>
+        
+ 
+        
+    
+    
+
+
+ 
+
+ 
+    </div>
+</div>
+
+
+    <aside class="post-side">
+        <div class="post-side__toc">
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%8B%E7%B4%B9"><span class="toc-text">介紹</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BE%A8%E5%88%A5%E6%96%B9%E5%BC%8F"><span class="toc-text">辨別方式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8E%9F%E5%A7%8B%E5%9E%8B%E5%88%A5-VS-%E7%89%A9%E4%BB%B6%E5%9E%8B%E5%88%A5"><span class="toc-text">原始型別 VS 物件型別</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%AF%E5%90%A6%E6%9B%B4%E6%94%B9%E5%8E%9F%E5%80%BC"><span class="toc-text">可否更改原值</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%8A%E6%95%B8%E5%AD%98%E6%94%BE%E6%96%B9%E5%BC%8F"><span class="toc-text">變數存放方式</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%88%87-%E8%88%87"><span class="toc-text">&#x3D; 與 &#x3D;&#x3D; 與 &#x3D;&#x3D;&#x3D;</span></a></li></ol>
+        </div>
+    </aside>
+    <a class="btn-toc button" id="btn-toc" tabindex="0">
+        <svg viewBox="0 0 1024 1024" width="32" height="32" xmlns="http://www.w3.org/2000/svg">
+            <path d="M128 256h64V192H128zM320 256h576V192H320zM128 544h64v-64H128zM320 544h576v-64H320zM128 832h64v-64H128zM320 832h576v-64H320z" fill="currentColor"></path>
+        </svg>
+    </a>
+    <div class="toc-menus" id="toc-menus">
+        <div class="toc-title">文章目錄</div>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%8B%E7%B4%B9"><span class="toc-text">介紹</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BE%A8%E5%88%A5%E6%96%B9%E5%BC%8F"><span class="toc-text">辨別方式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8E%9F%E5%A7%8B%E5%9E%8B%E5%88%A5-VS-%E7%89%A9%E4%BB%B6%E5%9E%8B%E5%88%A5"><span class="toc-text">原始型別 VS 物件型別</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%AF%E5%90%A6%E6%9B%B4%E6%94%B9%E5%8E%9F%E5%80%BC"><span class="toc-text">可否更改原值</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%8A%E6%95%B8%E5%AD%98%E6%94%BE%E6%96%B9%E5%BC%8F"><span class="toc-text">變數存放方式</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%88%87-%E8%88%87"><span class="toc-text">&#x3D; 與 &#x3D;&#x3D; 與 &#x3D;&#x3D;&#x3D;</span></a></li></ol>
+    </div>
+
+
+<article class="post post__with-toc content-card">
+    <div class="post__header"></div>
+    <div class="post__content">
+        <p>JavaScript 資料型別有七種，又分為<strong>原始型別</strong>及<strong>物件型別</strong>。</p>
+<h2 id="介紹"><a href="#介紹" class="headerlink" title="介紹"></a>介紹</h2><p>原始型別有六種：</p>
+<ul>
+<li>Boolean 布林，例如：true、false</li>
+<li>Null 空值</li>
+<li>Undefined 未定義</li>
+<li>Number 數字，例如：12345</li>
+<li>String 字串，例如：<code>&#39;Hello World&#39;</code></li>
+<li>Symbol（ES2015 新增） 符號</li>
+</ul>
+<p>其他的都是物件型別：</p>
+<ul>
+<li>Object 物件，包含（物件 Object、陣列 Array、函式 Function、時間 Date…）</li>
+</ul>
+<h2 id="辨別方式"><a href="#辨別方式" class="headerlink" title="辨別方式"></a>辨別方式</h2><p>可以透過 <code>typeof</code> 來辨別型別</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">console</span>.log(<span class="keyword">typeof</span> <span class="number">1</span>); <span class="comment">// number</span></span><br><span class="line"><span class="built_in">console</span>.log(<span class="keyword">typeof</span> <span class="string">&quot;2&quot;</span>); <span class="comment">// string</span></span><br><span class="line"><span class="built_in">console</span>.log(<span class="keyword">typeof</span> <span class="literal">true</span>); <span class="comment">// boolean</span></span><br><span class="line"><span class="built_in">console</span>.log(<span class="keyword">typeof</span> &#123; <span class="attr">a</span>: <span class="number">1</span> &#125;); <span class="comment">// object</span></span><br><span class="line"><span class="built_in">console</span>.log(<span class="keyword">typeof</span> [<span class="number">1</span>, <span class="number">2</span>]); <span class="comment">// object</span></span><br><span class="line"><span class="built_in">console</span>.log(<span class="keyword">typeof</span> <span class="keyword">new</span> <span class="built_in">Date</span>()); <span class="comment">// object</span></span><br><span class="line"><span class="built_in">console</span>.log(<span class="keyword">typeof</span> <span class="literal">undefined</span>); <span class="comment">// undefined</span></span><br><span class="line"><span class="built_in">console</span>.log(<span class="keyword">typeof</span> blabla); <span class="comment">// undefined，因為是個 undefined 變數</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 以下是比較特別的案例</span></span><br><span class="line"><span class="built_in">console</span>.log(<span class="keyword">typeof</span> <span class="literal">NaN</span>); <span class="comment">//number</span></span><br><span class="line"><span class="built_in">console</span>.log(<span class="keyword">typeof</span> <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;&#125;); <span class="comment">// function</span></span><br><span class="line"><span class="built_in">console</span>.log(<span class="keyword">typeof</span> <span class="literal">null</span>); <span class="comment">// object</span></span><br></pre></td></tr></table></figure>
+
+<p>註：<code>typeof null</code> 是一個在 JavaScript 剛推出時就存在的 bug，因為擔心改動後會導致太多網站壞掉，所以目前及未來都沒有改的計畫。</p>
+<p>仔細看會發現，確實像是時間、陣列都會被辨別為物件，雖然畢竟當初分類就是這麼分的，但在實務使用上還是有點不方便，因此其實有其他方式可以更準確地達到實務上的需求 ─ <code>Object.prototype.toString.call(...)</code> 。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 看後面可以知道確切格式</span></span><br><span class="line"><span class="built_in">console</span>.log(<span class="built_in">Object</span>.prototype.toString.call(<span class="literal">null</span>)); <span class="comment">// [Object Null]</span></span><br><span class="line"><span class="built_in">console</span>.log(<span class="built_in">Object</span>.prototype.toString.call([<span class="number">1</span>, <span class="number">2</span>])); <span class="comment">// [Object Array]</span></span><br><span class="line"><span class="built_in">console</span>.log(<span class="built_in">Object</span>.prototype.toString.call(<span class="keyword">new</span> <span class="built_in">Date</span>())); <span class="comment">// [Object Date]</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 凡事都有例外</span></span><br><span class="line"><span class="built_in">console</span>.log(<span class="built_in">Object</span>.prototype.toString.call(<span class="literal">NaN</span>)); <span class="comment">// [Object Number]</span></span><br><span class="line"><span class="comment">// 想要驗證 NAN，isNaN() 是唯一解</span></span><br><span class="line"><span class="built_in">console</span>.log(<span class="built_in">isNaN</span>(<span class="literal">NaN</span>)); <span class="comment">// true</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="原始型別-VS-物件型別"><a href="#原始型別-VS-物件型別" class="headerlink" title="原始型別 VS 物件型別"></a>原始型別 VS 物件型別</h2><h3 id="可否更改原值"><a href="#可否更改原值" class="headerlink" title="可否更改原值"></a>可否更改原值</h3><p>原始型別只能重新賦值，不能更改原值，比方說</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> str = <span class="string">&quot;aa&quot;</span>;</span><br><span class="line">str.toUpperCase(); <span class="comment">// 將字串變大寫</span></span><br><span class="line"><span class="built_in">console</span>.log(str); <span class="comment">// 還是 aa，因為字串是原始型別不能更改</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> str = <span class="string">&quot;aa&quot;</span>;</span><br><span class="line">str = str.toUpperCase(); <span class="comment">// 將自串變大寫的值賦值到變數中</span></span><br><span class="line"><span class="built_in">console</span>.log(str); <span class="comment">// 重新賦值後就會變 AA</span></span><br></pre></td></tr></table></figure>
+
+<p>物件型別可以更改原值，比方說</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> arr = [<span class="string">&quot;a&quot;</span>, <span class="string">&quot;b&quot;</span>];</span><br><span class="line">arr.push(<span class="string">&quot;c&quot;</span>); <span class="comment">// 在陣列中加入 &#x27;c&#x27;</span></span><br><span class="line"><span class="built_in">console</span>.log(arr); <span class="comment">// [&quot;a&quot;, &quot;b&quot;, &quot;c&quot;]，原本的 arr 會直接更改</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="變數存放方式"><a href="#變數存放方式" class="headerlink" title="變數存放方式"></a>變數存放方式</h3><p>之所以會有這樣的差別，最大的差別就在於變數存放的方式。可以想像成變數名稱都是一張 memo 紙，而變數是一個箱子。</p>
+<p>在原始型別當中，寫著變數名稱的 memo 紙貼著的箱子裡，放的就是變數的值，但在物件型別當中，寫著變數名稱的 memo 紙貼著的箱子裡，放的是一個記憶體位置，記憶體位置中放的才是變數的值。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> str = <span class="string">&quot;aa&quot;</span>; <span class="comment">// &#x27;aa&#x27; 真的放在 str 貼著的箱子裡</span></span><br><span class="line"><span class="keyword">let</span> arr = [<span class="string">&quot;a&quot;</span>, <span class="string">&quot;b&quot;</span>]; <span class="comment">// arr 貼著的箱子裡放的是記憶體位置 0x01，0x01 裡放的才是 [&#x27;a&#x27;, &#x27;b&#x27;]</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> str = <span class="number">1</span>;</span><br><span class="line"><span class="keyword">let</span> str1 = <span class="number">1</span>;</span><br><span class="line"><span class="built_in">console</span>.log(str === str1); <span class="comment">// true</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> arr = [<span class="number">1</span>, <span class="number">2</span>]; <span class="comment">// 變數內存著記憶體位置 0x01</span></span><br><span class="line"><span class="keyword">let</span> arr1 = [<span class="number">1</span>, <span class="number">2</span>]; <span class="comment">// 變數內存著記憶體位置 0x02</span></span><br><span class="line"><span class="built_in">console</span>.log(arr === arr1); <span class="comment">// false，因為記憶體位置不同</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> arr = [<span class="number">1</span>, <span class="number">2</span>];</span><br><span class="line"><span class="keyword">let</span> arr1 = arr; <span class="comment">// arr 把記憶體位置分享給 arr1，目前兩個變數都存著一樣的記憶體位置</span></span><br><span class="line"><span class="built_in">console</span>.log(arr === arr1); <span class="comment">// true</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 因此在更改物件型別值的時候要注意</span></span><br><span class="line"><span class="keyword">let</span> arr = [<span class="number">1</span>, <span class="number">2</span>];</span><br><span class="line"><span class="keyword">let</span> arr1 = arr;</span><br><span class="line">arr1.push(<span class="number">3</span>); <span class="comment">// 因為指向同個記憶體位置，當更改 arr1 時 arr 也會被改到</span></span><br><span class="line"><span class="built_in">console</span>.log(arr); <span class="comment">// [1, 2, 3]</span></span><br><span class="line"><span class="built_in">console</span>.log(arr1); <span class="comment">// [1, 2, 3]</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 原始型別</span></span><br><span class="line"><span class="keyword">let</span> str = <span class="string">&quot;aa&quot;</span>;</span><br><span class="line"><span class="keyword">let</span> str1 = str;</span><br><span class="line">str1.toUpperCase();</span><br><span class="line"><span class="built_in">console</span>.log(str); <span class="comment">// &#x27;aa&#x27;</span></span><br><span class="line"><span class="built_in">console</span>.log(str1); <span class="comment">// &#x27;aa&#x27;，因為前面有說原始型別不能直接更改只能重新賦值</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> str = <span class="string">&quot;aa&quot;</span>;</span><br><span class="line"><span class="keyword">let</span> str1 = str;</span><br><span class="line">str1 = str1.toUpperCase(); <span class="comment">// 重新賦值</span></span><br><span class="line"><span class="built_in">console</span>.log(str); <span class="comment">// &#x27;aa&#x27;</span></span><br><span class="line"><span class="built_in">console</span>.log(str1); <span class="comment">// &#x27;AA&#x27;，重新賦值後更改了，但不影響其他變數</span></span><br></pre></td></tr></table></figure>
+
+<p>綜合以上，我們會稱 &#x3D;&#x3D;物件型別是可變的 mutable，原始型別是不可變的 immutable&#x3D;&#x3D;。</p>
+<h2 id="與-與"><a href="#與-與" class="headerlink" title="&#x3D; 與 &#x3D;&#x3D; 與 &#x3D;&#x3D;&#x3D;"></a>&#x3D; 與 &#x3D;&#x3D; 與 &#x3D;&#x3D;&#x3D;</h2><ul>
+<li><code>=</code>：賦值</li>
+<li><code>==</code>：兩邊進行比較，且會自動進行型別轉換</li>
+<li><code>===</code>：兩邊進行比較，但不進行型別轉換</li>
+</ul>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> a = <span class="number">1</span>;</span><br><span class="line"><span class="built_in">console</span>.log(a == <span class="string">&quot;1&quot;</span>); <span class="comment">// true</span></span><br><span class="line"><span class="built_in">console</span>.log(a === <span class="string">&quot;1&quot;</span>); <span class="comment">// false</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> ((a = <span class="number">2</span>)) &#123;</span><br><span class="line">  <span class="comment">// 這邊會賦值</span></span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&quot;a = 2&quot;</span>);</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&quot;a = 1&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 印出 &#x27;a = 2&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>因此在比較時，永遠都是用 <code>===</code> 最可靠。關於更多的 <code>==</code> 與 <code>===</code> 比較可參考這個 <a target="_blank" rel="noopener" href="https://dorey.github.io/JavaScript-Equality-Table/">好懂表格</a>。</p>
+<p>另外，<code>NaN</code> 不大於、小於、等於任何數字或是 <code>NaN</code>，<code>NaN</code> 與任何數字運算也都會變成 <code>NaN</code> 。</p>
+
+    </div>
+     
+    <div class="post-footer__meta"><p>更新於 2024-02-13</p></div> 
+    <div class="post-entry__tags"><a href="/blog/tags/JavaScript/" class="post-tags__link button"># JavaScript</a></div> 
+</article>
+
+
+    <div class="nav">
+        <div class="nav__prev">
+            
+                <a href="/blog/article/password/" class="nav__link">
+                    <div>
+                        <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="24" height="24"><path d="M589.088 790.624L310.464 512l278.624-278.624 45.248 45.248L400.96 512l233.376 233.376z" fill="#808080"></path></svg>
+                    </div>
+                    <div>
+                        <div class="nav__label">
+                            上一篇
+                        </div>
+                        <div class="nav__title">
+                            密碼保護
+                        </div>
+                    </div>
+                </a>
+            
+        </div>
+        <div class="nav__next">
+            
+                <a href="/blog/article/%E8%AE%8A%E6%95%B8%E5%AE%A3%E5%91%8A%EF%BC%8Cvar%E3%80%81let%E3%80%81const-%E7%9A%84%E5%B7%AE%E5%88%A5/" class="nav__link">
+                    <div>
+                        <div class="nav__label">
+                            下一篇
+                        </div>
+                        <div class="nav__title">
+                            變數宣告，var、let、const 的差別
+                        </div>
+                    </div>
+                    <div>
+                        <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="24" height="24"><path d="M434.944 790.624l-45.248-45.248L623.04 512l-233.376-233.376 45.248-45.248L713.568 512z" fill="#808080"></path></svg>
+                    </div>
+                </a>
+            
+        </div>
+    </div>
+
+
+
+    <div class="post__comments post__with-toc content-card" id="comment">
+        
+    <h4>評論</h4>
+    
+    <div id="disqus_thread">無法加載 Disqus 評論系統，請確保您的網絡能夠正常訪問。</div>
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
+
+    </div>
+
+
+
+</main>
+
+            <footer class="footer">
+     
+    <a href="#" class="button" id="b2t" aria-label="回到頂部" title="回到頂部">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="32" height="32">
+            <path d="M233.376 722.752L278.624 768 512 534.624 745.376 768l45.248-45.248L512 444.128zM192 352h640V288H192z" fill="currentColor"></path>
+        </svg>
+    </a>
+
+    
+
+
+    
+     
+ 
+
+ 
+    
+        
+        <p class="footer-copyright">
+            Copyright © 2024 <a href="/blog/">Yu&#39;s Blog</a>
+        </p>
+    
+    
+    <p>Powered by <a href="https://hexo.io" target="_blank">Hexo</a> | Theme - <a href="https://github.com/ChrAlpha/hexo-theme-cards" target="_blank">Cards</a></p>
+</footer>
+
+        </div>
+         
+
+ 
+
+ 
+
+ 
+
+ 
+
+
+
+ 
+
+
+
+ 
+
+
+    
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+
+    
+    <script>
+        function loadComment() {
+            window.disqus_config = function () {
+                this.page.url = 'https://yu040419.github.io/blog/article/%E8%B3%87%E6%96%99%E5%9E%8B%E5%88%A5/';
+                this.page.identifier = 'article/資料型別/';
+            };
+            (function(){
+                var dsq = document.createElement('script');
+                dsq.type = 'text/javascript';
+                dsq.async = true;
+                dsq.src = '//' + 'yu040419' + '.disqus.com/embed.js';
+                (document.head || document.body).appendChild(dsq);
+            })();
+        }
+    
+        var runningOnBrowser = typeof window !== "undefined";
+        var isBot = runningOnBrowser && !("onscroll" in window) || typeof navigator !== "undefined" && /(gle|ing|ro|msn)bot|crawl|spider|yand|duckgo/i.test(navigator.userAgent);
+        var supportsIntersectionObserver = runningOnBrowser && "IntersectionObserver" in window;
+    
+        setTimeout(function () {
+            if (!isBot && supportsIntersectionObserver) {
+                var comment_observer = new IntersectionObserver(function(entries) {
+                    if (entries[0].isIntersecting) {
+                        loadComment();
+                        comment_observer.disconnect();
+                    }
+                }, { threshold: [0] });
+                comment_observer.observe(document.getElementById('comment'));
+            } else {
+                loadComment();
+            }
+        }, 1);
+    </script>
+
+
+    
+
+    
+    
+
+    
+    
+    
+    
+    
+
+    
+    
+    
+    
+    
+
+    
+    
+    
+
+
+
+    </body>
+</html>

@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="zh-tw">
+    <head>
+    <meta charset="utf-8">
+
+    
+
+    <!-- 渲染优化 -->
+    <meta name="renderer" content="webkit">
+    <meta name="force-rendering" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <meta name="HandheldFriendly" content="True" >
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <!--icon-->
+
+    
+    
+    
+    
+    
+
+
+    <!-- meta -->
+
+
+<title>GraphQL 系列文（一）：透過 The Schema Definition Language (SDL) 撰寫 GraphQL Schema | Yu&#39;s Blog</title>
+
+
+    <meta name="keywords" content="GraphQL">
+
+
+
+
+    <!-- OpenGraph -->
+ 
+    <meta name="description" content="SDL 是建立 GraphQL Schema 的語言，而 Schema 則是定義 GraphQL API 的重要骨幹，包含資料架構格式和型別。 在了解 Schema 之前，先來了解 GraphQL 是什麼。 GraphQL GraphQL 是一個用來查詢 API 的語言 (Query Language)，也是一個基於型別系統來執行及查詢的 server-side runtime。  GraphQL">
+<meta property="og:type" content="article">
+<meta property="og:title" content="GraphQL 系列文（一）：透過 The Schema Definition Language (SDL) 撰寫 GraphQL Schema">
+<meta property="og:url" content="https://yu040419.github.io/blog/article/SDL/index.html">
+<meta property="og:site_name" content="Yu&#39;s Blog">
+<meta property="og:description" content="SDL 是建立 GraphQL Schema 的語言，而 Schema 則是定義 GraphQL API 的重要骨幹，包含資料架構格式和型別。 在了解 Schema 之前，先來了解 GraphQL 是什麼。 GraphQL GraphQL 是一個用來查詢 API 的語言 (Query Language)，也是一個基於型別系統來執行及查詢的 server-side runtime。  GraphQL">
+<meta property="og:locale" content="zh_TW">
+<meta property="article:published_time" content="2022-01-13T13:48:44.000Z">
+<meta property="article:modified_time" content="2024-02-13T09:52:07.716Z">
+<meta property="article:author" content="Yu">
+<meta property="article:tag" content="GraphQL">
+<meta name="twitter:card" content="summary_large_image">
+
+
+    
+<link rel="stylesheet" href="/blog/css/style/main.css">
+ 
+
+    
+    
+        <link rel="stylesheet" id="hl-default-theme" href="https://cdn.jsdelivr.net/npm/hexo-theme-cards@1.2/dist/css/highlight/default.min.css" media="none" >
+        
+            <link rel="stylesheet" id="hl-dark-theme" href="https://cdn.jsdelivr.net/npm/hexo-theme-cards@1.2/dist/css/highlight/dark.min.css" media="none">
+        
+    
+
+    
+    
+
+    
+    
+<link rel="stylesheet" href="/blog/css/style/dark.css">
+
+    
+<script src="/blog/js/darkmode.js"></script>
+
+
+
+     
+
+    <!-- custom head -->
+
+<meta name="generator" content="Hexo 5.4.2"></head>
+
+    <body>
+        <div id="app" tabindex="-1">
+            <header class="header">
+    <div class="header__left">
+        <a href="/blog/" class="button">
+            <span class="logo__text">Yu&#39;s Blog</span>
+        </a>
+    </div>
+    <div class="header__right">
+        
+            <div class="navbar__menus">
+                
+                    <a href="/blog/" class="navbar-menu button">首頁</a>
+                
+                    <a href="/blog/archives/" class="navbar-menu button">所有文章</a>
+                
+                    <a href="/blog/tags/" class="navbar-menu button">標籤</a>
+                
+                    <a href="/blog/about/" class="navbar-menu button">關於我</a>
+                
+            </div>
+        
+        
+        
+    <a href="/blog/search/" id="btn-search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="24" height="24" fill="currentColor" stroke="currentColor" stroke-width="32"><path d="M192 448c0-141.152 114.848-256 256-256s256 114.848 256 256-114.848 256-256 256-256-114.848-256-256z m710.624 409.376l-206.88-206.88A318.784 318.784 0 0 0 768 448c0-176.736-143.264-320-320-320S128 271.264 128 448s143.264 320 320 320a318.784 318.784 0 0 0 202.496-72.256l206.88 206.88 45.248-45.248z"></path></svg>
+    </a>
+
+
+        
+        
+    <a href="javaScript:void(0);" id="btn-toggle-dark">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+    </a>
+
+
+        
+            <a class="dropdown-icon button" id="btn-dropdown" tabindex="0"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width='24' height='24' fill="none" stroke="currentColor" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round"><path fill="currentColor" d="M3.314,4.8h13.372c0.41,0,0.743-0.333,0.743-0.743c0-0.41-0.333-0.743-0.743-0.743H3.314c-0.41,0-0.743,0.333-0.743,0.743C2.571,4.467,2.904,4.8,3.314,4.8z M16.686,15.2H3.314c-0.41,0-0.743,0.333-0.743,0.743s0.333,0.743,0.743,0.743h13.372c0.41,0,0.743-0.333,0.743-0.743S17.096,15.2,16.686,15.2z M16.686,9.257H3.314c-0.41,0-0.743,0.333-0.743,0.743s0.333,0.743,0.743,0.743h13.372c0.41,0,0.743-0.333,0.743-0.743S17.096,9.257,16.686,9.257z"></path></svg></a>
+            <div class="dropdown-menus" id="dropdown-menus">
+                
+                    <a href="/blog/" class="dropdown-menu button">首頁</a>
+                
+                    <a href="/blog/archives/" class="dropdown-menu button">所有文章</a>
+                
+                    <a href="/blog/tags/" class="dropdown-menu button">標籤</a>
+                
+                    <a href="/blog/about/" class="dropdown-menu button">關於我</a>
+                
+            </div>
+        
+    </div>
+</header>
+
+
+            <main class="main">
+    
+
+<div class="post-title">
+    <h1 class="post-title__text">
+        GraphQL 系列文（一）：透過 The Schema Definition Language (SDL) 撰寫 GraphQL Schema
+    </h1>
+    <div class="post-title__meta">
+        <a href="/blog/archives/2022/01/" class="post-meta__date button">2022-01-13</a>
+        
+ 
+        
+    
+    
+
+
+ 
+
+ 
+    </div>
+</div>
+
+
+    <aside class="post-side">
+        <div class="post-side__toc">
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#GraphQL"><span class="toc-text">GraphQL</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AD%98%E5%8F%96%E6%96%B9%E5%BC%8F"><span class="toc-text">存取方式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B3%87%E6%96%99%E5%9E%8B%E5%88%A5-Scalar-Types"><span class="toc-text">資料型別 Scalar Types</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%A0%90%E8%A8%AD-Scalar-Types"><span class="toc-text">預設 Scalar Types</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%87%AA%E8%A8%82-Scalar-Types"><span class="toc-text">自訂 Scalar Types</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Syntax-%E8%AA%9E%E6%B3%95"><span class="toc-text">Syntax 語法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Comment"><span class="toc-text">Comment</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#non-nullable"><span class="toc-text">non-nullable !</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#directive-%E6%8C%87%E4%BB%A4"><span class="toc-text">directive 指令</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Schema"><span class="toc-text">Schema</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Type-Field"><span class="toc-text">Type &#x2F; Field</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#interface"><span class="toc-text">interface</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#implements"><span class="toc-text">implements</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#enum"><span class="toc-text">enum</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#union"><span class="toc-text">union</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#argument-input"><span class="toc-text">argument &#x2F; input</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Answer"><span class="toc-text">Answer</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Reference"><span class="toc-text">Reference</span></a></li></ol>
+        </div>
+    </aside>
+    <a class="btn-toc button" id="btn-toc" tabindex="0">
+        <svg viewBox="0 0 1024 1024" width="32" height="32" xmlns="http://www.w3.org/2000/svg">
+            <path d="M128 256h64V192H128zM320 256h576V192H320zM128 544h64v-64H128zM320 544h576v-64H320zM128 832h64v-64H128zM320 832h576v-64H320z" fill="currentColor"></path>
+        </svg>
+    </a>
+    <div class="toc-menus" id="toc-menus">
+        <div class="toc-title">文章目錄</div>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#GraphQL"><span class="toc-text">GraphQL</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AD%98%E5%8F%96%E6%96%B9%E5%BC%8F"><span class="toc-text">存取方式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B3%87%E6%96%99%E5%9E%8B%E5%88%A5-Scalar-Types"><span class="toc-text">資料型別 Scalar Types</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%A0%90%E8%A8%AD-Scalar-Types"><span class="toc-text">預設 Scalar Types</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%87%AA%E8%A8%82-Scalar-Types"><span class="toc-text">自訂 Scalar Types</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Syntax-%E8%AA%9E%E6%B3%95"><span class="toc-text">Syntax 語法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Comment"><span class="toc-text">Comment</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#non-nullable"><span class="toc-text">non-nullable !</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#directive-%E6%8C%87%E4%BB%A4"><span class="toc-text">directive 指令</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Schema"><span class="toc-text">Schema</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Type-Field"><span class="toc-text">Type &#x2F; Field</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#interface"><span class="toc-text">interface</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#implements"><span class="toc-text">implements</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#enum"><span class="toc-text">enum</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#union"><span class="toc-text">union</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#argument-input"><span class="toc-text">argument &#x2F; input</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Answer"><span class="toc-text">Answer</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Reference"><span class="toc-text">Reference</span></a></li></ol>
+    </div>
+
+
+<article class="post post__with-toc content-card">
+    <div class="post__header"></div>
+    <div class="post__content">
+        <p>SDL 是建立 GraphQL Schema 的語言，而 Schema 則是定義 GraphQL API 的重要骨幹，包含資料架構格式和型別。</p>
+<p>在了解 Schema 之前，先來了解 GraphQL 是什麼。</p>
+<h2 id="GraphQL"><a href="#GraphQL" class="headerlink" title="GraphQL"></a>GraphQL</h2><blockquote>
+<p>GraphQL 是一個用來查詢 API 的語言 (Query Language)，也是一個基於型別系統來執行及查詢的 server-side runtime。</p>
+</blockquote>
+<p>GraphQL 是設計用來快速開發高彈性、對開發者友善的 API。在開發完 API 後，會自動建立出一個線上的 IDE，在這個 IDE 中，可以測試發送 request，並得到相關的 response。在這個 IDE 中，也可以看得到完整的 API 文件。這邊有 Github 提供的 <a target="_blank" rel="noopener" href="https://graphql.org/swapi-graphql?query=%23%20Welcome%20to%20GraphiQL%0A%23%0A%23%20GraphiQL%20is%20an%20in-browser%20tool%20for%20writing,%20validating,%20and%0A%23%20testing%20GraphQL%20queries.%0A%23%0A%23%20Type%20queries%20into%20this%20side%20of%20the%20screen,%20and%20you%20will%20see%20intelligent%0A%23%20typeaheads%20aware%20of%20the%20current%20GraphQL%20type%20schema%20and%20live%20syntax%20and%0A%23%20validation%20errors%20highlighted%20within%20the%20text.%0A%23%0A%0Aquery%20getAllFilms%20%7B%0A%20%20allFilms%20%7B%0A%20%20%20%20films%20%7B%0A%20%20%20%20%20%20title%0A%20%20%20%20%20%20episodeID%0A%20%20%20%20%20%20director%0A%20%20%20%20%20%20producers%0A%20%20%20%20%7D%0A%20%20%7D%0A%7D&operationName=getAllFilms">範例 IDE</a>，有興趣的可以玩玩看～</p>
+<p>在上方的 IDE 中，可以看到版面被切分成三個區塊。左邊是供 client 端撰寫的 query。Query 區塊下方可以寫入 query 要帶上的變數，並設定 request header。若要執行 query，可以按上方的播放鍵執行，執行後得到的結果就會出現在中間的區塊。而最右邊的就是自動建立出來的 API 文件。</p>
+<p>當 GraphQL 的服務架起來時，便可以接受 GraphQL query，開始進行驗證及執行相關操作。GraphQL 會先確認 query 的型別與內容是否符合 Schema，驗證成功後才會執行 API 的資料存取。除此之外，GraphQL 還可以串接 RESTful API，詳細可以參考 <a target="_blank" rel="noopener" href="https://graphql.org/blog/rest-api-graphql-wrapper/">官方教學 - Wrapping a REST API in GraphQL</a>。</p>
+<p>GraphQL 不依賴於任何特定的資料庫或是 storage engine，而是建立在開發者所撰寫出來的 code 及數據。透過 GraphQL 開發 API 時，首先要了解的就是他的 type System，以及該如何自定義型別 (define type)，並依據每個 type 實作相對應的 resolver（可以理解成實作 API 的地方）。</p>
+<p>所以接下來，就來看看建立 GraphQL 的 Type System 的 SDL。</p>
+<h2 id="存取方式"><a href="#存取方式" class="headerlink" title="存取方式"></a>存取方式</h2><p>在 GraphQL 中，資料存取方式分成三種，分別是 query, mutation 跟 subscription。</p>
+<ul>
+<li>query：查詢資料</li>
+<li>mutation：新增、編輯、刪除資料</li>
+<li>subscription：擺脫以往發送 request 後得到 response 的方式，而是以透過 websocket 的方式，client 端訂閱某個資料後，Server 端一有新的資料後就會主動發送給 client。</li>
+</ul>
+<h2 id="資料型別-Scalar-Types"><a href="#資料型別-Scalar-Types" class="headerlink" title="資料型別 Scalar Types"></a>資料型別 Scalar Types</h2><ol>
+<li>可以讓 Client 與 Server 的開發者對於資料格式有共同的認知</li>
+<li>強迫 Client 送出正確格式的 query</li>
+<li>強迫 Server 回覆正確格式的 response</li>
+</ol>
+<h3 id="預設-Scalar-Types"><a href="#預設-Scalar-Types" class="headerlink" title="預設 Scalar Types"></a>預設 Scalar Types</h3><p>資料型別預設分成五種，分別是：</p>
+<ul>
+<li>Int：32-bit 整數</li>
+<li>Float：double precision 雙精度的浮點數</li>
+<li>String</li>
+<li>Boolean</li>
+<li>ID：ID 一般來說會以 string 方式呈現，但當前端輸入 id 為 “483109245” (string) 或是 483109245 (int) 都會被 GraphQL 所接受。</li>
+</ul>
+<h3 id="自訂-Scalar-Types"><a href="#自訂-Scalar-Types" class="headerlink" title="自訂 Scalar Types"></a>自訂 Scalar Types</h3><p>除了以上的型別外，也可以自訂型別，常見的有 Date, URL, Email, JSON 等等。可以動手 <a target="_blank" rel="noopener" href="https://ithelp.ithome.com.tw/articles/10206366">實作</a>，也可以透過 <a target="_blank" rel="noopener" href="https://www.npmjs.com/package/graphql-custom-types">套件</a>。</p>
+<h2 id="Syntax-語法"><a href="#Syntax-語法" class="headerlink" title="Syntax 語法"></a>Syntax 語法</h2><p>在了解以上基礎後，接下來就可以直接來看看，如何透過 SDL 訂定 GraphQL 的 Schema。</p>
+<h3 id="Comment"><a href="#Comment" class="headerlink" title="Comment"></a>Comment</h3><p>SDL 的註解方式分成三種，分別是 <code>#</code>、<code>&quot;</code> 及 <code>&quot;&quot;&quot;</code>。</p>
+<ul>
+<li><code>#</code>：SDL 單行註解方式，不會呈現在自動生成的 GraphQL 文件中。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># 這個單行註解不會出現在文件中</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>&quot;</code>：SDL 單行註解方式，會呈現在自動生成的 GraphQL 文件中，經常用來備註 field definition 。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&quot; 這個單行註解會出現在文件中 &quot;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>&quot;&quot;&quot;</code>：SDL 多行註解方式，會呈現在自動生成的 GraphQL 文件中。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&quot;&quot;&quot;</span><br><span class="line">這個多行註解會出現在文件中</span><br><span class="line">&quot;&quot;&quot;</span><br></pre></td></tr></table></figure>
+
+<h3 id="non-nullable"><a href="#non-nullable" class="headerlink" title="non-nullable !"></a>non-nullable !</h3><p><code>!</code> 在 SDL 當中，代表一個不能為 <code>null</code> 的值。GraphQL 會保證傳來的資料，不會是 <code>null</code>。</p>
+<ul>
+<li><code>String!</code>：這個值不可為 <code>null</code>，而且 scalar type 是字串</li>
+<li><code>[User!]</code>：這個值可能為 <code>null</code>，但陣列中不可為 <code>null</code>，且陣列中的 object type 為 User</li>
+<li><code>[User]!</code>：這個值不可能為 <code>null</code>，但陣列中可為 <code>null</code>，且陣列中的 object type 為 User</li>
+<li><code>[User!]!</code>：這個值不可為 <code>null</code>，且陣列中也不可為 <code>null</code>，陣列中的 object type 為 User</li>
+</ul>
+<p>值得注意的是，假設今天設定資料為 <code>myField: [String!]</code>，那可以猜猜看，以下哪個是合法的資料，哪個是不合法的：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"># 如果資料要求為 myField: [String!]</span><br><span class="line">myField: null</span><br><span class="line">myField: []</span><br><span class="line">myField: [&#39;a&#39;, &#39;b&#39;]</span><br><span class="line">myField: [&#39;a&#39;, null, &#39;b&#39;]</span><br><span class="line"></span><br><span class="line"># 如果資料要求為 myField: [String]!</span><br><span class="line">myField: null</span><br><span class="line">myField: []</span><br><span class="line">myField: [&#39;a&#39;, &#39;b&#39;]</span><br><span class="line">myField: [&#39;a&#39;, null, &#39;b&#39;]</span><br></pre></td></tr></table></figure>
+
+<p>為了不爆雷，答案在最下方，可以先想一下有答案後，再往下滑。</p>
+<h3 id="directive-指令"><a href="#directive-指令" class="headerlink" title="directive 指令"></a>directive 指令</h3><ul>
+<li>directive 指令以 <code>@</code> 宣告</li>
+<li>是一種語法糖</li>
+<li>可以 custom directive</li>
+<li><a target="_blank" rel="noopener" href="https://www.apollographql.com/docs/apollo-server/schema/directives/#default-directives">原生</a>有三個指令，一個用在 schema 就是 <code>@deprecated(reason: String!)</code>，另外兩個指令可參照 <a href="https://yu040419.github.io/blog/article/GraphQL-query/">如何透過 GraphQL 存取資料 － Query</a>。<ul>
+<li><code>@deprecated(reason: String!)</code>：schema 使用，是用來呈現在文件上，告訴 client 端盡量不要存取該欄位的用法，因此一定需要帶上 reason 的值。</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">type User &#123;</span><br><span class="line">  &quot;體重&quot;</span><br><span class="line">  weight(unit: WeightUnit &#x3D; KILOGRAM): Float @deprecated (reason: &quot;It&#39;s secret.&quot;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Schema"><a href="#Schema" class="headerlink" title="Schema"></a>Schema</h3><p>在還不太清楚前，可以先簡略的將 GraphQL Schema 想像成 DB Schema。一個 DB 可以有多個 Table，而一個 Schema 可以有多個 type；DB 中的 table 中有多個欄位，可分別設置資料型別，而 GraphQL type 也可以有多個 field (欄位)，每個欄位的資料也可設定型別。</p>
+<p>GraphQL 中的語法關鍵字 <code>Schema</code> 被官方稱為 Root Types，可以理解成所有存取資料的 entry point 進入點。在上面我們有提到存取方式有三種，因此 <code>Schema</code> 最多也只會包含三種類型：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">schema &#123;</span><br><span class="line">  &quot;查詢&quot;</span><br><span class="line">  query: Query</span><br><span class="line">  &quot;新增、修改、刪除&quot;</span><br><span class="line">  mutation: Mutation</span><br><span class="line">  &quot;訂閱&quot;</span><br><span class="line">  subscription: Subscription</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Type-Field"><a href="#Type-Field" class="headerlink" title="Type &#x2F; Field"></a>Type &#x2F; Field</h3><blockquote>
+<p><code>type</code> 是宣告 <code>Object Type</code> 的關鍵字。<br><code>Object Type</code> 中若有可選的欄位，則是 <code>Field</code>。</p>
+</blockquote>
+<p>底下範例中：</p>
+<ul>
+<li>Query 是 Object Type 的名字，供查詢。</li>
+<li>設定可以查詢的 Field 欄位被稱為 Field Names，這邊有有四個，分別是 hello, me, users, user。</li>
+<li><code>string</code> <code>User</code> <code>User!</code> <code>[User!]!</code> 被稱作 Field Types。</li>
+<li><code>users</code> 這個 Field Name 需要帶上 argument 參數 name，詳見以下 argument。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">type Query &#123;</span><br><span class="line">  hello: String                    # 資料格式是字串</span><br><span class="line">  me: User                         # 資料指向另一個 Object Type，此 Object Type 命名為 User</span><br><span class="line">  user(name: String!): User!       # 資料指向另一個 Object Type User，而且不會是空值。 () 內的是參數 argument，表示一定要帶上參數 name，且參數值一定要是不得為空的字串</span><br><span class="line">  users: [User!]!                  # 資料不會是空值，且內容是一個陣列，此陣列內也不會是空值，陣列內容指向 User</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="interface"><a href="#interface" class="headerlink" title="interface"></a>interface</h3><blockquote>
+<p>透過 <code>interface</code> 關鍵字宣告介面。</p>
+</blockquote>
+<p>在以下範例中 Character 是這個介面名稱，實作此介面的時候都必須包含以下三個欄位。（個人認為有點類似 OOP 的多型）。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">interface Character &#123;</span><br><span class="line">  id: ID!</span><br><span class="line">  name: String</span><br><span class="line">  avatarUrl: String</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="implements"><a href="#implements" class="headerlink" title="implements"></a>implements</h4><blockquote>
+<p>當要透過 <code>type</code> 實作出 <code>interface</code> 時，都需要透過 <code>implements</code> 這個關鍵字。</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">&quot;&quot;&quot;</span><br><span class="line">使用者相關資料</span><br><span class="line">&quot;&quot;&quot;</span><br><span class="line">type User implements Character &#123;</span><br><span class="line">  id: ID!      </span><br><span class="line">  name: String</span><br><span class="line">  avatarUrl: String</span><br><span class="line">  email: String</span><br><span class="line">  age: Int @deprecated(reason: &quot;Use birthday&quot;)   # 已被 deprecated</span><br><span class="line">  height(unit: HeightUnit &#x3D; CENTIMETER): Float   # 帶有 arguments 參數 unit，參數型別為 HeightUnit，詳見以下 enum，此參數預設值是 CENTIMETER</span><br><span class="line">  weight(unit: WeightUnit &#x3D; KILOGRAM): Float     # 帶有 arguments 參數 unit，參數型別為 WeightUnit，詳見以下 enum，此參數預設值是 KILOGRAM</span><br><span class="line">  friends: [User]</span><br><span class="line">  posts: [Post]                                    </span><br><span class="line">  birthday: String</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&quot;&quot;&quot;</span><br><span class="line">粉專相關資料</span><br><span class="line">&quot;&quot;&quot;</span><br><span class="line">type FanPage implements Character &#123;</span><br><span class="line">  id: ID!</span><br><span class="line">  name: String</span><br><span class="line">  avatarUrl: String</span><br><span class="line">  likeGivers: [User]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="enum"><a href="#enum" class="headerlink" title="enum"></a>enum</h3><blockquote>
+<p>受限的選項，常用在參數、Field Types 等。</p>
+</blockquote>
+<p>在以下的範例中，型別為 <code>WeightUnit</code> 的，value 只有可能有三種可能，分別是 <code>KILOGRAM</code>、<code>GRAM</code>、<code>POUND</code>等。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">&quot;&quot;&quot;</span><br><span class="line">體重單位</span><br><span class="line">&quot;&quot;&quot;</span><br><span class="line"># 代表值只有三種可能，分別是</span><br><span class="line">enum WeightUnit &#123;</span><br><span class="line">  KILOGRAM</span><br><span class="line">  GRAM</span><br><span class="line">  POUND</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&quot;&quot;&quot;</span><br><span class="line">身高單位</span><br><span class="line">&quot;&quot;&quot;</span><br><span class="line">enum HeightUnit &#123;</span><br><span class="line">  METRE</span><br><span class="line">  CENTIMETRE</span><br><span class="line">  FOOT</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="union"><a href="#union" class="headerlink" title="union"></a>union</h3><p>可以理解成 type 的集合，當今天回傳資料類型，可能包含一個以上的 type 時，<code>union</code> 就非常適合。</p>
+<p>以下範例來說，會依照參數需求，來回傳需要的設備是使用手機還是電腦，這時候就很適合使用 union 回傳。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">union Device &#x3D; Mobile | PC</span><br><span class="line"></span><br><span class="line">type Mobile &#123;</span><br><span class="line">  id: String!</span><br><span class="line">  price: Float!</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">type PC &#123;</span><br><span class="line">  id: String!</span><br><span class="line">  price: Float!</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">type Query &#123;</span><br><span class="line">  getDevice(need: String!): [Device]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="argument-input"><a href="#argument-input" class="headerlink" title="argument &#x2F; input"></a>argument &#x2F; input</h3><blockquote>
+<p>參數，經常使用在 query 及 mutation 中。<br>input 是宣告 input 這個 Object Type 的關鍵字。</p>
+</blockquote>
+<p>參數數量若大於 3 個的話，通常會包成一個 input。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line">type Mutation &#123;</span><br><span class="line">  &quot;新增使用者資訊，參數使用 input Object Type，一定要放參數&quot;</span><br><span class="line">  addUser(input: addUserInput!): addUserPayload         # 自定義回傳 payload</span><br><span class="line">  &quot;編輯使用者資訊&quot;</span><br><span class="line">  updateUser(input: updateUserInput!): User</span><br><span class="line">  &quot;新增貼文資訊，參數小於三個，直接放裡面，title 選填，author 必填&quot;</span><br><span class="line">  addPost(title: string, author: string!): Post</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&quot;&quot;&quot;</span><br><span class="line">新增使用者參數</span><br><span class="line">&quot;&quot;&quot;</span><br><span class="line">input addUserInput &#123;</span><br><span class="line">  name: String!</span><br><span class="line">  email: String!</span><br><span class="line">  age: Int</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&quot;&quot;&quot;</span><br><span class="line">更改使用者資料參數</span><br><span class="line">&quot;&quot;&quot;</span><br><span class="line">input updateUserInput &#123;</span><br><span class="line">  id: ID!</span><br><span class="line">  name: String</span><br><span class="line">  email: String</span><br><span class="line">  age: Int</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&quot;&quot;&quot;</span><br><span class="line">新增使用者後的回傳資料</span><br><span class="line">&quot;&quot;&quot;</span><br><span class="line">type addUserPayload &#123;</span><br><span class="line">  addUser: User   </span><br><span class="line">  &quot;商業邏輯層的錯誤&quot;</span><br><span class="line">  error: [UserError!]!</span><br><span class="line">  &quot;執行時間&quot;</span><br><span class="line">  timestamp: String</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&quot;&quot;&quot;</span><br><span class="line">自定義 Error 格式</span><br><span class="line">&quot;&quot;&quot;</span><br><span class="line">type UserError &#123;</span><br><span class="line">  code: Int</span><br><span class="line">  message: String!</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Answer"><a href="#Answer" class="headerlink" title="Answer"></a>Answer</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"># 如果資料要求為 myField: [String!]</span><br><span class="line">myField: null &#x2F;&#x2F; valid</span><br><span class="line">myField: [] &#x2F;&#x2F; valid</span><br><span class="line">myField: [&#39;a&#39;, &#39;b&#39;] &#x2F;&#x2F; valid</span><br><span class="line">myField: [&#39;a&#39;, null, &#39;b&#39;] &#x2F;&#x2F; error</span><br><span class="line"></span><br><span class="line"># 如果資料要求為 myField: [String]!</span><br><span class="line">myField: null &#x2F;&#x2F; error</span><br><span class="line">myField: [] &#x2F;&#x2F; valid</span><br><span class="line">myField: [&#39;a&#39;, &#39;b&#39;] &#x2F;&#x2F; valid</span><br><span class="line">myField: [&#39;a&#39;, null, &#39;b&#39;] &#x2F;&#x2F; valid</span><br></pre></td></tr></table></figure>
+
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><ol>
+<li><a target="_blank" rel="noopener" href="https://graphql.org/">官網</a></li>
+<li><a target="_blank" rel="noopener" href="https://ithelp.ithome.com.tw/users/20111997/ironman/1878?page=1">Think in GraphQL 系列文</a></li>
+</ol>
+
+    </div>
+     
+    <div class="post-footer__meta"><p>更新於 2024-02-13</p></div> 
+    <div class="post-entry__tags"><a href="/blog/tags/GraphQL/" class="post-tags__link button"># GraphQL</a></div> 
+</article>
+
+
+    <div class="nav">
+        <div class="nav__prev">
+            
+                <a href="/blog/article/GraphQL-query/" class="nav__link">
+                    <div>
+                        <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="24" height="24"><path d="M589.088 790.624L310.464 512l278.624-278.624 45.248 45.248L400.96 512l233.376 233.376z" fill="#808080"></path></svg>
+                    </div>
+                    <div>
+                        <div class="nav__label">
+                            上一篇
+                        </div>
+                        <div class="nav__title">
+                            GraphQL 系列文（二）：透過 Query 存取資料
+                        </div>
+                    </div>
+                </a>
+            
+        </div>
+        <div class="nav__next">
+            
+                <a href="/blog/article/Vue-3-2/" class="nav__link">
+                    <div>
+                        <div class="nav__label">
+                            下一篇
+                        </div>
+                        <div class="nav__title">
+                            Vue 3 學習筆記 (二)
+                        </div>
+                    </div>
+                    <div>
+                        <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="24" height="24"><path d="M434.944 790.624l-45.248-45.248L623.04 512l-233.376-233.376 45.248-45.248L713.568 512z" fill="#808080"></path></svg>
+                    </div>
+                </a>
+            
+        </div>
+    </div>
+
+
+
+    <div class="post__comments post__with-toc content-card" id="comment">
+        
+    <h4>評論</h4>
+    
+    <div id="disqus_thread">無法加載 Disqus 評論系統，請確保您的網絡能夠正常訪問。</div>
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
+
+    </div>
+
+
+
+</main>
+
+            <footer class="footer">
+     
+    <a href="#" class="button" id="b2t" aria-label="回到頂部" title="回到頂部">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="32" height="32">
+            <path d="M233.376 722.752L278.624 768 512 534.624 745.376 768l45.248-45.248L512 444.128zM192 352h640V288H192z" fill="currentColor"></path>
+        </svg>
+    </a>
+
+    
+
+
+    
+     
+ 
+
+ 
+    
+        
+        <p class="footer-copyright">
+            Copyright © 2024 <a href="/blog/">Yu&#39;s Blog</a>
+        </p>
+    
+    
+    <p>Powered by <a href="https://hexo.io" target="_blank">Hexo</a> | Theme - <a href="https://github.com/ChrAlpha/hexo-theme-cards" target="_blank">Cards</a></p>
+</footer>
+
+        </div>
+         
+
+ 
+
+ 
+
+ 
+
+ 
+
+
+
+ 
+
+
+
+ 
+
+
+    
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+
+    
+    <script>
+        function loadComment() {
+            window.disqus_config = function () {
+                this.page.url = 'https://yu040419.github.io/blog/article/SDL/';
+                this.page.identifier = 'article/SDL/';
+            };
+            (function(){
+                var dsq = document.createElement('script');
+                dsq.type = 'text/javascript';
+                dsq.async = true;
+                dsq.src = '//' + 'yu040419' + '.disqus.com/embed.js';
+                (document.head || document.body).appendChild(dsq);
+            })();
+        }
+    
+        var runningOnBrowser = typeof window !== "undefined";
+        var isBot = runningOnBrowser && !("onscroll" in window) || typeof navigator !== "undefined" && /(gle|ing|ro|msn)bot|crawl|spider|yand|duckgo/i.test(navigator.userAgent);
+        var supportsIntersectionObserver = runningOnBrowser && "IntersectionObserver" in window;
+    
+        setTimeout(function () {
+            if (!isBot && supportsIntersectionObserver) {
+                var comment_observer = new IntersectionObserver(function(entries) {
+                    if (entries[0].isIntersecting) {
+                        loadComment();
+                        comment_observer.disconnect();
+                    }
+                }, { threshold: [0] });
+                comment_observer.observe(document.getElementById('comment'));
+            } else {
+                loadComment();
+            }
+        }, 1);
+    </script>
+
+
+    
+
+    
+    
+
+    
+    
+    
+    
+    
+
+    
+    
+    
+    
+    
+
+    
+    
+    
+
+
+
+    </body>
+</html>

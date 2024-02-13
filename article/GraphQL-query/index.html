@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="zh-tw">
+    <head>
+    <meta charset="utf-8">
+
+    
+
+    <!-- 渲染优化 -->
+    <meta name="renderer" content="webkit">
+    <meta name="force-rendering" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <meta name="HandheldFriendly" content="True" >
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <!--icon-->
+
+    
+    
+    
+    
+    
+
+
+    <!-- meta -->
+
+
+<title>GraphQL 系列文（二）：透過 Query 存取資料 | Yu&#39;s Blog</title>
+
+
+    <meta name="keywords" content="GraphQL">
+
+
+
+
+    <!-- OpenGraph -->
+ 
+    <meta name="description" content="在上一篇文章 GraphQL 系列文（一）：透過 The Schema Definition Language (SDL) 撰寫 GraphQL Schema 中有提到，GraphQL 有三種存取資料的方式 (operation type)，主要常被使用的是 Query 查詢資料，以及 Mutation 新增、編輯、刪除資料。 因為底下會直接使用 GraphQL 的相關名詞，不會對名詞進行解釋，因">
+<meta property="og:type" content="article">
+<meta property="og:title" content="GraphQL 系列文（二）：透過 Query 存取資料">
+<meta property="og:url" content="https://yu040419.github.io/blog/article/GraphQL-query/index.html">
+<meta property="og:site_name" content="Yu&#39;s Blog">
+<meta property="og:description" content="在上一篇文章 GraphQL 系列文（一）：透過 The Schema Definition Language (SDL) 撰寫 GraphQL Schema 中有提到，GraphQL 有三種存取資料的方式 (operation type)，主要常被使用的是 Query 查詢資料，以及 Mutation 新增、編輯、刪除資料。 因為底下會直接使用 GraphQL 的相關名詞，不會對名詞進行解釋，因">
+<meta property="og:locale" content="zh_TW">
+<meta property="article:published_time" content="2022-03-09T13:05:02.000Z">
+<meta property="article:modified_time" content="2024-02-13T09:52:07.716Z">
+<meta property="article:author" content="Yu">
+<meta property="article:tag" content="GraphQL">
+<meta name="twitter:card" content="summary_large_image">
+
+
+    
+<link rel="stylesheet" href="/blog/css/style/main.css">
+ 
+
+    
+    
+        <link rel="stylesheet" id="hl-default-theme" href="https://cdn.jsdelivr.net/npm/hexo-theme-cards@1.2/dist/css/highlight/default.min.css" media="none" >
+        
+            <link rel="stylesheet" id="hl-dark-theme" href="https://cdn.jsdelivr.net/npm/hexo-theme-cards@1.2/dist/css/highlight/dark.min.css" media="none">
+        
+    
+
+    
+    
+
+    
+    
+<link rel="stylesheet" href="/blog/css/style/dark.css">
+
+    
+<script src="/blog/js/darkmode.js"></script>
+
+
+
+     
+
+    <!-- custom head -->
+
+<meta name="generator" content="Hexo 5.4.2"></head>
+
+    <body>
+        <div id="app" tabindex="-1">
+            <header class="header">
+    <div class="header__left">
+        <a href="/blog/" class="button">
+            <span class="logo__text">Yu&#39;s Blog</span>
+        </a>
+    </div>
+    <div class="header__right">
+        
+            <div class="navbar__menus">
+                
+                    <a href="/blog/" class="navbar-menu button">首頁</a>
+                
+                    <a href="/blog/archives/" class="navbar-menu button">所有文章</a>
+                
+                    <a href="/blog/tags/" class="navbar-menu button">標籤</a>
+                
+                    <a href="/blog/about/" class="navbar-menu button">關於我</a>
+                
+            </div>
+        
+        
+        
+    <a href="/blog/search/" id="btn-search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="24" height="24" fill="currentColor" stroke="currentColor" stroke-width="32"><path d="M192 448c0-141.152 114.848-256 256-256s256 114.848 256 256-114.848 256-256 256-256-114.848-256-256z m710.624 409.376l-206.88-206.88A318.784 318.784 0 0 0 768 448c0-176.736-143.264-320-320-320S128 271.264 128 448s143.264 320 320 320a318.784 318.784 0 0 0 202.496-72.256l206.88 206.88 45.248-45.248z"></path></svg>
+    </a>
+
+
+        
+        
+    <a href="javaScript:void(0);" id="btn-toggle-dark">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+    </a>
+
+
+        
+            <a class="dropdown-icon button" id="btn-dropdown" tabindex="0"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width='24' height='24' fill="none" stroke="currentColor" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round"><path fill="currentColor" d="M3.314,4.8h13.372c0.41,0,0.743-0.333,0.743-0.743c0-0.41-0.333-0.743-0.743-0.743H3.314c-0.41,0-0.743,0.333-0.743,0.743C2.571,4.467,2.904,4.8,3.314,4.8z M16.686,15.2H3.314c-0.41,0-0.743,0.333-0.743,0.743s0.333,0.743,0.743,0.743h13.372c0.41,0,0.743-0.333,0.743-0.743S17.096,15.2,16.686,15.2z M16.686,9.257H3.314c-0.41,0-0.743,0.333-0.743,0.743s0.333,0.743,0.743,0.743h13.372c0.41,0,0.743-0.333,0.743-0.743S17.096,9.257,16.686,9.257z"></path></svg></a>
+            <div class="dropdown-menus" id="dropdown-menus">
+                
+                    <a href="/blog/" class="dropdown-menu button">首頁</a>
+                
+                    <a href="/blog/archives/" class="dropdown-menu button">所有文章</a>
+                
+                    <a href="/blog/tags/" class="dropdown-menu button">標籤</a>
+                
+                    <a href="/blog/about/" class="dropdown-menu button">關於我</a>
+                
+            </div>
+        
+    </div>
+</header>
+
+
+            <main class="main">
+    
+
+<div class="post-title">
+    <h1 class="post-title__text">
+        GraphQL 系列文（二）：透過 Query 存取資料
+    </h1>
+    <div class="post-title__meta">
+        <a href="/blog/archives/2022/03/" class="post-meta__date button">2022-03-09</a>
+        
+ 
+        
+    
+    
+
+
+ 
+
+ 
+    </div>
+</div>
+
+
+    <aside class="post-side">
+        <div class="post-side__toc">
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Query"><span class="toc-text">Query</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#argument-%E5%8F%83%E6%95%B8"><span class="toc-text">argument 參數</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#alias-%E5%88%A5%E5%90%8D"><span class="toc-text">alias 別名</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#fragment-%E7%89%87%E6%AE%B5"><span class="toc-text">fragment 片段</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#inline-fragment"><span class="toc-text">inline fragment</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#directive-%E6%8C%87%E4%BB%A4"><span class="toc-text">directive 指令</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#include"><span class="toc-text">@include</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#skip"><span class="toc-text">@skip</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%B5%90%E8%AA%9E"><span class="toc-text">結語</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Reference"><span class="toc-text">Reference</span></a></li></ol>
+        </div>
+    </aside>
+    <a class="btn-toc button" id="btn-toc" tabindex="0">
+        <svg viewBox="0 0 1024 1024" width="32" height="32" xmlns="http://www.w3.org/2000/svg">
+            <path d="M128 256h64V192H128zM320 256h576V192H320zM128 544h64v-64H128zM320 544h576v-64H320zM128 832h64v-64H128zM320 832h576v-64H320z" fill="currentColor"></path>
+        </svg>
+    </a>
+    <div class="toc-menus" id="toc-menus">
+        <div class="toc-title">文章目錄</div>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Query"><span class="toc-text">Query</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#argument-%E5%8F%83%E6%95%B8"><span class="toc-text">argument 參數</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#alias-%E5%88%A5%E5%90%8D"><span class="toc-text">alias 別名</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#fragment-%E7%89%87%E6%AE%B5"><span class="toc-text">fragment 片段</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#inline-fragment"><span class="toc-text">inline fragment</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#directive-%E6%8C%87%E4%BB%A4"><span class="toc-text">directive 指令</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#include"><span class="toc-text">@include</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#skip"><span class="toc-text">@skip</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%B5%90%E8%AA%9E"><span class="toc-text">結語</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Reference"><span class="toc-text">Reference</span></a></li></ol>
+    </div>
+
+
+<article class="post post__with-toc content-card">
+    <div class="post__header"></div>
+    <div class="post__content">
+        <p>在上一篇文章 <a href="https://yu040419.github.io/blog/article/SDL/">GraphQL 系列文（一）：透過 The Schema Definition Language (SDL) 撰寫 GraphQL Schema</a> 中有提到，GraphQL 有三種存取資料的方式 (operation type)，主要常被使用的是 Query 查詢資料，以及 Mutation 新增、編輯、刪除資料。</p>
+<p>因為底下會直接使用 GraphQL 的相關名詞，不會對名詞進行解釋，因此建議先閱讀過上一篇文章，對 GraphQL 有基礎理解後，再繼續往下看。</p>
+<h2 id="Query"><a href="#Query" class="headerlink" title="Query"></a>Query</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">query operationName($id: ID &#x3D; &quot;93he&quot;, $type: String!) &#123;</span><br><span class="line">  user(id: $id) &#123;</span><br><span class="line">    name</span><br><span class="line">    email(type: $type)</span><br><span class="line">    location</span><br><span class="line">    friends &#123;</span><br><span class="line">      name</span><br><span class="line">      email</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">------------------------------</span><br><span class="line"># variable</span><br><span class="line">&#123;</span><br><span class="line">  &quot;id&quot;: &quot;39d0&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在執行 query 時，一定會加上 keyword <code>query</code> 這個 operation type，後面再加上這個 query 的名稱，官方說法為 operation name，operation name 不是必要，但對開發及後續維護上非常方便，建議一定要加上，好處如下：</p>
+<ul>
+<li>增加易讀性</li>
+<li>DEBUG 時有 operation name 就不會找不到 query</li>
+<li>搜尋 request 時快速有效率，很方便</li>
+</ul>
+<p>Query 有幾個特色如下：</p>
+<ul>
+<li>可巢狀存取</li>
+<li>可自由選擇存取哪些資料</li>
+<li>可一次存取多個 field 或多個 object type</li>
+<li>存取到 object type 時，需展開繼續存取內部的 field（ 才知道說到底要什麼資料 ）</li>
+</ul>
+<h3 id="argument-參數"><a href="#argument-參數" class="headerlink" title="argument 參數"></a>argument 參數</h3><p>若是 schema 中要求帶上參數，則必須在 query 名稱後面以括號帶上參數。</p>
+<ul>
+<li>一般參數會透過變數處理。</li>
+<li>變數會以 <code>$</code> 進行宣告。</li>
+<li>每個 field 及 object type 都可以放上參數。</li>
+<li>聲明與 schema 相符的 scalar type 及透過 <code>!</code> 表明是否為必要帶上的參數。</li>
+<li>可以透過 <code>=</code> 給定參數預設值。</li>
+</ul>
+<h3 id="alias-別名"><a href="#alias-別名" class="headerlink" title="alias 別名"></a>alias 別名</h3><p>今天若要一次取兩個相同名稱的 field 時，GraphQL 會報錯，因為一筆 Query 中，不可以有相同的 field。這時候就可以透過 alias 別名的方式，來重新對這個 object type 進行命名。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">query getUser1AndUser2($id1: ID!, $id2: ID!, $age: Int!) &#123;</span><br><span class="line">  user1: user(id: $id1) &#123;</span><br><span class="line">    name</span><br><span class="line">    email</span><br><span class="line">    friends(age: $age) &#123;</span><br><span class="line">      name</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  user2: user(id: $id2) &#123;</span><br><span class="line">    name</span><br><span class="line">    email</span><br><span class="line">    friends(age: $age) &#123;</span><br><span class="line">      name</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">-------------------------------------------</span><br><span class="line"># variable</span><br><span class="line">&#123;</span><br><span class="line">  &quot;id1&quot;: &quot;39j3&quot;,</span><br><span class="line">  &quot;id2&quot;: &quot;3je2&quot;,</span><br><span class="line">  &quot;age&quot;: 40,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>以上的結果，得到的 response 就會是：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">&quot;data&quot;</span>: &#123;</span><br><span class="line">    <span class="attr">&quot;user1&quot;</span>: &#123;</span><br><span class="line">      <span class="attr">&quot;name&quot;</span>: <span class="string">&quot;Yu&quot;</span>,</span><br><span class="line">      <span class="attr">&quot;email&quot;</span>: <span class="string">&quot;a@gmail.com&quot;</span>,</span><br><span class="line">      <span class="attr">&quot;friends&quot;</span>: [</span><br><span class="line">        &#123;</span><br><span class="line">          <span class="attr">&quot;name&quot;</span>: <span class="string">&quot;Jacky&quot;</span></span><br><span class="line">        &#125;</span><br><span class="line">      ]</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">&quot;user2&quot;</span>: &#123;</span><br><span class="line">      <span class="attr">&quot;name&quot;</span>: <span class="string">&quot;Kuan&quot;</span>,</span><br><span class="line">      <span class="attr">&quot;email&quot;</span>: <span class="string">&quot;b@gmail.com&quot;</span>,</span><br><span class="line">      <span class="attr">&quot;friends&quot;</span>: [</span><br><span class="line">        &#123;</span><br><span class="line">          <span class="attr">&quot;name&quot;</span>: <span class="string">&quot;Tommy&quot;</span>,</span><br><span class="line">          <span class="attr">&quot;name&quot;</span>: <span class="string">&quot;Cindy&quot;</span></span><br><span class="line">        &#125;</span><br><span class="line">      ]</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在剛上面的範例中，取的資料都相同，都是 user 資料中的 name 跟 email。在 GraphQL 有沒有其他方式方式，可以像 function 一樣，將相同的地方抽出來，重複使用呢？</p>
+<p>還真的有！那就是 <code>fragment</code>！</p>
+<h3 id="fragment-片段"><a href="#fragment-片段" class="headerlink" title="fragment 片段"></a>fragment 片段</h3><p>透過 <code>fragment</code> 這個關鍵字宣告。使用時，再以類似展開元素，透過 <code>...</code> 使用即可。<br>在 <code>fragment</code> 中，一樣可以透過變數取值。而上面一樣的 code 透過 <code>fragment</code> 重寫後，變成以下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">query getUser1AndUser2($id1: ID!, $id2: ID!, $age: Int!) &#123;</span><br><span class="line">  user1: user(id: $id1) &#123;</span><br><span class="line">    ...userData</span><br><span class="line">  &#125;</span><br><span class="line">  user2: user(id: $id2) &#123;</span><br><span class="line">    ...userData</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">fragment userData on User &#123;</span><br><span class="line">  name</span><br><span class="line">  email</span><br><span class="line">  friends(age: $age) &#123;</span><br><span class="line">    name</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="inline-fragment"><a href="#inline-fragment" class="headerlink" title="inline fragment"></a>inline fragment</h3><p>當今天若是想要 query 的資料型別，不是 object type &#x2F; field，而是 Interface 跟 Union type 時，這時候就會需要透過 inline fragment 進行存取。</p>
+<p>拿上一篇提到的範例來說：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"># Schema</span><br><span class="line">union Device &#x3D; Mobile | PC</span><br><span class="line"></span><br><span class="line">type Mobile &#123;</span><br><span class="line">  id: String!</span><br><span class="line">  price: Float!</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">type PC &#123;</span><br><span class="line">  id: String!</span><br><span class="line">  price: Float!</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">type Query &#123;</span><br><span class="line">  getDevice: [Device]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在 query 的時候，就會以 inline fragment 呈現：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">query ExampleQuery &#123;</span><br><span class="line">  getDevice &#123;</span><br><span class="line">    Device &#123;</span><br><span class="line">      ... on Mobile &#123;</span><br><span class="line">        id</span><br><span class="line">        price</span><br><span class="line">      &#125;</span><br><span class="line">      ... on PC &#123;</span><br><span class="line">        id</span><br><span class="line">        price</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="directive-指令"><a href="#directive-指令" class="headerlink" title="directive 指令"></a>directive 指令</h3><p>在上一篇文章中有提到官方原生有三個 directive 指令，schema 中會使用一個。而在 query 中會使用到剩餘的兩個。</p>
+<p>在了解之前，可以先猜猜看，以下的 query，最後會拿到什麼資料：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">query ($hasFriends: Boolean!, $isSensitive: Boolean!) &#123;</span><br><span class="line">  me &#123;</span><br><span class="line">    name</span><br><span class="line">    ...sensitiveData @skip(if: $isSensitive)</span><br><span class="line">    friends @include(if: $hasFriends) &#123;</span><br><span class="line">      name</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">fragment sensitiveData on User &#123;</span><br><span class="line">  age</span><br><span class="line">  weight</span><br><span class="line">  height</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">----------------------------</span><br><span class="line"># varaibles</span><br><span class="line">&#123;</span><br><span class="line">  &quot;hasFriends&quot;: false,</span><br><span class="line">  &quot;isSensitive&quot;: true</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="include"><a href="#include" class="headerlink" title="@include"></a>@include</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">@include(if: boolean)</span><br></pre></td></tr></table></figure>
+
+<p>如果 boolean 是 true 的話，就存取這個欄位，一般會透過變數管理 boolean。</p>
+<h4 id="skip"><a href="#skip" class="headerlink" title="@skip"></a>@skip</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">@skip(if: boolean)</span><br></pre></td></tr></table></figure>
+
+<p>如果 boolean 是 true 的話，就略過這個欄位，也就是不存取，一般會透過變數管理 boolean。</p>
+<p>所以猜對了嗎？在上面的 query 中，最後拿到的資料是：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">&quot;data&quot;</span>: &#123;</span><br><span class="line">    <span class="attr">&quot;me&quot;</span>: &#123;</span><br><span class="line">      <span class="attr">&quot;name&quot;</span>: <span class="string">&quot;Yu&quot;</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>噹啷！就是只有 name！</p>
+<h2 id="結語"><a href="#結語" class="headerlink" title="結語"></a>結語</h2><p>Query 的部分大概就到這邊，Mutation 可參考下一篇。</p>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><ol>
+<li><a target="_blank" rel="noopener" href="https://graphql.org/">官網</a></li>
+<li><a target="_blank" rel="noopener" href="https://ithelp.ithome.com.tw/users/20111997/ironman/1878?page=1">Think in GraphQL 系列文</a></li>
+</ol>
+
+    </div>
+     
+    <div class="post-footer__meta"><p>更新於 2024-02-13</p></div> 
+    <div class="post-entry__tags"><a href="/blog/tags/GraphQL/" class="post-tags__link button"># GraphQL</a></div> 
+</article>
+
+
+    <div class="nav">
+        <div class="nav__prev">
+            
+                <a href="/blog/article/GraphQL-mutation-and-subscription/" class="nav__link">
+                    <div>
+                        <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="24" height="24"><path d="M589.088 790.624L310.464 512l278.624-278.624 45.248 45.248L400.96 512l233.376 233.376z" fill="#808080"></path></svg>
+                    </div>
+                    <div>
+                        <div class="nav__label">
+                            上一篇
+                        </div>
+                        <div class="nav__title">
+                            GraphQL 系列文（三）：Mutation &amp; Subscription
+                        </div>
+                    </div>
+                </a>
+            
+        </div>
+        <div class="nav__next">
+            
+                <a href="/blog/article/SDL/" class="nav__link">
+                    <div>
+                        <div class="nav__label">
+                            下一篇
+                        </div>
+                        <div class="nav__title">
+                            GraphQL 系列文（一）：透過 The Schema Definition Language (SDL) 撰寫 GraphQL Schema
+                        </div>
+                    </div>
+                    <div>
+                        <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="24" height="24"><path d="M434.944 790.624l-45.248-45.248L623.04 512l-233.376-233.376 45.248-45.248L713.568 512z" fill="#808080"></path></svg>
+                    </div>
+                </a>
+            
+        </div>
+    </div>
+
+
+
+    <div class="post__comments post__with-toc content-card" id="comment">
+        
+    <h4>評論</h4>
+    
+    <div id="disqus_thread">無法加載 Disqus 評論系統，請確保您的網絡能夠正常訪問。</div>
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
+
+    </div>
+
+
+
+</main>
+
+            <footer class="footer">
+     
+    <a href="#" class="button" id="b2t" aria-label="回到頂部" title="回到頂部">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="32" height="32">
+            <path d="M233.376 722.752L278.624 768 512 534.624 745.376 768l45.248-45.248L512 444.128zM192 352h640V288H192z" fill="currentColor"></path>
+        </svg>
+    </a>
+
+    
+
+
+    
+     
+ 
+
+ 
+    
+        
+        <p class="footer-copyright">
+            Copyright © 2024 <a href="/blog/">Yu&#39;s Blog</a>
+        </p>
+    
+    
+    <p>Powered by <a href="https://hexo.io" target="_blank">Hexo</a> | Theme - <a href="https://github.com/ChrAlpha/hexo-theme-cards" target="_blank">Cards</a></p>
+</footer>
+
+        </div>
+         
+
+ 
+
+ 
+
+ 
+
+ 
+
+
+
+ 
+
+
+
+ 
+
+
+    
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+
+    
+    <script>
+        function loadComment() {
+            window.disqus_config = function () {
+                this.page.url = 'https://yu040419.github.io/blog/article/GraphQL-query/';
+                this.page.identifier = 'article/GraphQL-query/';
+            };
+            (function(){
+                var dsq = document.createElement('script');
+                dsq.type = 'text/javascript';
+                dsq.async = true;
+                dsq.src = '//' + 'yu040419' + '.disqus.com/embed.js';
+                (document.head || document.body).appendChild(dsq);
+            })();
+        }
+    
+        var runningOnBrowser = typeof window !== "undefined";
+        var isBot = runningOnBrowser && !("onscroll" in window) || typeof navigator !== "undefined" && /(gle|ing|ro|msn)bot|crawl|spider|yand|duckgo/i.test(navigator.userAgent);
+        var supportsIntersectionObserver = runningOnBrowser && "IntersectionObserver" in window;
+    
+        setTimeout(function () {
+            if (!isBot && supportsIntersectionObserver) {
+                var comment_observer = new IntersectionObserver(function(entries) {
+                    if (entries[0].isIntersecting) {
+                        loadComment();
+                        comment_observer.disconnect();
+                    }
+                }, { threshold: [0] });
+                comment_observer.observe(document.getElementById('comment'));
+            } else {
+                loadComment();
+            }
+        }, 1);
+    </script>
+
+
+    
+
+    
+    
+
+    
+    
+    
+    
+    
+
+    
+    
+    
+    
+    
+
+    
+    
+    
+
+
+
+    </body>
+</html>

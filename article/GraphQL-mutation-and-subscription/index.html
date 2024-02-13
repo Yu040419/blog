@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="zh-tw">
+    <head>
+    <meta charset="utf-8">
+
+    
+
+    <!-- 渲染优化 -->
+    <meta name="renderer" content="webkit">
+    <meta name="force-rendering" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <meta name="HandheldFriendly" content="True" >
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <!--icon-->
+
+    
+    
+    
+    
+    
+
+
+    <!-- meta -->
+
+
+<title>GraphQL 系列文（三）：Mutation &amp; Subscription | Yu&#39;s Blog</title>
+
+
+    <meta name="keywords" content="GraphQL">
+
+
+
+
+    <!-- OpenGraph -->
+ 
+    <meta name="description" content="假設今天有個 GraphQL Schema 如下，今天需要發送一個請求，請求內容中需要拿到使用者的 ID、名稱、年紀、身高 (公分)、所有貼文的標題及內容等。 那該如何寫請求呢？答案我放在這篇文章最下方，可以先自己練習看看。 如果看不懂 Schema、或是不知道如何寫 Query，的，可以先參考系列文章的前兩篇，GraphQL 系列文（一）：透過 The Schema Definition Lan">
+<meta property="og:type" content="article">
+<meta property="og:title" content="GraphQL 系列文（三）：Mutation &amp; Subscription">
+<meta property="og:url" content="https://yu040419.github.io/blog/article/GraphQL-mutation-and-subscription/index.html">
+<meta property="og:site_name" content="Yu&#39;s Blog">
+<meta property="og:description" content="假設今天有個 GraphQL Schema 如下，今天需要發送一個請求，請求內容中需要拿到使用者的 ID、名稱、年紀、身高 (公分)、所有貼文的標題及內容等。 那該如何寫請求呢？答案我放在這篇文章最下方，可以先自己練習看看。 如果看不懂 Schema、或是不知道如何寫 Query，的，可以先參考系列文章的前兩篇，GraphQL 系列文（一）：透過 The Schema Definition Lan">
+<meta property="og:locale" content="zh_TW">
+<meta property="article:published_time" content="2022-06-22T12:28:01.000Z">
+<meta property="article:modified_time" content="2024-02-13T09:52:07.716Z">
+<meta property="article:author" content="Yu">
+<meta property="article:tag" content="GraphQL">
+<meta name="twitter:card" content="summary_large_image">
+
+
+    
+<link rel="stylesheet" href="/blog/css/style/main.css">
+ 
+
+    
+    
+        <link rel="stylesheet" id="hl-default-theme" href="https://cdn.jsdelivr.net/npm/hexo-theme-cards@1.2/dist/css/highlight/default.min.css" media="none" >
+        
+            <link rel="stylesheet" id="hl-dark-theme" href="https://cdn.jsdelivr.net/npm/hexo-theme-cards@1.2/dist/css/highlight/dark.min.css" media="none">
+        
+    
+
+    
+    
+
+    
+    
+<link rel="stylesheet" href="/blog/css/style/dark.css">
+
+    
+<script src="/blog/js/darkmode.js"></script>
+
+
+
+     
+
+    <!-- custom head -->
+
+<meta name="generator" content="Hexo 5.4.2"></head>
+
+    <body>
+        <div id="app" tabindex="-1">
+            <header class="header">
+    <div class="header__left">
+        <a href="/blog/" class="button">
+            <span class="logo__text">Yu&#39;s Blog</span>
+        </a>
+    </div>
+    <div class="header__right">
+        
+            <div class="navbar__menus">
+                
+                    <a href="/blog/" class="navbar-menu button">首頁</a>
+                
+                    <a href="/blog/archives/" class="navbar-menu button">所有文章</a>
+                
+                    <a href="/blog/tags/" class="navbar-menu button">標籤</a>
+                
+                    <a href="/blog/about/" class="navbar-menu button">關於我</a>
+                
+            </div>
+        
+        
+        
+    <a href="/blog/search/" id="btn-search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="24" height="24" fill="currentColor" stroke="currentColor" stroke-width="32"><path d="M192 448c0-141.152 114.848-256 256-256s256 114.848 256 256-114.848 256-256 256-256-114.848-256-256z m710.624 409.376l-206.88-206.88A318.784 318.784 0 0 0 768 448c0-176.736-143.264-320-320-320S128 271.264 128 448s143.264 320 320 320a318.784 318.784 0 0 0 202.496-72.256l206.88 206.88 45.248-45.248z"></path></svg>
+    </a>
+
+
+        
+        
+    <a href="javaScript:void(0);" id="btn-toggle-dark">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+    </a>
+
+
+        
+            <a class="dropdown-icon button" id="btn-dropdown" tabindex="0"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width='24' height='24' fill="none" stroke="currentColor" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round"><path fill="currentColor" d="M3.314,4.8h13.372c0.41,0,0.743-0.333,0.743-0.743c0-0.41-0.333-0.743-0.743-0.743H3.314c-0.41,0-0.743,0.333-0.743,0.743C2.571,4.467,2.904,4.8,3.314,4.8z M16.686,15.2H3.314c-0.41,0-0.743,0.333-0.743,0.743s0.333,0.743,0.743,0.743h13.372c0.41,0,0.743-0.333,0.743-0.743S17.096,15.2,16.686,15.2z M16.686,9.257H3.314c-0.41,0-0.743,0.333-0.743,0.743s0.333,0.743,0.743,0.743h13.372c0.41,0,0.743-0.333,0.743-0.743S17.096,9.257,16.686,9.257z"></path></svg></a>
+            <div class="dropdown-menus" id="dropdown-menus">
+                
+                    <a href="/blog/" class="dropdown-menu button">首頁</a>
+                
+                    <a href="/blog/archives/" class="dropdown-menu button">所有文章</a>
+                
+                    <a href="/blog/tags/" class="dropdown-menu button">標籤</a>
+                
+                    <a href="/blog/about/" class="dropdown-menu button">關於我</a>
+                
+            </div>
+        
+    </div>
+</header>
+
+
+            <main class="main">
+    
+
+<div class="post-title">
+    <h1 class="post-title__text">
+        GraphQL 系列文（三）：Mutation &amp; Subscription
+    </h1>
+    <div class="post-title__meta">
+        <a href="/blog/archives/2022/06/" class="post-meta__date button">2022-06-22</a>
+        
+ 
+        
+    
+    
+
+
+ 
+
+ 
+    </div>
+</div>
+
+
+    <aside class="post-side">
+        <div class="post-side__toc">
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Mutation"><span class="toc-text">Mutation</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Input-Object-Type"><span class="toc-text">Input Object Type</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Mutation-%E8%A8%AD%E8%A8%88%E5%BB%BA%E8%AD%B0"><span class="toc-text">Mutation 設計建議</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E5%8B%95%E8%A9%9E%E9%96%8B%E9%A0%AD"><span class="toc-text">1. 動詞開頭</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E5%BB%BA%E8%AD%B0%E6%AF%8F%E5%80%8B-mutation-%E6%90%AD%E9%85%8D%E8%87%AA%E5%B7%B1%E7%9A%84-input-%E5%8F%8A-payload%EF%BC%8C%E6%96%B9%E4%BE%BF%E6%9C%AA%E4%BE%86%E7%9A%84%E6%93%B4%E5%B1%95"><span class="toc-text">2. 建議每個 mutation 搭配自己的 input 及 payload，方便未來的擴展</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E4%BE%9D%E7%85%A7%E5%95%86%E6%A5%AD%E9%82%8F%E8%BC%AF%E7%B4%B0%E5%88%86-Mutation"><span class="toc-text">3. 依照商業邏輯細分 Mutation</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-%E5%8F%83%E6%95%B8%E7%9B%A1%E9%87%8F%E4%BD%BF%E7%94%A8-input-object-type-%E7%AE%A1%E7%90%86%E5%8F%83%E6%95%B8"><span class="toc-text">4. 參數盡量使用 input object type 管理參數</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-%E8%A8%AD%E8%A8%88%E6%AF%8F%E5%80%8B-mutation-%E7%9A%84%E5%B0%88%E5%B1%AC%E5%9B%9E%E5%82%B3%E8%B3%87%E6%96%99"><span class="toc-text">5. 設計每個 mutation 的專屬回傳資料</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%B7%B4%E7%BF%92"><span class="toc-text">練習</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Subscription"><span class="toc-text">Subscription</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Subscription-Library"><span class="toc-text">Subscription Library</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Client-Side"><span class="toc-text">Client-Side</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%B5%90%E8%AA%9E"><span class="toc-text">結語</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Answer"><span class="toc-text">Answer</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%96%E5%BE%97%E4%BD%BF%E7%94%A8%E8%80%85%E7%9B%B8%E9%97%9C%E8%B3%87%E6%96%99"><span class="toc-text">取得使用者相關資料</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%B7%A8%E8%BC%AF%E8%B2%BC%E6%96%87"><span class="toc-text">編輯貼文</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Schema"><span class="toc-text">Schema</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Mutation-1"><span class="toc-text">Mutation</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Reference"><span class="toc-text">Reference</span></a></li></ol>
+        </div>
+    </aside>
+    <a class="btn-toc button" id="btn-toc" tabindex="0">
+        <svg viewBox="0 0 1024 1024" width="32" height="32" xmlns="http://www.w3.org/2000/svg">
+            <path d="M128 256h64V192H128zM320 256h576V192H320zM128 544h64v-64H128zM320 544h576v-64H320zM128 832h64v-64H128zM320 832h576v-64H320z" fill="currentColor"></path>
+        </svg>
+    </a>
+    <div class="toc-menus" id="toc-menus">
+        <div class="toc-title">文章目錄</div>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Mutation"><span class="toc-text">Mutation</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Input-Object-Type"><span class="toc-text">Input Object Type</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Mutation-%E8%A8%AD%E8%A8%88%E5%BB%BA%E8%AD%B0"><span class="toc-text">Mutation 設計建議</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E5%8B%95%E8%A9%9E%E9%96%8B%E9%A0%AD"><span class="toc-text">1. 動詞開頭</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E5%BB%BA%E8%AD%B0%E6%AF%8F%E5%80%8B-mutation-%E6%90%AD%E9%85%8D%E8%87%AA%E5%B7%B1%E7%9A%84-input-%E5%8F%8A-payload%EF%BC%8C%E6%96%B9%E4%BE%BF%E6%9C%AA%E4%BE%86%E7%9A%84%E6%93%B4%E5%B1%95"><span class="toc-text">2. 建議每個 mutation 搭配自己的 input 及 payload，方便未來的擴展</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E4%BE%9D%E7%85%A7%E5%95%86%E6%A5%AD%E9%82%8F%E8%BC%AF%E7%B4%B0%E5%88%86-Mutation"><span class="toc-text">3. 依照商業邏輯細分 Mutation</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-%E5%8F%83%E6%95%B8%E7%9B%A1%E9%87%8F%E4%BD%BF%E7%94%A8-input-object-type-%E7%AE%A1%E7%90%86%E5%8F%83%E6%95%B8"><span class="toc-text">4. 參數盡量使用 input object type 管理參數</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-%E8%A8%AD%E8%A8%88%E6%AF%8F%E5%80%8B-mutation-%E7%9A%84%E5%B0%88%E5%B1%AC%E5%9B%9E%E5%82%B3%E8%B3%87%E6%96%99"><span class="toc-text">5. 設計每個 mutation 的專屬回傳資料</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%B7%B4%E7%BF%92"><span class="toc-text">練習</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Subscription"><span class="toc-text">Subscription</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Subscription-Library"><span class="toc-text">Subscription Library</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Client-Side"><span class="toc-text">Client-Side</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%B5%90%E8%AA%9E"><span class="toc-text">結語</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Answer"><span class="toc-text">Answer</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%96%E5%BE%97%E4%BD%BF%E7%94%A8%E8%80%85%E7%9B%B8%E9%97%9C%E8%B3%87%E6%96%99"><span class="toc-text">取得使用者相關資料</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%B7%A8%E8%BC%AF%E8%B2%BC%E6%96%87"><span class="toc-text">編輯貼文</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Schema"><span class="toc-text">Schema</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Mutation-1"><span class="toc-text">Mutation</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Reference"><span class="toc-text">Reference</span></a></li></ol>
+    </div>
+
+
+<article class="post post__with-toc content-card">
+    <div class="post__header"></div>
+    <div class="post__content">
+        <p>假設今天有個 GraphQL Schema 如下，今天需要發送一個請求，請求內容中需要拿到使用者的 ID、名稱、年紀、身高 (公分)、所有貼文的標題及內容等。</p>
+<p>那該如何寫請求呢？答案我放在這篇文章最下方，可以先自己練習看看。</p>
+<p>如果看不懂 Schema、或是不知道如何寫 Query，的，可以先參考系列文章的前兩篇，<a href="https://yu040419.github.io/blog/article/SDL/">GraphQL 系列文（一）：透過 The Schema Definition Language (SDL) 撰寫 GraphQL Schema</a> 及 <a href="https://yu040419.github.io/blog/article/GraphQL-query/">GraphQL 系列文（二）：透過 Query 存取資料</a>，複習一下再繼續往下看。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br></pre></td><td class="code"><pre><span class="line">schema &#123;</span><br><span class="line">  query: Query</span><br><span class="line">  mutation: Mutation</span><br><span class="line">  subscription: Subscription</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">type Query &#123;</span><br><span class="line">  hello: String</span><br><span class="line">  me: User</span><br><span class="line">  user(name: String!): User!</span><br><span class="line">  users: [User!]!</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">interface Character &#123;</span><br><span class="line">  id: ID!</span><br><span class="line">  name: String</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">type User implements Character &#123;</span><br><span class="line">  id: ID!</span><br><span class="line">  name: String</span><br><span class="line">  email: String</span><br><span class="line">  age: Int @deprecated(reason: &quot;Use birthDay&quot;)</span><br><span class="line">  height(unit: HeightUnit &#x3D; CENTIMETRE): Float</span><br><span class="line">  weight(unit: WeightUnit &#x3D; KILOGRAM): Float</span><br><span class="line">  friends: [User]</span><br><span class="line">  posts: [Post]</span><br><span class="line">  birthDay: String</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">type Post &#123;</span><br><span class="line">  id: ID!</span><br><span class="line">  title: String</span><br><span class="line">  content: String</span><br><span class="line">  createdAt: Int</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">type Mutation &#123;</span><br><span class="line">  createPost(input: CreatePostInput!): CreatePostPayload</span><br><span class="line">  deletePost(id: ID!): DeletePostPayload</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">type Subscription &#123;</span><br><span class="line">  nextTrainArrivalTime(trainId: String!): String!</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">input CreatePostInput &#123;</span><br><span class="line">  title: String!</span><br><span class="line">  content: String!</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">type CreatePostPayload &#123;</span><br><span class="line">  createPost: Post</span><br><span class="line">  error: Error</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">type DeletePostPayload &#123;</span><br><span class="line">  deletePost: Post</span><br><span class="line">  error: Error</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">type Error &#123;</span><br><span class="line">  code: Int</span><br><span class="line">  message: String</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">enum WeightUnit &#123;</span><br><span class="line">  KILOGRAM</span><br><span class="line">  GRAM</span><br><span class="line">  POUND</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">enum HeightUnit &#123;</span><br><span class="line">  METRE</span><br><span class="line">  CENTIMETRE</span><br><span class="line">  FOOT</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Mutation"><a href="#Mutation" class="headerlink" title="Mutation"></a>Mutation</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">mutation createPost($input: CreatePostInput!) &#123;</span><br><span class="line">  post1: createPost(input: $input) &#123;</span><br><span class="line">    createPost &#123;</span><br><span class="line">      id</span><br><span class="line">      createdAt</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">-------------------</span><br><span class="line"># Variables</span><br><span class="line">&#123;</span><br><span class="line">  &quot;input&quot;: &#123;</span><br><span class="line">    &quot;title&quot;: &quot;GraphQL&quot;,</span><br><span class="line">    &quot;content&quot;: &quot;Mutation and Subscription&quot;</span><br><span class="line">  &#125;,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>跟執行 Query 一樣，在執行 mutation 時，一定會加上 keyword <code>mutation</code> 這個 operation type，後面再加上這個 mutation 的名稱，官方說法為 operation name。至於 operation name 的好處，在這邊就不再說一次，可以參考上一篇文章。</p>
+<p>從以上的 mutation 可以發現：</p>
+<ul>
+<li>有使用 Input Object Type 取代 Arguments</li>
+<li>透過 <code>$input</code> 這個變數去管理 mutation 的 Input</li>
+<li>將 createPost 取了暱稱 <code>post1</code></li>
+<li>除了新增貼文外，createPost 這個 mutation 還存取了 <code>CreatePostPayload</code> 內容中的，<code>createPost</code>。<ul>
+<li><code>CreatePostPayload</code> 跟 Query 的概念相同，都可以自由進行存取</li>
+</ul>
+</li>
+</ul>
+<p>上方的 Mutation 當中，拿到的資料顯示狀況會呈現如下：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">&quot;data&quot;</span>: &#123;</span><br><span class="line">    <span class="attr">&quot;post1&quot;</span>: &#123; <span class="comment">// 使用 Alias</span></span><br><span class="line">      <span class="attr">&quot;createPost&quot;</span>: &#123;</span><br><span class="line">        <span class="attr">&quot;id&quot;</span>: <span class="string">&quot;793ff34d-5a45-49b1-a6ca-b500efed625e&quot;</span>,</span><br><span class="line">        <span class="attr">&quot;createdAt&quot;</span>: <span class="number">1128746332</span></span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Input-Object-Type"><a href="#Input-Object-Type" class="headerlink" title="Input Object Type"></a>Input Object Type</h3><p>在討論 Schema 的時候有提到，Mutation 有兩個以上的 Argument 參數時，就會建議透過 input Type 來作為 Object Type 的 Argument。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">input CreatePostInput &#123;</span><br><span class="line">  title: String!</span><br><span class="line">  content: String!</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>以上方這個 input 為例，這個 input 需要 title 及 content 這兩個 Field Names，兩個的 Field Types 都是 String。而且兩個都有 <code>!</code> 這個 Type Modifier，顯示這個兩個 field 都是必填。</p>
+<h3 id="Mutation-設計建議"><a href="#Mutation-設計建議" class="headerlink" title="Mutation 設計建議"></a>Mutation 設計建議</h3><h4 id="1-動詞開頭"><a href="#1-動詞開頭" class="headerlink" title="1. 動詞開頭"></a>1. 動詞開頭</h4><p>比方說 createPost &#x2F; updatePost 等。</p>
+<h4 id="2-建議每個-mutation-搭配自己的-input-及-payload，方便未來的擴展"><a href="#2-建議每個-mutation-搭配自己的-input-及-payload，方便未來的擴展" class="headerlink" title="2. 建議每個 mutation 搭配自己的 input 及 payload，方便未來的擴展"></a>2. 建議每個 mutation 搭配自己的 input 及 payload，方便未來的擴展</h4><p>比方說 mutation 名稱為 updatePost 時，input 為 UpdatePostInput、payload 為 UpdatePostPayload。</p>
+<h4 id="3-依照商業邏輯細分-Mutation"><a href="#3-依照商業邏輯細分-Mutation" class="headerlink" title="3. 依照商業邏輯細分 Mutation"></a>3. 依照商業邏輯細分 Mutation</h4><p>剛開始大家會將 RESTful 的 CUD 來對應 Mutation，但 Mutation 可以完全因應前端需求調整，因此如果需要細分的就細分，需要一次更改多個欄位的就包在一隻 Mutation 中。</p>
+<h4 id="4-參數盡量使用-input-object-type-管理參數"><a href="#4-參數盡量使用-input-object-type-管理參數" class="headerlink" title="4. 參數盡量使用 input object type 管理參數"></a>4. 參數盡量使用 input object type 管理參數</h4><p>除了易讀性較高外，input object type 經常也能被重複使用。</p>
+<h4 id="5-設計每個-mutation-的專屬回傳資料"><a href="#5-設計每個-mutation-的專屬回傳資料" class="headerlink" title="5. 設計每個 mutation 的專屬回傳資料"></a>5. 設計每個 mutation 的專屬回傳資料</h4><p>概念上跟之前 RESTful 都會有個 response 內容有點類似，建議為每個 mutation 加上個別獨立的 Object Type。</p>
+<h3 id="練習"><a href="#練習" class="headerlink" title="練習"></a>練習</h3><p>在上面的 Schema 當中，只有 CreatePost 及 DeletePost 的功能，所以可以試著建立看看 UpdatePost 來編輯貼文。並試著發送 mutation 的 request，然後獲取該文章更新後的內容及錯誤訊息，答案一樣會放在下方。</p>
+<h2 id="Subscription"><a href="#Subscription" class="headerlink" title="Subscription"></a>Subscription</h2><p>在前面提到的 Query 跟 Mutation，基本上都是常見的由 Client 端發送 request 給 Server，當 Server 接收到請求後，再回傳 Response 給 Client。</p>
+<p>一般來說若希望可以由 Server 主動推送資料給 Client 端的話，會透過 WebSocket 來實作。在 GraphQL 當中，Subscription 就是扮演這樣的角色，開發者不需自行串接，只需要透過與 Query 相似的語法，就可以輕鬆實現（GraphQL Subscription 底層也是透過 WebSocket 實作）。</p>
+<h3 id="Subscription-Library"><a href="#Subscription-Library" class="headerlink" title="Subscription Library"></a>Subscription Library</h3><blockquote>
+<p>TL;DR: 下載 <a target="_blank" rel="noopener" href="https://github.com/enisdenjo/graphql-ws">graphql-ws</a> 作為 Subscription Libray</p>
+</blockquote>
+<p>在實作 Subscription 之前，需要先選擇前後端介接的 Protocol，專案的前後端都必須使用同一個 Protocol，才可以成功實作 Subscription。</p>
+<p>而在 GraphQL 當中有兩個熱門的 Library 可供選擇，分別是 <a target="_blank" rel="noopener" href="https://github.com/apollographql/subscriptions-transport-ws">subscriptions-transport-ws</a> 及 <a target="_blank" rel="noopener" href="https://github.com/enisdenjo/graphql-ws">graphql-ws</a>。</p>
+<p>神奇的地方來了！<br>Library 名稱是 subscriptions-transport-ws 的 <code>Sec-WebSocket-Protocol</code> 名稱是 graphql-ws。而 Library 名稱是 graphql-ws 的 <code>Sec-WebSocket-Protocol</code> 名稱是 subscriptions-transport-ws。</p>
+<p>是的，你沒看錯，他們的 Library 名稱跟 Protocol 名稱剛好顛倒，非常容易造成混淆 QQ</p>
+<p>而 Library 名稱是 subscriptions-transport-ws 目前已經不再維護了。不管是 Apollo 官方及 subscriptions-transport-ws Libray 本身，都推薦使用 graphql-ws 這個 Libray。所以毫無懸念，就下載 graphql-ws 吧！</p>
+<p>graphql-ws 相關的設定，可以參考 <a target="_blank" rel="noopener" href="https://www.apollographql.com/docs/react/data/subscriptions/#setting-up-the-transport">Apollo 官方文件</a>。</p>
+<h3 id="Client-Side"><a href="#Client-Side" class="headerlink" title="Client-Side"></a>Client-Side</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">subscription GetNextTrainArrivalTime($id: ID!) &#123;</span><br><span class="line">  nextTrainArrivalTime(trainId: $id)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">-------------------</span><br><span class="line"># Variables</span><br><span class="line">&#123;</span><br><span class="line">  &quot;id&quot;: &quot;Knight-Bus&quot;,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>以上方為例，可以看到架構上基本上都跟 Query 及 Mutation 無異，都是由 operation Type + Operation Name。如果需要 Argument 則都透過變數代為管理。</p>
+<h2 id="結語"><a href="#結語" class="headerlink" title="結語"></a>結語</h2><p>GraphQL 系列文章就差不多這樣告一個段落，一開始介紹了最重要的 Schema，可以理解為前後端都需要遵守的 Spec。Schema 訂好之後，GraphQL 會協助把關，如果前端傳送非 Schema 訂定的資料類別或架構，就不會發送 Request 給後端；反之亦然，後端若回覆非 Schema 訂定的資料類別或架構，就無法成功發送 Response 給前端。</p>
+<p>接下來了解了 Schema 三本柱，Query、Mutation 及 Subscription。Query 跟 Mutation 都是基於 HTTP 傳輸協定。Query 用來取得資料，而 Mutation 用來新增、修改、刪除資料。Subscription 則是基於 WebSocket 傳輸協定，讓 Server 可以主動推送訊息給 Client，常用於顯示一些即時資料。</p>
+<p>上方的所有程式碼，都有建立 <a target="_blank" rel="noopener" href="https://codesandbox.io/s/priceless-driscoll-9jzqb6?file=/typeDefs.js">codesandbox</a> 作為 Live Code Demo，想玩玩的都可以點 Codesandbox 連結去玩玩看～</p>
+<h2 id="Answer"><a href="#Answer" class="headerlink" title="Answer"></a>Answer</h2><h3 id="取得使用者相關資料"><a href="#取得使用者相關資料" class="headerlink" title="取得使用者相關資料"></a>取得使用者相關資料</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">query getUserInfo($name: String!) &#123;</span><br><span class="line">  user(name: $name) &#123;</span><br><span class="line">    id</span><br><span class="line">    name</span><br><span class="line">    height</span><br><span class="line">    birthDay</span><br><span class="line">    posts &#123;</span><br><span class="line">      title</span><br><span class="line">      content</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;</span><br><span class="line"># variables</span><br><span class="line">&#123;</span><br><span class="line">  &quot;name&quot;: &quot;Minerva-McGonagall&quot;,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="編輯貼文"><a href="#編輯貼文" class="headerlink" title="編輯貼文"></a>編輯貼文</h3><h4 id="Schema"><a href="#Schema" class="headerlink" title="Schema"></a>Schema</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">schema &#123;</span><br><span class="line">  mutation: Mutation</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">type Post &#123;</span><br><span class="line">  id: ID!</span><br><span class="line">  title: String</span><br><span class="line">  content: String</span><br><span class="line">  createdAt: String</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">type Mutation &#123;</span><br><span class="line">  updatePost(input: UpdatePostInput!): UpdatePostPayload</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">input UpdatePostInput &#123;</span><br><span class="line">  id: ID!</span><br><span class="line">  title: String</span><br><span class="line">  content: String</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">type UpdatePostPayload &#123;</span><br><span class="line">  updatePost: Post</span><br><span class="line">  error: Error</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">type Error &#123;</span><br><span class="line">  code: Int</span><br><span class="line">  message: String</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="Mutation-1"><a href="#Mutation-1" class="headerlink" title="Mutation"></a>Mutation</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">mutation updatePost($input: UpdatePostInput!) &#123;</span><br><span class="line">  updatePost(input: $input) &#123;</span><br><span class="line">    updatePost &#123;</span><br><span class="line">      content</span><br><span class="line">    &#125;</span><br><span class="line">    error &#123;</span><br><span class="line">      message</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">-----------------</span><br><span class="line"># varialbes</span><br><span class="line">&#123;</span><br><span class="line">  &quot;input&quot;: &#123;</span><br><span class="line">    &quot;id&quot;: &quot;0731&quot;,</span><br><span class="line">    &quot;title&quot;: &quot;The Philosopher&#39;s Stone&quot;,</span><br><span class="line">    &quot;content&quot;: &quot;Harry Potter and The Philosopher&#39;s Stone&quot;,</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://ithelp.ithome.com.tw/users/20111997/ironman/1878">Think in GraphQL 系列</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.apollographql.com/docs/">Apollo Docs</a></li>
+</ul>
+
+    </div>
+     
+    <div class="post-footer__meta"><p>更新於 2024-02-13</p></div> 
+    <div class="post-entry__tags"><a href="/blog/tags/GraphQL/" class="post-tags__link button"># GraphQL</a></div> 
+</article>
+
+
+    <div class="nav">
+        <div class="nav__prev">
+            
+                <a href="/blog/article/urql/" class="nav__link">
+                    <div>
+                        <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="24" height="24"><path d="M589.088 790.624L310.464 512l278.624-278.624 45.248 45.248L400.96 512l233.376 233.376z" fill="#808080"></path></svg>
+                    </div>
+                    <div>
+                        <div class="nav__label">
+                            上一篇
+                        </div>
+                        <div class="nav__title">
+                            URQL 的基本介紹與常見應用
+                        </div>
+                    </div>
+                </a>
+            
+        </div>
+        <div class="nav__next">
+            
+                <a href="/blog/article/GraphQL-query/" class="nav__link">
+                    <div>
+                        <div class="nav__label">
+                            下一篇
+                        </div>
+                        <div class="nav__title">
+                            GraphQL 系列文（二）：透過 Query 存取資料
+                        </div>
+                    </div>
+                    <div>
+                        <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="24" height="24"><path d="M434.944 790.624l-45.248-45.248L623.04 512l-233.376-233.376 45.248-45.248L713.568 512z" fill="#808080"></path></svg>
+                    </div>
+                </a>
+            
+        </div>
+    </div>
+
+
+
+    <div class="post__comments post__with-toc content-card" id="comment">
+        
+    <h4>評論</h4>
+    
+    <div id="disqus_thread">無法加載 Disqus 評論系統，請確保您的網絡能夠正常訪問。</div>
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
+
+    </div>
+
+
+
+</main>
+
+            <footer class="footer">
+     
+    <a href="#" class="button" id="b2t" aria-label="回到頂部" title="回到頂部">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="32" height="32">
+            <path d="M233.376 722.752L278.624 768 512 534.624 745.376 768l45.248-45.248L512 444.128zM192 352h640V288H192z" fill="currentColor"></path>
+        </svg>
+    </a>
+
+    
+
+
+    
+     
+ 
+
+ 
+    
+        
+        <p class="footer-copyright">
+            Copyright © 2024 <a href="/blog/">Yu&#39;s Blog</a>
+        </p>
+    
+    
+    <p>Powered by <a href="https://hexo.io" target="_blank">Hexo</a> | Theme - <a href="https://github.com/ChrAlpha/hexo-theme-cards" target="_blank">Cards</a></p>
+</footer>
+
+        </div>
+         
+
+ 
+
+ 
+
+ 
+
+ 
+
+
+
+ 
+
+
+
+ 
+
+
+    
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+
+    
+    <script>
+        function loadComment() {
+            window.disqus_config = function () {
+                this.page.url = 'https://yu040419.github.io/blog/article/GraphQL-mutation-and-subscription/';
+                this.page.identifier = 'article/GraphQL-mutation-and-subscription/';
+            };
+            (function(){
+                var dsq = document.createElement('script');
+                dsq.type = 'text/javascript';
+                dsq.async = true;
+                dsq.src = '//' + 'yu040419' + '.disqus.com/embed.js';
+                (document.head || document.body).appendChild(dsq);
+            })();
+        }
+    
+        var runningOnBrowser = typeof window !== "undefined";
+        var isBot = runningOnBrowser && !("onscroll" in window) || typeof navigator !== "undefined" && /(gle|ing|ro|msn)bot|crawl|spider|yand|duckgo/i.test(navigator.userAgent);
+        var supportsIntersectionObserver = runningOnBrowser && "IntersectionObserver" in window;
+    
+        setTimeout(function () {
+            if (!isBot && supportsIntersectionObserver) {
+                var comment_observer = new IntersectionObserver(function(entries) {
+                    if (entries[0].isIntersecting) {
+                        loadComment();
+                        comment_observer.disconnect();
+                    }
+                }, { threshold: [0] });
+                comment_observer.observe(document.getElementById('comment'));
+            } else {
+                loadComment();
+            }
+        }, 1);
+    </script>
+
+
+    
+
+    
+    
+
+    
+    
+    
+    
+    
+
+    
+    
+    
+    
+    
+
+    
+    
+    
+
+
+
+    </body>
+</html>

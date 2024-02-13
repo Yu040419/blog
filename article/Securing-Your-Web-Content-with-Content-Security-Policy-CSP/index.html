@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="zh-tw">
+    <head>
+    <meta charset="utf-8">
+
+    
+
+    <!-- 渲染优化 -->
+    <meta name="renderer" content="webkit">
+    <meta name="force-rendering" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <meta name="HandheldFriendly" content="True" >
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <!--icon-->
+
+    
+    
+    
+    
+    
+
+
+    <!-- meta -->
+
+
+<title>Securing Your Web Content with Content Security Policy (CSP) | Yu&#39;s Blog</title>
+
+
+    <meta name="keywords" content="資訊安全">
+
+
+
+
+    <!-- OpenGraph -->
+ 
+    <meta name="description" content="What is CSPContent Security Policy, or CSP, is a security standard implemented by web browsers to mitigate the risks of Cross-Site Scripting (XSS) attacks. It serves as an added layer of protection by">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Securing Your Web Content with Content Security Policy (CSP)">
+<meta property="og:url" content="https://yu040419.github.io/blog/article/Securing-Your-Web-Content-with-Content-Security-Policy-CSP/index.html">
+<meta property="og:site_name" content="Yu&#39;s Blog">
+<meta property="og:description" content="What is CSPContent Security Policy, or CSP, is a security standard implemented by web browsers to mitigate the risks of Cross-Site Scripting (XSS) attacks. It serves as an added layer of protection by">
+<meta property="og:locale" content="zh_TW">
+<meta property="article:published_time" content="2024-02-13T09:59:12.000Z">
+<meta property="article:modified_time" content="2024-02-13T12:02:51.618Z">
+<meta property="article:author" content="Yu">
+<meta property="article:tag" content="資訊安全">
+<meta name="twitter:card" content="summary_large_image">
+
+
+    
+<link rel="stylesheet" href="/blog/css/style/main.css">
+ 
+
+    
+    
+        <link rel="stylesheet" id="hl-default-theme" href="https://cdn.jsdelivr.net/npm/hexo-theme-cards@1.2/dist/css/highlight/default.min.css" media="none" >
+        
+            <link rel="stylesheet" id="hl-dark-theme" href="https://cdn.jsdelivr.net/npm/hexo-theme-cards@1.2/dist/css/highlight/dark.min.css" media="none">
+        
+    
+
+    
+    
+
+    
+    
+<link rel="stylesheet" href="/blog/css/style/dark.css">
+
+    
+<script src="/blog/js/darkmode.js"></script>
+
+
+
+     
+
+    <!-- custom head -->
+
+<meta name="generator" content="Hexo 5.4.2"></head>
+
+    <body>
+        <div id="app" tabindex="-1">
+            <header class="header">
+    <div class="header__left">
+        <a href="/blog/" class="button">
+            <span class="logo__text">Yu&#39;s Blog</span>
+        </a>
+    </div>
+    <div class="header__right">
+        
+            <div class="navbar__menus">
+                
+                    <a href="/blog/" class="navbar-menu button">首頁</a>
+                
+                    <a href="/blog/archives/" class="navbar-menu button">所有文章</a>
+                
+                    <a href="/blog/tags/" class="navbar-menu button">標籤</a>
+                
+                    <a href="/blog/about/" class="navbar-menu button">關於我</a>
+                
+            </div>
+        
+        
+        
+    <a href="/blog/search/" id="btn-search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="24" height="24" fill="currentColor" stroke="currentColor" stroke-width="32"><path d="M192 448c0-141.152 114.848-256 256-256s256 114.848 256 256-114.848 256-256 256-256-114.848-256-256z m710.624 409.376l-206.88-206.88A318.784 318.784 0 0 0 768 448c0-176.736-143.264-320-320-320S128 271.264 128 448s143.264 320 320 320a318.784 318.784 0 0 0 202.496-72.256l206.88 206.88 45.248-45.248z"></path></svg>
+    </a>
+
+
+        
+        
+    <a href="javaScript:void(0);" id="btn-toggle-dark">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+    </a>
+
+
+        
+            <a class="dropdown-icon button" id="btn-dropdown" tabindex="0"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width='24' height='24' fill="none" stroke="currentColor" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round"><path fill="currentColor" d="M3.314,4.8h13.372c0.41,0,0.743-0.333,0.743-0.743c0-0.41-0.333-0.743-0.743-0.743H3.314c-0.41,0-0.743,0.333-0.743,0.743C2.571,4.467,2.904,4.8,3.314,4.8z M16.686,15.2H3.314c-0.41,0-0.743,0.333-0.743,0.743s0.333,0.743,0.743,0.743h13.372c0.41,0,0.743-0.333,0.743-0.743S17.096,15.2,16.686,15.2z M16.686,9.257H3.314c-0.41,0-0.743,0.333-0.743,0.743s0.333,0.743,0.743,0.743h13.372c0.41,0,0.743-0.333,0.743-0.743S17.096,9.257,16.686,9.257z"></path></svg></a>
+            <div class="dropdown-menus" id="dropdown-menus">
+                
+                    <a href="/blog/" class="dropdown-menu button">首頁</a>
+                
+                    <a href="/blog/archives/" class="dropdown-menu button">所有文章</a>
+                
+                    <a href="/blog/tags/" class="dropdown-menu button">標籤</a>
+                
+                    <a href="/blog/about/" class="dropdown-menu button">關於我</a>
+                
+            </div>
+        
+    </div>
+</header>
+
+
+            <main class="main">
+    
+
+<div class="post-title">
+    <h1 class="post-title__text">
+        Securing Your Web Content with Content Security Policy (CSP)
+    </h1>
+    <div class="post-title__meta">
+        <a href="/blog/archives/2024/02/" class="post-meta__date button">2024-02-13</a>
+        
+ 
+        
+    
+    
+
+
+ 
+
+ 
+    </div>
+</div>
+
+
+    <aside class="post-side">
+        <div class="post-side__toc">
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#What-is-CSP"><span class="toc-text">What is CSP</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#How-To-Implement-CSP"><span class="toc-text">How To Implement CSP</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#HTTP-Response-Header"><span class="toc-text">HTTP Response Header</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#HTML-meta"><span class="toc-text">HTML meta</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Directives"><span class="toc-text">Directives</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Source"><span class="toc-text">Source</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Practice"><span class="toc-text">Practice</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Tips"><span class="toc-text">Tips</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#References"><span class="toc-text">References</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Conclusion"><span class="toc-text">Conclusion</span></a></li></ol>
+        </div>
+    </aside>
+    <a class="btn-toc button" id="btn-toc" tabindex="0">
+        <svg viewBox="0 0 1024 1024" width="32" height="32" xmlns="http://www.w3.org/2000/svg">
+            <path d="M128 256h64V192H128zM320 256h576V192H320zM128 544h64v-64H128zM320 544h576v-64H320zM128 832h64v-64H128zM320 832h576v-64H320z" fill="currentColor"></path>
+        </svg>
+    </a>
+    <div class="toc-menus" id="toc-menus">
+        <div class="toc-title">文章目錄</div>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#What-is-CSP"><span class="toc-text">What is CSP</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#How-To-Implement-CSP"><span class="toc-text">How To Implement CSP</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#HTTP-Response-Header"><span class="toc-text">HTTP Response Header</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#HTML-meta"><span class="toc-text">HTML meta</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Directives"><span class="toc-text">Directives</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Source"><span class="toc-text">Source</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Practice"><span class="toc-text">Practice</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Tips"><span class="toc-text">Tips</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#References"><span class="toc-text">References</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Conclusion"><span class="toc-text">Conclusion</span></a></li></ol>
+    </div>
+
+
+<article class="post post__with-toc content-card">
+    <div class="post__header"></div>
+    <div class="post__content">
+        <h2 id="What-is-CSP"><a href="#What-is-CSP" class="headerlink" title="What is CSP"></a>What is CSP</h2><p><strong>Content Security Policy</strong>, or <strong>CSP</strong>, is a security standard implemented by web browsers to mitigate the risks of Cross-Site Scripting (XSS) attacks. It serves as an added layer of protection by defining and enforcing a set of rules that dictate which resources a browser is allowed to load for a specific web page. These resources include <strong>scripts</strong>, <strong>stylesheets</strong>, <strong>images</strong>, <strong>fonts</strong>, and more.</p>
+<blockquote>
+<p>Sometimes you may see mentions of the <code>X-Content-Security-Policy</code> header, but that’s an older version and you don’t need to specify it anymore.</p>
+</blockquote>
+<h2 id="How-To-Implement-CSP"><a href="#How-To-Implement-CSP" class="headerlink" title="How To Implement CSP"></a>How To Implement CSP</h2><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Content-Security-Policy: <span class="tag">&lt;<span class="name">policy-directive</span>&gt;</span>; <span class="tag">&lt;<span class="name">policy-directive</span>&gt;</span>;</span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">policy-directive</span>&gt;</span>: <span class="tag">&lt;<span class="name">directive</span>&gt;</span> <span class="tag">&lt;<span class="name">source</span>&gt;</span> <span class="tag">&lt;<span class="name">source</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="HTTP-Response-Header"><a href="#HTTP-Response-Header" class="headerlink" title="HTTP Response Header"></a>HTTP Response Header</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">DemoPage</span>(<span class="params">TemplateView</span>):</span></span><br><span class="line"><span class="meta">    @method_decorator(<span class="params">never_cache</span>)</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">dispatch</span>(<span class="params">self, request, *args, **kwargs</span>):</span></span><br><span class="line">        response = <span class="built_in">super</span>().dispatch(request, *args, **kwargs)</span><br><span class="line">        response[<span class="string">&quot;Content-Security-Policy&quot;</span>] = <span class="string">&quot;default-src &#x27;self&#x27;; img-src https://*; child-src &#x27;none&#x27;;&quot;</span></span><br><span class="line">        <span class="keyword">return</span> response</span><br></pre></td></tr></table></figure>
+
+<h3 id="HTML-meta"><a href="#HTML-meta" class="headerlink" title="HTML meta"></a>HTML meta</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;meta</span><br><span class="line">  http-equiv&#x3D;&quot;Content-Security-Policy&quot;</span><br><span class="line">  content&#x3D;&quot;default-src &#39;self&#39;; img-src https:&#x2F;&#x2F;*; child-src &#39;none&#39;;&quot; &#x2F;&gt;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Directives"><a href="#Directives" class="headerlink" title="Directives"></a>Directives</h2><ul>
+<li><p><strong>Default-src</strong>：Specifies the default sources for content if no other directive applies.</p>
+</li>
+<li><p><strong>Script-src</strong>：Defines valid sources for JavaScript, allowing you to whitelist specific domains or sources.</p>
+<ul>
+<li>Inline scripts are blocked by default.</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;script&gt;</span><br><span class="line">  runInlineScript();</span><br><span class="line">&lt;&#x2F;script&gt;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>The execution of all JS event handlers from inline HTML markup are blocked by default.</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;button onClick&#x3D;&quot;runInlineScript();&quot;&gt;</span><br><span class="line">  All JS Event Handlers Blocked</span><br><span class="line">&lt;&#x2F;button&gt;</span><br><span class="line"></span><br><span class="line">&lt;a href&#x3D;&quot;javascript:runInlineScript();&quot;&gt;Won&#39;t Run&lt;&#x2F;a&gt;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>Style-src</strong>：Similar to script-src but for stylesheets.</p>
+<ul>
+<li>Inline styles are blocked by default.<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;div style&#x3D;&quot;color:red&quot;&gt;</span><br><span class="line">  All Inline style CSS is blocked by default</span><br><span class="line">&lt;&#x2F;div&gt;</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><p><strong>Img-src</strong>：Specifies the allowed sources for images.</p>
+</li>
+<li><p><strong>Font-src</strong>：Determines the sources for web fonts.</p>
+</li>
+<li><p><strong>Connect-src</strong>：Specifies the valid sources for network requests.</p>
+<ul>
+<li>Applies to <code>XMLHttpRequest (AJAX)</code>, <code>WebSocket</code>, <code>fetch()</code>, <code>&lt;a ping&gt;</code> or <code>EventSource</code>. If not allowed the browser emulates a 400 HTTP status code.</li>
+</ul>
+</li>
+<li><p><strong>Form-action</strong>：Restricts the URLs where forms can be submitted.</p>
+</li>
+<li><p><strong>Frame-ancestors</strong>：Controls which websites can embed your content in frames.</p>
+</li>
+</ul>
+<h2 id="Source"><a href="#Source" class="headerlink" title="Source"></a>Source</h2><table>
+<thead>
+<tr>
+<th>Source</th>
+<th>Description</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>*</td>
+<td>Used as a wildcard. It allows any URL except the <code>data:</code>, <code>blob:</code> and the <code>filesystem:</code> schemes.</td>
+<td>script-src * ;</td>
+</tr>
+<tr>
+<td>‘none’</td>
+<td>Prevents loading resources from any source.</td>
+<td>media-src ‘none’ ;</td>
+</tr>
+<tr>
+<td>‘self’</td>
+<td>Allows loading resources from the same origin (host, and port).</td>
+<td>default-src ‘self’ ;</td>
+</tr>
+<tr>
+<td>data:</td>
+<td>Allows loading resources via the data scheme (e.g. Base64 encoded images).</td>
+<td>img-src data: ;</td>
+</tr>
+<tr>
+<td>specificDomain.com</td>
+<td>Allows loading resources from the specific domain</td>
+<td>media-src specificDomain.com ;</td>
+</tr>
+<tr>
+<td>*.example.com</td>
+<td>Allows loading resources from any subdomain under example.com.</td>
+<td>script-src *.example.com</td>
+</tr>
+<tr>
+<td>https:</td>
+<td>Allows loading resources only over HTTPS on any domain.</td>
+<td>object-src https: ;</td>
+</tr>
+<tr>
+<td>‘unsafe-inline’</td>
+<td>Allows use of inline source elements such as style attribute, onclick, or script tag bodies (depends on the context of the source it is applied to) and javascript: URIs</td>
+<td>script-src ‘unsafe-inline’ ;</td>
+</tr>
+<tr>
+<td>‘unsafe-eval’</td>
+<td>Allows unsafe dynamic code evaluation such as JavaScript <code>eval()</code></td>
+<td>script-src ‘unsafe-eval’ ;</td>
+</tr>
+<tr>
+<td>‘nonce-<base64-value>‘</td>
+<td>An allowlist for specific inline scripts using a cryptographic nonce (number used once).</td>
+<td><code>&lt;script nonce=&quot;2726c7f26c&quot;&gt; doSomethingBad() &lt;/script&gt;</code> <br> script-src ‘nonce-2726c7f26c’;</td>
+</tr>
+<tr>
+<td>‘<hash-algorithm>-<base64-value>‘</td>
+<td>A sha256, sha384 or sha512 hash of scripts or styles. This value consists of the algorithm used to create the hash followed by a hyphen and the base64-encoded hash of the script or style.</td>
+<td><code>&lt;script&gt;doSomething();&lt;/script&gt;</code> <br> script-src ‘sha256-RFWPLDbv2BY+rC’;</td>
+</tr>
+</tbody></table>
+<h2 id="Practice"><a href="#Practice" class="headerlink" title="Practice"></a>Practice</h2><p>Valid Image resource</p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">maps.gstatic.<span class="keyword">com</span> - loads various img assets <span class="keyword">for</span> the <span class="keyword">map</span></span><br><span class="line">maps.googleapis.<span class="keyword">com</span> - loads tiles of the <span class="keyword">map</span></span><br><span class="line">dat<span class="variable">a:image</span>/svg+xml - several resources are loaded <span class="keyword">as</span> SVG using data URIs</span><br><span class="line">khms0.googleapis.<span class="keyword">com</span> - load satalite images <span class="keyword">for</span> the <span class="keyword">map</span>. This could <span class="keyword">be</span> from <span class="keyword">a</span> few different similar subdomains.</span><br><span class="line">geo0.ggpht.<span class="keyword">com</span> - loads street <span class="keyword">view</span> images, this could <span class="keyword">be</span> from <span class="keyword">a</span> few different similar subdomains.</span><br></pre></td></tr></table></figure>
+
+<p><strong>ANSWER</strong></p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">img-src dat<span class="variable">a:</span> maps.gstatic.<span class="keyword">com</span> *.googleapis.<span class="keyword">com</span> *.ggpht.<span class="keyword">com</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="Tips"><a href="#Tips" class="headerlink" title="Tips"></a>Tips</h2><ul>
+<li><strong>Open your devtool, and check Response Headers of Network tab</strong><ul>
+<li>Facebook</li>
+<li>HackMD</li>
+<li>MDN</li>
+</ul>
+</li>
+<li><strong>Syntax Error</strong><ul>
+<li>No colon between directive and source <code>:</code></li>
+<li>Separate policy With semicolon <code>;</code></li>
+<li>Separate source with space <code> </code></li>
+<li>Specific source with single quote <code>&#39;self&#39;</code></li>
+</ul>
+</li>
+<li><a target="_blank" rel="noopener" href="https://csp-evaluator.withgoogle.com/"><strong>Testing Tools by Google</strong></a></li>
+<li><strong>Report Only Mode</strong>: During implementation, use the <a target="_blank" rel="noopener" href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy-Report-Only">Content-Security-Policy-Report-Only</a> header to receive reports about policy violations without enforcing the policy.<ul>
+<li><code>Content-Security-Policy-Report-Only: report-to /csp-report/</code></li>
+</ul>
+</li>
+<li><strong>Blocked Content</strong>: If you notice certain resources are not loading, check the browser console for CSP error messages. Adjust your policy accordingly.</li>
+<li><a target="_blank" rel="noopener" href="https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP#browser_compatibility"><strong>Browser Compatibility</strong></a></li>
+</ul>
+<h2 id="References"><a href="#References" class="headerlink" title="References"></a>References</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy">Content-Security-Policy - HTTP | MDN</a></li>
+<li><a target="_blank" rel="noopener" href="https://devco.re/blog/2014/04/08/security-issues-of-http-headers-2-content-security-policy/">Content-Security-Policy (v2014) | DEVCORE</a></li>
+<li><a target="_blank" rel="noopener" href="https://cheatsheetseries.owasp.org/cheatsheets/Content_Security_Policy_Cheat_Sheet.html">Content Security Policy Cheat Sheet | OWASP</a></li>
+<li><a target="_blank" rel="noopener" href="https://content-security-policy.com/">Content Security Policy (CSP) Quick Reference Guide</a></li>
+</ul>
+<h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><ul>
+<li>Powerful</li>
+<li>Careful</li>
+<li>Keep changing</li>
+</ul>
+
+    </div>
+     
+    <div class="post-footer__meta"><p>更新於 2024-02-13</p></div> 
+    <div class="post-entry__tags"><a href="/blog/tags/%E8%B3%87%E8%A8%8A%E5%AE%89%E5%85%A8/" class="post-tags__link button"># 資訊安全</a></div> 
+</article>
+
+
+    <div class="nav">
+        <div class="nav__prev">
+            
+        </div>
+        <div class="nav__next">
+            
+                <a href="/blog/article/urql/" class="nav__link">
+                    <div>
+                        <div class="nav__label">
+                            下一篇
+                        </div>
+                        <div class="nav__title">
+                            URQL 的基本介紹與常見應用
+                        </div>
+                    </div>
+                    <div>
+                        <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="24" height="24"><path d="M434.944 790.624l-45.248-45.248L623.04 512l-233.376-233.376 45.248-45.248L713.568 512z" fill="#808080"></path></svg>
+                    </div>
+                </a>
+            
+        </div>
+    </div>
+
+
+
+    <div class="post__comments post__with-toc content-card" id="comment">
+        
+    <h4>評論</h4>
+    
+    <div id="disqus_thread">無法加載 Disqus 評論系統，請確保您的網絡能夠正常訪問。</div>
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
+
+    </div>
+
+
+
+</main>
+
+            <footer class="footer">
+     
+    <a href="#" class="button" id="b2t" aria-label="回到頂部" title="回到頂部">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="32" height="32">
+            <path d="M233.376 722.752L278.624 768 512 534.624 745.376 768l45.248-45.248L512 444.128zM192 352h640V288H192z" fill="currentColor"></path>
+        </svg>
+    </a>
+
+    
+
+
+    
+     
+ 
+
+ 
+    
+        
+        <p class="footer-copyright">
+            Copyright © 2024 <a href="/blog/">Yu&#39;s Blog</a>
+        </p>
+    
+    
+    <p>Powered by <a href="https://hexo.io" target="_blank">Hexo</a> | Theme - <a href="https://github.com/ChrAlpha/hexo-theme-cards" target="_blank">Cards</a></p>
+</footer>
+
+        </div>
+         
+
+ 
+
+ 
+
+ 
+
+ 
+
+
+
+ 
+
+
+
+ 
+
+
+    
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+
+    
+    <script>
+        function loadComment() {
+            window.disqus_config = function () {
+                this.page.url = 'https://yu040419.github.io/blog/article/Securing-Your-Web-Content-with-Content-Security-Policy-CSP/';
+                this.page.identifier = 'article/Securing-Your-Web-Content-with-Content-Security-Policy-CSP/';
+            };
+            (function(){
+                var dsq = document.createElement('script');
+                dsq.type = 'text/javascript';
+                dsq.async = true;
+                dsq.src = '//' + 'yu040419' + '.disqus.com/embed.js';
+                (document.head || document.body).appendChild(dsq);
+            })();
+        }
+    
+        var runningOnBrowser = typeof window !== "undefined";
+        var isBot = runningOnBrowser && !("onscroll" in window) || typeof navigator !== "undefined" && /(gle|ing|ro|msn)bot|crawl|spider|yand|duckgo/i.test(navigator.userAgent);
+        var supportsIntersectionObserver = runningOnBrowser && "IntersectionObserver" in window;
+    
+        setTimeout(function () {
+            if (!isBot && supportsIntersectionObserver) {
+                var comment_observer = new IntersectionObserver(function(entries) {
+                    if (entries[0].isIntersecting) {
+                        loadComment();
+                        comment_observer.disconnect();
+                    }
+                }, { threshold: [0] });
+                comment_observer.observe(document.getElementById('comment'));
+            } else {
+                loadComment();
+            }
+        }, 1);
+    </script>
+
+
+    
+
+    
+    
+
+    
+    
+    
+    
+    
+
+    
+    
+    
+    
+    
+
+    
+    
+    
+
+
+
+    </body>
+</html>

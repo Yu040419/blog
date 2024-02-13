@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="zh-tw">
+    <head>
+    <meta charset="utf-8">
+
+    
+
+    <!-- 渲染优化 -->
+    <meta name="renderer" content="webkit">
+    <meta name="force-rendering" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <meta name="HandheldFriendly" content="True" >
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <!--icon-->
+
+    
+    
+    
+    
+    
+
+
+    <!-- meta -->
+
+
+<title>Vue 3 學習筆記 (二) | Yu&#39;s Blog</title>
+
+
+    <meta name="keywords" content="Vue">
+
+
+
+
+    <!-- OpenGraph -->
+ 
+    <meta name="description" content="此篇筆記為 Vue 相關筆記第二篇，建議可先閱讀 第一篇，對 Vue 3 基礎較為熟悉後，再閱讀會更好理解。筆記部分參考 VueConf China 2021 中，VueUse 作者分享。 script setupVue 3.2 出的新功能中，包含了 script setup 這個語法糖，包含以下幾個特點：  更簡潔的 Code 優化執行效能 對 TypeScript 的支援度更好  再也不需要">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Vue 3 學習筆記 (二)">
+<meta property="og:url" content="https://yu040419.github.io/blog/article/Vue-3-2/index.html">
+<meta property="og:site_name" content="Yu&#39;s Blog">
+<meta property="og:description" content="此篇筆記為 Vue 相關筆記第二篇，建議可先閱讀 第一篇，對 Vue 3 基礎較為熟悉後，再閱讀會更好理解。筆記部分參考 VueConf China 2021 中，VueUse 作者分享。 script setupVue 3.2 出的新功能中，包含了 script setup 這個語法糖，包含以下幾個特點：  更簡潔的 Code 優化執行效能 對 TypeScript 的支援度更好  再也不需要">
+<meta property="og:locale" content="zh_TW">
+<meta property="article:published_time" content="2021-12-19T13:45:06.000Z">
+<meta property="article:modified_time" content="2024-02-13T09:52:07.717Z">
+<meta property="article:author" content="Yu">
+<meta property="article:tag" content="Vue">
+<meta name="twitter:card" content="summary_large_image">
+
+
+    
+<link rel="stylesheet" href="/blog/css/style/main.css">
+ 
+
+    
+    
+        <link rel="stylesheet" id="hl-default-theme" href="https://cdn.jsdelivr.net/npm/hexo-theme-cards@1.2/dist/css/highlight/default.min.css" media="none" >
+        
+            <link rel="stylesheet" id="hl-dark-theme" href="https://cdn.jsdelivr.net/npm/hexo-theme-cards@1.2/dist/css/highlight/dark.min.css" media="none">
+        
+    
+
+    
+    
+
+    
+    
+<link rel="stylesheet" href="/blog/css/style/dark.css">
+
+    
+<script src="/blog/js/darkmode.js"></script>
+
+
+
+     
+
+    <!-- custom head -->
+
+<meta name="generator" content="Hexo 5.4.2"></head>
+
+    <body>
+        <div id="app" tabindex="-1">
+            <header class="header">
+    <div class="header__left">
+        <a href="/blog/" class="button">
+            <span class="logo__text">Yu&#39;s Blog</span>
+        </a>
+    </div>
+    <div class="header__right">
+        
+            <div class="navbar__menus">
+                
+                    <a href="/blog/" class="navbar-menu button">首頁</a>
+                
+                    <a href="/blog/archives/" class="navbar-menu button">所有文章</a>
+                
+                    <a href="/blog/tags/" class="navbar-menu button">標籤</a>
+                
+                    <a href="/blog/about/" class="navbar-menu button">關於我</a>
+                
+            </div>
+        
+        
+        
+    <a href="/blog/search/" id="btn-search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="24" height="24" fill="currentColor" stroke="currentColor" stroke-width="32"><path d="M192 448c0-141.152 114.848-256 256-256s256 114.848 256 256-114.848 256-256 256-256-114.848-256-256z m710.624 409.376l-206.88-206.88A318.784 318.784 0 0 0 768 448c0-176.736-143.264-320-320-320S128 271.264 128 448s143.264 320 320 320a318.784 318.784 0 0 0 202.496-72.256l206.88 206.88 45.248-45.248z"></path></svg>
+    </a>
+
+
+        
+        
+    <a href="javaScript:void(0);" id="btn-toggle-dark">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+    </a>
+
+
+        
+            <a class="dropdown-icon button" id="btn-dropdown" tabindex="0"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width='24' height='24' fill="none" stroke="currentColor" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round"><path fill="currentColor" d="M3.314,4.8h13.372c0.41,0,0.743-0.333,0.743-0.743c0-0.41-0.333-0.743-0.743-0.743H3.314c-0.41,0-0.743,0.333-0.743,0.743C2.571,4.467,2.904,4.8,3.314,4.8z M16.686,15.2H3.314c-0.41,0-0.743,0.333-0.743,0.743s0.333,0.743,0.743,0.743h13.372c0.41,0,0.743-0.333,0.743-0.743S17.096,15.2,16.686,15.2z M16.686,9.257H3.314c-0.41,0-0.743,0.333-0.743,0.743s0.333,0.743,0.743,0.743h13.372c0.41,0,0.743-0.333,0.743-0.743S17.096,9.257,16.686,9.257z"></path></svg></a>
+            <div class="dropdown-menus" id="dropdown-menus">
+                
+                    <a href="/blog/" class="dropdown-menu button">首頁</a>
+                
+                    <a href="/blog/archives/" class="dropdown-menu button">所有文章</a>
+                
+                    <a href="/blog/tags/" class="dropdown-menu button">標籤</a>
+                
+                    <a href="/blog/about/" class="dropdown-menu button">關於我</a>
+                
+            </div>
+        
+    </div>
+</header>
+
+
+            <main class="main">
+    
+
+<div class="post-title">
+    <h1 class="post-title__text">
+        Vue 3 學習筆記 (二)
+    </h1>
+    <div class="post-title__meta">
+        <a href="/blog/archives/2021/12/" class="post-meta__date button">2021-12-19</a>
+        
+ 
+        
+    
+    
+
+
+ 
+
+ 
+    </div>
+</div>
+
+
+    <aside class="post-side">
+        <div class="post-side__toc">
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#script-setup"><span class="toc-text">script setup</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%86%8D%E4%B9%9F%E4%B8%8D%E9%9C%80%E8%A6%81-return"><span class="toc-text">再也不需要 return</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8F%90%E5%8D%87-TypeScript-%E6%94%AF%E6%8F%B4"><span class="toc-text">提升 TypeScript 支援</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#defineExpose"><span class="toc-text">defineExpose</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AF%84%E4%BE%8B"><span class="toc-text">範例</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ref"><span class="toc-text">ref</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#unref"><span class="toc-text">unref</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#computed"><span class="toc-text">computed</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#InjectionKey"><span class="toc-text">InjectionKey</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#v-model"><span class="toc-text">v-model</span></a></li></ol>
+        </div>
+    </aside>
+    <a class="btn-toc button" id="btn-toc" tabindex="0">
+        <svg viewBox="0 0 1024 1024" width="32" height="32" xmlns="http://www.w3.org/2000/svg">
+            <path d="M128 256h64V192H128zM320 256h576V192H320zM128 544h64v-64H128zM320 544h576v-64H320zM128 832h64v-64H128zM320 832h576v-64H320z" fill="currentColor"></path>
+        </svg>
+    </a>
+    <div class="toc-menus" id="toc-menus">
+        <div class="toc-title">文章目錄</div>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#script-setup"><span class="toc-text">script setup</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%86%8D%E4%B9%9F%E4%B8%8D%E9%9C%80%E8%A6%81-return"><span class="toc-text">再也不需要 return</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8F%90%E5%8D%87-TypeScript-%E6%94%AF%E6%8F%B4"><span class="toc-text">提升 TypeScript 支援</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#defineExpose"><span class="toc-text">defineExpose</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AF%84%E4%BE%8B"><span class="toc-text">範例</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ref"><span class="toc-text">ref</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#unref"><span class="toc-text">unref</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#computed"><span class="toc-text">computed</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#InjectionKey"><span class="toc-text">InjectionKey</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#v-model"><span class="toc-text">v-model</span></a></li></ol>
+    </div>
+
+
+<article class="post post__with-toc content-card">
+    <div class="post__header"></div>
+    <div class="post__content">
+        <p>此篇筆記為 Vue 相關筆記第二篇，建議可先閱讀 <a href="https://yu040419.github.io/blog/article/Vue-3-1/">第一篇</a>，對 Vue 3 基礎較為熟悉後，再閱讀會更好理解。<br>筆記部分參考 VueConf China 2021 中，VueUse 作者分享。</p>
+<h2 id="script-setup"><a href="#script-setup" class="headerlink" title="script setup"></a>script setup</h2><p>Vue 3.2 出的新功能中，包含了 <a target="_blank" rel="noopener" href="https://v3.cn.vuejs.org/api/sfc-script-setup.html#%E5%9F%BA%E6%9C%AC%E8%AF%AD%E6%B3%95">script setup</a> 這個語法糖，包含以下幾個特點：</p>
+<ul>
+<li>更簡潔的 Code</li>
+<li>優化執行效能</li>
+<li>對 TypeScript 的支援度更好</li>
+</ul>
+<h3 id="再也不需要-return"><a href="#再也不需要-return" class="headerlink" title="再也不需要 return"></a>再也不需要 return</h3><p>在過去 Composition API 中，<code>template</code> 若要使用任何 data，都會需要在 <code>setup</code> 中將資料 <code>return</code> 出來。</p>
+<p>但使用 script setup 的語法後，引入的 state &#x2F; function 可以立即使用，不需要 <code>return</code>，十分方便。</p>
+<h3 id="提升-TypeScript-支援"><a href="#提升-TypeScript-支援" class="headerlink" title="提升 TypeScript 支援"></a>提升 TypeScript 支援</h3><p>script setup 同時新增幾個語法，來提昇 TypeScript 支援。分別是：</p>
+<ul>
+<li><code>defineProps</code>：定義 <code>props</code> 的型別</li>
+<li><code>defineEmits</code>：定義 <code>emits</code> 的型別</li>
+<li><code>withDefaults</code>：搭配 <code>defineProps</code> 賦予 <code>props</code> 預設值。</li>
+</ul>
+<h3 id="defineExpose"><a href="#defineExpose" class="headerlink" title="defineExpose"></a>defineExpose</h3><p>因為 <code>script setup</code> 默認不將 component 內的 data 及 method 暴露出去。所以當如果想要在父層使用子層 dom 元素時，就可以在子 component 將該 ref 值透過 <code>defineExpose()</code> 暴露出去。</p>
+<h3 id="範例"><a href="#範例" class="headerlink" title="範例"></a>範例</h3><p>可搭配以上特色服用：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 原先 Vue 3 版本</span></span><br><span class="line">&lt;script lang=<span class="string">&quot;ts&quot;</span>&gt;</span><br><span class="line"><span class="keyword">import</span> &#123; defineComponent, computed &#125; <span class="keyword">from</span> <span class="string">&quot;vue&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; useI18n &#125; <span class="keyword">from</span> <span class="string">&quot;vue-i18n&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> defineComponent(&#123;</span><br><span class="line">  name: <span class="string">&quot;BaseInput&quot;</span>,</span><br><span class="line">  props: &#123;</span><br><span class="line">    isRequired: &#123;</span><br><span class="line">      type: <span class="built_in">Boolean</span>,</span><br><span class="line">      <span class="keyword">default</span>: <span class="literal">false</span>,</span><br><span class="line">    &#125;,</span><br><span class="line">    error: &#123;</span><br><span class="line">      type: <span class="built_in">String</span>,</span><br><span class="line">    &#125;,</span><br><span class="line">    title: &#123;</span><br><span class="line">      type: <span class="built_in">String</span>,</span><br><span class="line">    &#125;,</span><br><span class="line">    label: &#123;</span><br><span class="line">      type: <span class="built_in">String</span>,</span><br><span class="line">      required: <span class="literal">true</span>,</span><br><span class="line">    &#125;,</span><br><span class="line">    val: &#123;</span><br><span class="line">      required: <span class="literal">true</span>,</span><br><span class="line">    &#125;,</span><br><span class="line">    type: &#123;</span><br><span class="line">      type: <span class="built_in">String</span>,</span><br><span class="line">      required: <span class="literal">true</span>,</span><br><span class="line">    &#125;,</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="function"><span class="title">setup</span>(<span class="params">props, &#123; emit &#125;</span>)</span> &#123;</span><br><span class="line">    <span class="keyword">const</span> &#123; t &#125; = useI18n();</span><br><span class="line">    <span class="keyword">const</span> inputVal = computed(&#123;</span><br><span class="line">      get: <span class="function">() =&gt;</span> props.val,</span><br><span class="line">      set: <span class="function">(<span class="params">val</span>) =&gt;</span> emit(<span class="string">&quot;update:val&quot;</span>, val),</span><br><span class="line">    &#125;);</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> &#123;</span><br><span class="line">      props,</span><br><span class="line">      inputVal,</span><br><span class="line">      t,</span><br><span class="line">    &#125;;</span><br><span class="line">  &#125;,</span><br></pre></td></tr></table></figure>
+<p>使用 <code>script setup</code> 後：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">&lt;script lang=<span class="string">&quot;ts&quot;</span> setup&gt;</span><br><span class="line"><span class="keyword">import</span> &#123; computed, defineProps, defineEmits, withDefaults &#125; <span class="keyword">from</span> <span class="string">&quot;vue&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; useI18n &#125; <span class="keyword">from</span> <span class="string">&quot;vue-i18n&quot;</span>;</span><br><span class="line"></span><br><span class="line">interface Props &#123;</span><br><span class="line">  isRequired?: boolean;</span><br><span class="line">  error?: string;</span><br><span class="line">  title?: string;</span><br><span class="line">  label: string;</span><br><span class="line">  val: string | number;</span><br><span class="line">  type: string;</span><br><span class="line">&#125;</span><br><span class="line">  </span><br><span class="line"><span class="keyword">const</span> props = withDefaults(defineProps&lt;Props&gt;(), &#123;</span><br><span class="line">  isRequired: <span class="literal">false</span>,</span><br><span class="line">&#125;);</span><br><span class="line"><span class="keyword">const</span> emit = defineEmits&lt;&#123; (e: <span class="string">&quot;update:val&quot;</span>, <span class="attr">val</span>: string | number): <span class="keyword">void</span> &#125;&gt;();</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> &#123; t &#125; = useI18n();</span><br><span class="line"><span class="keyword">const</span> inputVal = computed(&#123;</span><br><span class="line">  get: <span class="function">() =&gt;</span> props.val,</span><br><span class="line">  set: <span class="function">(<span class="params">val</span>) =&gt;</span> emit(<span class="string">&quot;update:val&quot;</span>, val),</span><br><span class="line">&#125;);</span><br><span class="line">&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+<h2 id="ref"><a href="#ref" class="headerlink" title="ref"></a>ref</h2><p><code>ref</code> 一般常用於 primitive type 的狀態使用，會在 <code>ref()</code> 中，放入 primitive type，像是 boolean, string, number 等等。</p>
+<p>但其實，<code>ref</code> 本身也可以接受 <code>ref</code> 值，兩者返回的值，也完全相同。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> a = ref(<span class="number">1</span>);</span><br><span class="line"><span class="keyword">const</span> b = ref(a);</span><br><span class="line"></span><br><span class="line"><span class="built_in">console</span>.log(a === b); <span class="comment">// true</span></span><br></pre></td></tr></table></figure>
+<p>這常用於 TypeScript 中，當今天無法確定參數的型別時，可以很方便地處理：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">useTitle</span>(<span class="params">title: Ref&lt;string&gt; | string | <span class="literal">null</span></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">const</span> title = isRef(title) ? title : title ? : ref(title) : <span class="string">&#x27;title&#x27;</span>;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 不需要做以上一連串判斷，可以直接將 ref 值放進來</span></span><br><span class="line">  <span class="keyword">const</span> title = ref(title || <span class="string">&#x27;title&#x27;</span>);</span><br><span class="line">  </span><br><span class="line">  <span class="built_in">document</span>.title = title;</span><br><span class="line">  <span class="keyword">return</span> title;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>也因為完全相同的關係，使用上也需要特別注意，在改動其中一個 ref 值時，另一個 ref 值也會被一起更動。</p>
+<h2 id="unref"><a href="#unref" class="headerlink" title="unref"></a>unref</h2><p><a target="_blank" rel="noopener" href="https://v3.vuejs.org/api/refs-api.html#unref">unref</a> 是官方原生的 API，是一種語法糖，將以下用法包裹起來：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">unref</span>(<span class="params">val</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> isRef(val) ? val.value : val;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>unref</code> 會先用一樣是官方原生的 <code>isRef</code> API 判定是否是 Ref，如果是的話，就將 ref 值回傳回去，如果不是的話，就直接回傳這個值。</p>
+<p>簡單用法就如同以下，透過 unref 可以確保一定拿得到該值：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> data = unref(value);</span><br></pre></td></tr></table></figure>
+<p>如果搭配 TypeScript，實用性也會更高：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 接受 ref 值或是純數字</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">add</span>(<span class="params"></span></span></span><br><span class="line"><span class="function"><span class="params">  a: Ref&lt;<span class="built_in">number</span>&gt; | <span class="built_in">number</span>,</span></span></span><br><span class="line"><span class="function"><span class="params">  b: Ref&lt;<span class="built_in">number</span>&gt; | <span class="built_in">number</span></span></span></span><br><span class="line"><span class="function"><span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="comment">// 這邊就不需要再做多一層型別判斷</span></span><br><span class="line">  <span class="keyword">return</span> computed(<span class="function">() =&gt;</span> unref(a) + unref(b));</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>補充，也可以搭配自定義的 <code>MaybeRef</code> 型別，使用上可以更簡潔：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> MaybeRef&lt;T&gt; = Ref&lt;T&gt; | T</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">add</span>(<span class="params"></span></span></span><br><span class="line"><span class="function"><span class="params">  a: MaybeRef&lt;<span class="built_in">number</span>&gt;,</span></span></span><br><span class="line"><span class="function"><span class="params">  b: MaybeRef&lt;<span class="built_in">number</span>&gt;</span></span></span><br><span class="line"><span class="function"><span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> computed(<span class="function">() =&gt;</span> unref(a) + unref(b));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="computed"><a href="#computed" class="headerlink" title="computed"></a>computed</h2><p>一般我們會透過非同步的方式取得資料後，再將取得的資料賦值給 state 或 store。但也可以先將資料透過 computed 的方式串連起來，概念跟 React 的 SWR 相似。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// call API 取得資料後，再透過 computed 賦值</span></span><br><span class="line"><span class="keyword">const</span> &#123; data &#125; = useFetch(<span class="string">&#x27;https://api.github.com/&#x27;</span>).json()</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> user_url = computed(<span class="function">() =&gt;</span> data.value?.user_url)</span><br></pre></td></tr></table></figure>
+
+<h2 id="InjectionKey"><a href="#InjectionKey" class="headerlink" title="InjectionKey"></a>InjectionKey<T></h2><p>透過 <code>provide</code> 跟 <code>inject</code> 可以避免 props drilling 的問題，但對型別的支援卻不友善。這時可以透過 <code>InjectionKey</code> 來解決型別問題。</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// context.ts 共用 state 檔案</span></span><br><span class="line"><span class="keyword">import</span> &#123; InjectionKey &#125; <span class="keyword">from</span> <span class="string">&#x27;vue&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">interface</span> UserInfo &#123;</span><br><span class="line">  id: <span class="built_in">number</span></span><br><span class="line">  name: <span class="built_in">string</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> injectKeyUser: InjectionKey&lt;UserInfo&gt; = <span class="built_in">Symbol</span>()</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> injectKeyIsBoolean: InjectionKey&lt;<span class="built_in">boolean</span>&gt; = <span class="built_in">Symbol</span>();</span><br></pre></td></tr></table></figure>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// parent.vue</span></span><br><span class="line"><span class="comment">// 在父元件 provide 值</span></span><br><span class="line"><span class="keyword">import</span> &#123; provide &#125; <span class="keyword">from</span> <span class="string">&#x27;vue&#x27;</span> </span><br><span class="line"><span class="keyword">import</span> &#123; injectKeyUser, injectKeyIsBoolean &#125; <span class="keyword">from</span> <span class="string">&#x27;./context&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span><br><span class="line">  <span class="function"><span class="title">setup</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">    provide(injectKeyUser, &#123;</span><br><span class="line">      id: <span class="string">&#x27;7&#x27;</span>, <span class="comment">// error 型別錯誤</span></span><br><span class="line">      name: <span class="string">&#x27;Yu&#x27;</span></span><br><span class="line">    &#125;);</span><br><span class="line">    </span><br><span class="line">    provide(injectKeyIsBoolean, <span class="literal">true</span>); <span class="comment">// 檢查通過</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// child.vue</span></span><br><span class="line"><span class="comment">// 在子元件 inject 值</span></span><br><span class="line"><span class="keyword">import</span> &#123; inject &#125; <span class="keyword">from</span> <span class="string">&#x27;vue&#x27;</span> </span><br><span class="line"><span class="keyword">import</span> &#123; injectKeyUser &#125; <span class="keyword">from</span> <span class="string">&#x27;./context&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span><br><span class="line">  <span class="function"><span class="title">setup</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">    <span class="keyword">const</span> user = inject(injectKeyUser) </span><br><span class="line">    <span class="comment">// UserInfo | undefined</span></span><br><span class="line">    <span class="comment">// 因為有可能不被 provide，所以有可能是 undefined</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (user)</span><br><span class="line">      <span class="built_in">console</span>.log(user.name) <span class="comment">// Yu</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="v-model"><a href="#v-model" class="headerlink" title="v-model"></a>v-model</h2><p>當今天子組件接收父組件的 props 綁定 input 時，可以透過 <code>computed</code> 搭配 <code>v-model</code> 達成簡易快速的 <code>emit</code>。</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// parent.vue</span></span><br><span class="line">&lt;template&gt;</span><br><span class="line">  <span class="comment">// 這邊記得要加上 v-model</span></span><br><span class="line">  &lt;ChildComponent v-model:val=<span class="string">&quot;value&quot;</span> /&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line"></span><br><span class="line">&lt;script setup&gt;</span><br><span class="line"><span class="keyword">const</span> value = ref(<span class="string">&#x27;test&#x27;</span>);</span><br><span class="line">&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ChildComponent.vue</span></span><br><span class="line">&lt;template&gt;</span><br><span class="line">  <span class="comment">// 綁定 v-model</span></span><br><span class="line">  &lt;input v-model.lazy=<span class="string">&quot;inputVal&quot;</span> /&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line"></span><br><span class="line">&lt;script setup&gt;</span><br><span class="line"><span class="comment">// 宣告 props</span></span><br><span class="line"><span class="keyword">const</span> props = defineProps&lt;&#123; <span class="attr">val</span>: <span class="built_in">string</span>; &#125;&gt;();</span><br><span class="line"></span><br><span class="line"><span class="comment">// 透過 computed 達成快速 emit</span></span><br><span class="line"><span class="keyword">const</span> inputVal = computed(&#123;</span><br><span class="line">  get: <span class="function">() =&gt;</span> props.val,</span><br><span class="line">  set: <span class="function">(<span class="params">val</span>) =&gt;</span> emit(<span class="string">&quot;update:val&quot;</span>, val),</span><br><span class="line">&#125;);</span><br><span class="line">&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+    </div>
+     
+    <div class="post-footer__meta"><p>更新於 2024-02-13</p></div> 
+    <div class="post-entry__tags"><a href="/blog/tags/Vue/" class="post-tags__link button"># Vue</a></div> 
+</article>
+
+
+    <div class="nav">
+        <div class="nav__prev">
+            
+                <a href="/blog/article/SDL/" class="nav__link">
+                    <div>
+                        <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="24" height="24"><path d="M589.088 790.624L310.464 512l278.624-278.624 45.248 45.248L400.96 512l233.376 233.376z" fill="#808080"></path></svg>
+                    </div>
+                    <div>
+                        <div class="nav__label">
+                            上一篇
+                        </div>
+                        <div class="nav__title">
+                            GraphQL 系列文（一）：透過 The Schema Definition Language (SDL) 撰寫 GraphQL Schema
+                        </div>
+                    </div>
+                </a>
+            
+        </div>
+        <div class="nav__next">
+            
+                <a href="/blog/article/Vue-3-1/" class="nav__link">
+                    <div>
+                        <div class="nav__label">
+                            下一篇
+                        </div>
+                        <div class="nav__title">
+                            Vue 3 學習筆記 (一)
+                        </div>
+                    </div>
+                    <div>
+                        <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="24" height="24"><path d="M434.944 790.624l-45.248-45.248L623.04 512l-233.376-233.376 45.248-45.248L713.568 512z" fill="#808080"></path></svg>
+                    </div>
+                </a>
+            
+        </div>
+    </div>
+
+
+
+    <div class="post__comments post__with-toc content-card" id="comment">
+        
+    <h4>評論</h4>
+    
+    <div id="disqus_thread">無法加載 Disqus 評論系統，請確保您的網絡能夠正常訪問。</div>
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
+
+    </div>
+
+
+
+</main>
+
+            <footer class="footer">
+     
+    <a href="#" class="button" id="b2t" aria-label="回到頂部" title="回到頂部">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="32" height="32">
+            <path d="M233.376 722.752L278.624 768 512 534.624 745.376 768l45.248-45.248L512 444.128zM192 352h640V288H192z" fill="currentColor"></path>
+        </svg>
+    </a>
+
+    
+
+
+    
+     
+ 
+
+ 
+    
+        
+        <p class="footer-copyright">
+            Copyright © 2024 <a href="/blog/">Yu&#39;s Blog</a>
+        </p>
+    
+    
+    <p>Powered by <a href="https://hexo.io" target="_blank">Hexo</a> | Theme - <a href="https://github.com/ChrAlpha/hexo-theme-cards" target="_blank">Cards</a></p>
+</footer>
+
+        </div>
+         
+
+ 
+
+ 
+
+ 
+
+ 
+
+
+
+ 
+
+
+
+ 
+
+
+    
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+
+    
+    <script>
+        function loadComment() {
+            window.disqus_config = function () {
+                this.page.url = 'https://yu040419.github.io/blog/article/Vue-3-2/';
+                this.page.identifier = 'article/Vue-3-2/';
+            };
+            (function(){
+                var dsq = document.createElement('script');
+                dsq.type = 'text/javascript';
+                dsq.async = true;
+                dsq.src = '//' + 'yu040419' + '.disqus.com/embed.js';
+                (document.head || document.body).appendChild(dsq);
+            })();
+        }
+    
+        var runningOnBrowser = typeof window !== "undefined";
+        var isBot = runningOnBrowser && !("onscroll" in window) || typeof navigator !== "undefined" && /(gle|ing|ro|msn)bot|crawl|spider|yand|duckgo/i.test(navigator.userAgent);
+        var supportsIntersectionObserver = runningOnBrowser && "IntersectionObserver" in window;
+    
+        setTimeout(function () {
+            if (!isBot && supportsIntersectionObserver) {
+                var comment_observer = new IntersectionObserver(function(entries) {
+                    if (entries[0].isIntersecting) {
+                        loadComment();
+                        comment_observer.disconnect();
+                    }
+                }, { threshold: [0] });
+                comment_observer.observe(document.getElementById('comment'));
+            } else {
+                loadComment();
+            }
+        }, 1);
+    </script>
+
+
+    
+
+    
+    
+
+    
+    
+    
+    
+    
+
+    
+    
+    
+    
+    
+
+    
+    
+    
+
+
+
+    </body>
+</html>

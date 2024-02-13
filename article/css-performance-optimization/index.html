@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="zh-tw">
+    <head>
+    <meta charset="utf-8">
+
+    
+
+    <!-- 渲染优化 -->
+    <meta name="renderer" content="webkit">
+    <meta name="force-rendering" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <meta name="HandheldFriendly" content="True" >
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <!--icon-->
+
+    
+    
+    
+    
+    
+
+
+    <!-- meta -->
+
+
+<title>CSS 效能優化 | Yu&#39;s Blog</title>
+
+
+    <meta name="keywords" content="CSS, gzip, sprites">
+
+
+
+
+    <!-- OpenGraph -->
+ 
+    <meta name="description" content="效能優化一直是個博大精深的主題，這邊簡單討論幾種方式，包含像是資源大小、載入方式及執行方式。 資源大小進行文字資源優化，優化後檔案變小，當然傳輸時間就會縮短。 Minify 最小化在原本的 CSS 檔案當中，為了易讀性時常會有空格跟換行，Minify 就是將原本的檔案當中的空格、換行、註解全部拿掉，這樣檔案大小會縮小，但瀏覽器依然可以成功解析。 透過 Sass 內建的指令就可以達成（壓縮過的副檔名">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CSS 效能優化">
+<meta property="og:url" content="https://yu040419.github.io/blog/article/css-performance-optimization/index.html">
+<meta property="og:site_name" content="Yu&#39;s Blog">
+<meta property="og:description" content="效能優化一直是個博大精深的主題，這邊簡單討論幾種方式，包含像是資源大小、載入方式及執行方式。 資源大小進行文字資源優化，優化後檔案變小，當然傳輸時間就會縮短。 Minify 最小化在原本的 CSS 檔案當中，為了易讀性時常會有空格跟換行，Minify 就是將原本的檔案當中的空格、換行、註解全部拿掉，這樣檔案大小會縮小，但瀏覽器依然可以成功解析。 透過 Sass 內建的指令就可以達成（壓縮過的副檔名">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://i.imgur.com/mTEvooA.png">
+<meta property="og:image" content="https://i.imgur.com/9uK9bBP.png">
+<meta property="og:image" content="https://i.imgur.com/ztDZI83.jpg">
+<meta property="article:published_time" content="2021-03-19T15:04:23.000Z">
+<meta property="article:modified_time" content="2024-02-13T09:52:07.717Z">
+<meta property="article:author" content="Yu">
+<meta property="article:tag" content="CSS">
+<meta property="article:tag" content="gzip">
+<meta property="article:tag" content="sprites">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://i.imgur.com/mTEvooA.png">
+
+
+    
+<link rel="stylesheet" href="/blog/css/style/main.css">
+ 
+
+    
+    
+        <link rel="stylesheet" id="hl-default-theme" href="https://cdn.jsdelivr.net/npm/hexo-theme-cards@1.2/dist/css/highlight/default.min.css" media="none" >
+        
+            <link rel="stylesheet" id="hl-dark-theme" href="https://cdn.jsdelivr.net/npm/hexo-theme-cards@1.2/dist/css/highlight/dark.min.css" media="none">
+        
+    
+
+    
+    
+
+    
+    
+<link rel="stylesheet" href="/blog/css/style/dark.css">
+
+    
+<script src="/blog/js/darkmode.js"></script>
+
+
+
+     
+
+    <!-- custom head -->
+
+<meta name="generator" content="Hexo 5.4.2"></head>
+
+    <body>
+        <div id="app" tabindex="-1">
+            <header class="header">
+    <div class="header__left">
+        <a href="/blog/" class="button">
+            <span class="logo__text">Yu&#39;s Blog</span>
+        </a>
+    </div>
+    <div class="header__right">
+        
+            <div class="navbar__menus">
+                
+                    <a href="/blog/" class="navbar-menu button">首頁</a>
+                
+                    <a href="/blog/archives/" class="navbar-menu button">所有文章</a>
+                
+                    <a href="/blog/tags/" class="navbar-menu button">標籤</a>
+                
+                    <a href="/blog/about/" class="navbar-menu button">關於我</a>
+                
+            </div>
+        
+        
+        
+    <a href="/blog/search/" id="btn-search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="24" height="24" fill="currentColor" stroke="currentColor" stroke-width="32"><path d="M192 448c0-141.152 114.848-256 256-256s256 114.848 256 256-114.848 256-256 256-256-114.848-256-256z m710.624 409.376l-206.88-206.88A318.784 318.784 0 0 0 768 448c0-176.736-143.264-320-320-320S128 271.264 128 448s143.264 320 320 320a318.784 318.784 0 0 0 202.496-72.256l206.88 206.88 45.248-45.248z"></path></svg>
+    </a>
+
+
+        
+        
+    <a href="javaScript:void(0);" id="btn-toggle-dark">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+    </a>
+
+
+        
+            <a class="dropdown-icon button" id="btn-dropdown" tabindex="0"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width='24' height='24' fill="none" stroke="currentColor" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round"><path fill="currentColor" d="M3.314,4.8h13.372c0.41,0,0.743-0.333,0.743-0.743c0-0.41-0.333-0.743-0.743-0.743H3.314c-0.41,0-0.743,0.333-0.743,0.743C2.571,4.467,2.904,4.8,3.314,4.8z M16.686,15.2H3.314c-0.41,0-0.743,0.333-0.743,0.743s0.333,0.743,0.743,0.743h13.372c0.41,0,0.743-0.333,0.743-0.743S17.096,15.2,16.686,15.2z M16.686,9.257H3.314c-0.41,0-0.743,0.333-0.743,0.743s0.333,0.743,0.743,0.743h13.372c0.41,0,0.743-0.333,0.743-0.743S17.096,9.257,16.686,9.257z"></path></svg></a>
+            <div class="dropdown-menus" id="dropdown-menus">
+                
+                    <a href="/blog/" class="dropdown-menu button">首頁</a>
+                
+                    <a href="/blog/archives/" class="dropdown-menu button">所有文章</a>
+                
+                    <a href="/blog/tags/" class="dropdown-menu button">標籤</a>
+                
+                    <a href="/blog/about/" class="dropdown-menu button">關於我</a>
+                
+            </div>
+        
+    </div>
+</header>
+
+
+            <main class="main">
+    
+
+<div class="post-title">
+    <h1 class="post-title__text">
+        CSS 效能優化
+    </h1>
+    <div class="post-title__meta">
+        <a href="/blog/archives/2021/03/" class="post-meta__date button">2021-03-19</a>
+        
+ 
+        
+    
+    
+
+
+ 
+
+ 
+    </div>
+</div>
+
+
+    <aside class="post-side">
+        <div class="post-side__toc">
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B3%87%E6%BA%90%E5%A4%A7%E5%B0%8F"><span class="toc-text">資源大小</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Minify-%E6%9C%80%E5%B0%8F%E5%8C%96"><span class="toc-text">Minify 最小化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Gzip"><span class="toc-text">Gzip</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BC%89%E5%85%A5%E6%96%B9%E5%BC%8F"><span class="toc-text">載入方式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Critical-Css"><span class="toc-text">Critical Css</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Css-Sprites"><span class="toc-text">Css Sprites</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Cache"><span class="toc-text">Cache</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%B7%E8%A1%8C%E6%96%B9%E5%BC%8F"><span class="toc-text">執行方式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%80%8F%E8%A6%BD%E5%99%A8%E5%A6%82%E4%BD%95%E6%B8%B2%E6%9F%93%E6%AA%94%E6%A1%88"><span class="toc-text">瀏覽器如何渲染檔案</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%81%B8%E6%93%87%E5%99%A8"><span class="toc-text">選擇器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B1%AC%E6%80%A7%E6%B8%B2%E6%9F%93"><span class="toc-text">屬性渲染</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B3%87%E6%96%99%E4%BE%86%E6%BA%90%EF%BC%9A"><span class="toc-text">資料來源：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8E%A8%E8%96%A6%E9%96%B1%E8%AE%80"><span class="toc-text">推薦閱讀</span></a></li></ol>
+        </div>
+    </aside>
+    <a class="btn-toc button" id="btn-toc" tabindex="0">
+        <svg viewBox="0 0 1024 1024" width="32" height="32" xmlns="http://www.w3.org/2000/svg">
+            <path d="M128 256h64V192H128zM320 256h576V192H320zM128 544h64v-64H128zM320 544h576v-64H320zM128 832h64v-64H128zM320 832h576v-64H320z" fill="currentColor"></path>
+        </svg>
+    </a>
+    <div class="toc-menus" id="toc-menus">
+        <div class="toc-title">文章目錄</div>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B3%87%E6%BA%90%E5%A4%A7%E5%B0%8F"><span class="toc-text">資源大小</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Minify-%E6%9C%80%E5%B0%8F%E5%8C%96"><span class="toc-text">Minify 最小化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Gzip"><span class="toc-text">Gzip</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BC%89%E5%85%A5%E6%96%B9%E5%BC%8F"><span class="toc-text">載入方式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Critical-Css"><span class="toc-text">Critical Css</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Css-Sprites"><span class="toc-text">Css Sprites</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Cache"><span class="toc-text">Cache</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%B7%E8%A1%8C%E6%96%B9%E5%BC%8F"><span class="toc-text">執行方式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%80%8F%E8%A6%BD%E5%99%A8%E5%A6%82%E4%BD%95%E6%B8%B2%E6%9F%93%E6%AA%94%E6%A1%88"><span class="toc-text">瀏覽器如何渲染檔案</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%81%B8%E6%93%87%E5%99%A8"><span class="toc-text">選擇器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B1%AC%E6%80%A7%E6%B8%B2%E6%9F%93"><span class="toc-text">屬性渲染</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B3%87%E6%96%99%E4%BE%86%E6%BA%90%EF%BC%9A"><span class="toc-text">資料來源：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8E%A8%E8%96%A6%E9%96%B1%E8%AE%80"><span class="toc-text">推薦閱讀</span></a></li></ol>
+    </div>
+
+
+<article class="post post__with-toc content-card">
+    <div class="post__header"></div>
+    <div class="post__content">
+        <p>效能優化一直是個博大精深的主題，這邊簡單討論幾種方式，包含像是資源大小、載入方式及執行方式。</p>
+<h2 id="資源大小"><a href="#資源大小" class="headerlink" title="資源大小"></a>資源大小</h2><p>進行文字資源優化，優化後檔案變小，當然傳輸時間就會縮短。</p>
+<h3 id="Minify-最小化"><a href="#Minify-最小化" class="headerlink" title="Minify 最小化"></a>Minify 最小化</h3><p>在原本的 CSS 檔案當中，為了易讀性時常會有空格跟換行，Minify 就是將原本的檔案當中的空格、換行、註解全部拿掉，這樣檔案大小會縮小，但瀏覽器依然可以成功解析。</p>
+<p>透過 Sass 內建的指令就可以達成（壓縮過的副檔名通常都是 min.css）：</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sass style=compressed <span class="selector-tag">main</span><span class="selector-class">.scss</span> <span class="selector-tag">main</span><span class="selector-class">.min</span>.css</span><br><span class="line">sass + 設定 style 是壓縮檔 + 原本的 scss 檔案名稱 + 壓縮過的 min<span class="selector-class">.css</span> 檔案名稱</span><br></pre></td></tr></table></figure>
+
+<p>或是透過 VS code 的 Live Sass Compile 也可以達成。</p>
+<h3 id="Gzip"><a href="#Gzip" class="headerlink" title="Gzip"></a>Gzip</h3><p>Gzip 就是壓縮，可以想像成一般我們常見的 zip 或是 rar 壓縮檔。在 Modern Web 現代化網頁開發設計中，大多瀏覽器都已經可以自動要求壓縮檔，並在渲染時自動進行解壓縮。若要求不到壓縮檔時才會存取原始檔案。</p>
+<p>因此 Server 有沒有設定啟用讓 Gzip 壓縮檔案就很關鍵，像部署的 AWS EC2，預設模式就是會透過 Gzip 壓縮檔案。透過 Gzip 壓縮是最簡單且效率最高的優化方式。</p>
+<p>更多文字資源優化可參考 <a target="_blank" rel="noopener" href="https://developers.google.com/web/fundamentals/performance/optimizing-content-efficiency/optimize-encoding-and-transfer">最佳化文字資產的編碼和傳輸大小 - Google</a>。</p>
+<h2 id="載入方式"><a href="#載入方式" class="headerlink" title="載入方式"></a>載入方式</h2><h3 id="Critical-Css"><a href="#Critical-Css" class="headerlink" title="Critical Css"></a>Critical Css</h3><p>把重要的資訊先渲染出來，讓使用者可以先收到一些資訊，其餘的再依序載入。</p>
+<p>做法就是直接在 HTML <code>&lt;head&gt;</code> 中，直接把重要的 CSS 寫入<code>&lt;style&gt;</code>，其餘的再打包成一個檔案引入。這樣當瀏覽器在渲染出 HTML 檔案時，直接套用 CSS 樣式，不需要再發一個 request 到 CSS 檔案。</p>
+<p>透過 Critical Css 優化效能最被人詬病的一點，就是不好維護，因為資料散落在不同地方。這時候可以參考 <a target="_blank" rel="noopener" href="https://www.w3cplus.com/css/understanding-critical-css.html">這篇文章</a>，裏頭討論如何透過基於 Node.js 的第三方套件 Grunt 來達成自動化 Critical Css。</p>
+<h3 id="Css-Sprites"><a href="#Css-Sprites" class="headerlink" title="Css Sprites"></a>Css Sprites</h3><p>是圖片最佳化的一種方式，大多運用在 icon 上。因為每個 icon 都是一個圖片檔，當今天一個網站可能有數十個甚至數百個 icon 時，就會有多少個 request，非常耗效能。</p>
+<p>不如將圖片全部組合成一張圖片，瀏覽器只要載入一張大圖，再透過 CSS 的 <code>background-position</code> 屬性去做切割，只取需要的部分，就可以達成跟原先一樣的效果。</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">height</span>: icon 高;</span><br><span class="line"><span class="attribute">width</span>: icon 寬;</span><br><span class="line"><span class="attribute">background-repeat</span>: no-repeat;</span><br><span class="line"><span class="attribute">background-position</span>: x 軸, y 軸;</span><br></pre></td></tr></table></figure>
+
+<p>gulp 跟 webpack 都有提供將圖片合在一起，變成一張 Sprite 圖的服務。關於 Sprites Css 詳細可參考 <a target="_blank" rel="noopener" href="https://www.cnblogs.com/Ry-yuan/p/7392492.html">這篇</a>，裡面也有討論另一種圖片最佳化 ─ base64。</p>
+<h3 id="Cache"><a href="#Cache" class="headerlink" title="Cache"></a>Cache</h3><p>可參考之前寫的 <a href="https://yu040419.github.io/blog/article/cache-1/">快取 Cache 是什麼？那些網頁前端的快取（上）</a>，以及 <a href="https://yu040419.github.io/blog/article/cache-2/">快取 Cache 是什麼？那些網頁後端的快取（下）</a>。</p>
+<h2 id="執行方式"><a href="#執行方式" class="headerlink" title="執行方式"></a>執行方式</h2><p>在了解如何從 CSS 的選擇器及屬性渲染進行優化前，先來看 CSS 渲染方式，以及 HTML 是怎麼被渲染的。</p>
+<h3 id="瀏覽器如何渲染檔案"><a href="#瀏覽器如何渲染檔案" class="headerlink" title="瀏覽器如何渲染檔案"></a>瀏覽器如何渲染檔案</h3><p>今天瀏覽器載入 HTML 的時候，會依照 HTML 的標籤元素依序製造出 DOM ( Document Object Model )。</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE <span class="meta-keyword">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">&quot;viewport&quot;</span> <span class="attr">content</span>=<span class="string">&quot;width=device-width,initial-scale=1&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">link</span> <span class="attr">href</span>=<span class="string">&quot;style.css&quot;</span> <span class="attr">rel</span>=<span class="string">&quot;stylesheet&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">title</span>&gt;</span>Critical Path<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">p</span>&gt;</span>Hello <span class="tag">&lt;<span class="name">span</span>&gt;</span>web performance<span class="tag">&lt;/<span class="name">span</span>&gt;</span> students!<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span>&gt;</span><span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">&quot;awesome-photo.jpg&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>假設是上方範例的文件，會是這樣的依序建立：</p>
+<p><img src="https://i.imgur.com/mTEvooA.png"></p>
+<p>而當瀏覽器解析到 <code>&lt;head&gt;</code> 裡的 <code>&lt;link&gt;</code> 時，就會發 request 給該檔案，瀏覽器收到 response 後，也會開始製作 CSSOM ( CSS Objext Model )。</p>
+<blockquote>
+<p>當瀏覽器在製作 CSSOM，別忘了它也同時在渲染 DOM，兩者是並行執行的。</p>
+</blockquote>
+<p>當 DOM 跟 CSSOM 都渲染完後，瀏覽器就會將兩個合併，變成「轉譯樹狀結構（Render tree）」：</p>
+<p><img src="https://i.imgur.com/9uK9bBP.png"><br>若今天在某個 div 的 css 上加上 <code>display: none</code>，那這個 div 就不會在 Render tree 上呈現。</p>
+<p>有了 Render Tree 後就可以開始進行版面計算及配置，並開始繪製網頁跟渲染。步驟如下：</p>
+<ol>
+<li>處理 HTML 標記，產生 DOM 樹狀結構。</li>
+<li>處理 CSS 標記，產生 CSSOM 樹狀結構。</li>
+<li>將 DOM 樹狀結構和 CSSOM 樹狀結構合併為 Render tree。</li>
+<li>對 Render tree 進行版面配置，計算每個節點的幾何形狀。</li>
+<li>在螢幕上繪製各個節點。</li>
+</ol>
+<p>以上圖片及部分文字均源自 <a target="_blank" rel="noopener" href="https://developers.google.com/web/fundamentals/performance/critical-rendering-path/constructing-the-object-model?hl=zh-tw">Google</a>。</p>
+<h3 id="選擇器"><a href="#選擇器" class="headerlink" title="選擇器"></a>選擇器</h3><p>簡單來說就是將低選擇器的複雜度。舉例來說：</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* 瀏覽器可以快速了解是哪個元素 */</span></span><br><span class="line"><span class="selector-class">.title</span> &#123;</span><br><span class="line">  ...</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/* 瀏覽器需要先了解整個 dom 結構後並計算，然後再找底下的 .title */</span></span><br><span class="line"><span class="selector-class">.box</span><span class="selector-pseudo">:nth-last-child</span>(-n+<span class="number">1</span>) <span class="selector-class">.title</span> &#123;</span><br><span class="line">  ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>因此 CSS Class 建議以 BEM 的命名方式，這樣可以直接下 <code>.list__list-item &#123; &#125;</code> 直接選到該元素。更多可參考 <a target="_blank" rel="noopener" href="https://developers.google.com/web/fundamentals/performance/rendering/reduce-the-scope-and-complexity-of-style-calculations?hl=zh-tw">Google 文章</a>。</p>
+<h3 id="屬性渲染"><a href="#屬性渲染" class="headerlink" title="屬性渲染"></a>屬性渲染</h3><p>其實在前面討論瀏覽器如何渲染頁面時，第四及第五點：</p>
+<blockquote>
+<ol start="4">
+<li>對 Render tree 進行版面配置，計算每個節點的幾何形狀。</li>
+<li>在螢幕上繪製各個節點。</li>
+</ol>
+</blockquote>
+<p>其實還可以更仔細的去區分成五個步驟，這樣的流程被稱為 Brower Rendering Pipeline。步驟分別是：<br><img src="https://i.imgur.com/ztDZI83.jpg"></p>
+<ol>
+<li><strong>JavaScript</strong>：利用 JS 來處理視覺變更相關的工作，像是一些動畫、新增 DOM 元素、轉換等。CSS 動畫、轉換和網頁動畫 API 也是從這個階段開始。</li>
+<li><strong>Style 樣式計算</strong>：根據符合的選取器，弄清楚 CSS 規則適用於哪些元素。</li>
+<li><strong>Layout 版面配置</strong>：排版。計算元素要佔用的空間及在螢幕上的位置。如：width、height、position、margin、padding。</li>
+<li><strong>Paint 繪製</strong>：描繪文字、顏色、影像、邊框和陰影，如：box-shadow、border-radius、color、background-color、text-shadow。這階段耗時最長，應儘量避免。</li>
+<li><strong>Composite 合成</strong>：合成所有元素及圖層。如：transform、opacity。</li>
+</ol>
+<p>當然瀏覽器在第一次載入渲染網頁時，每個步驟都需要跑過，不過後來的像是切換顏色、背景、邊框等不影響版面配置的動作，瀏覽器會跳過前面幾個步驟，直接進行 Paint；切換 transform 或是 opacity 時，也是直接進行 Composite。</p>
+<p>因此這就是可以做效能優化的地方了，&#x3D;&#x3D;當我們可以從第四、第五步驟開始做的時候，就不需要讓瀏覽器從第三步驟開始執行&#x3D;&#x3D;。</p>
+<p>最常見的例子就是當我們希望某個元素可以改變位置時，不要使用 position，因為 position 會影響版面位置，讓瀏覽器必須從第三步開始做起，而是改用 <code>transform: translate();</code>，直接做第五步。</p>
+<h2 id="資料來源："><a href="#資料來源：" class="headerlink" title="資料來源："></a>資料來源：</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://cythilya.github.io/2018/07/13/critical-rendering-path/#browser-rendering-pipeline">關鍵轉譯路徑 Critical Rendering Path ─ Summer 桑莫</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.techbridge.cc/2016/04/02/Browser-Rendering-Optimization/">Browser Rendering Optimization ─ TechBridge</a></li>
+<li><a target="_blank" rel="noopener" href="https://developers.google.com/web/fundamentals/performance/rendering/">Rendering Performance Overview ─ Google</a></li>
+</ul>
+<h2 id="推薦閱讀"><a href="#推薦閱讀" class="headerlink" title="推薦閱讀"></a>推薦閱讀</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://cythilya.github.io/2018/07/30/image-optimization/">圖片最佳化（Image Optimization） ─ Summer 桑莫</a></li>
+<li><a target="_blank" rel="noopener" href="https://cythilya.github.io/2018/08/22/image-compression/">如何做圖片壓縮？ ─ Summer 桑莫</a></li>
+<li><a target="_blank" rel="noopener" href="https://cythilya.github.io/2018/09/05/text-content/">文字資源優化 ─ Summer 桑莫</a></li>
+<li><a target="_blank" rel="noopener" href="https://muki.tw/tech/css-to-svg-sprite/">從 CSS sprite 進化到 SVG sprite</a></li>
+</ul>
+
+    </div>
+     
+    <div class="post-footer__meta"><p>更新於 2024-02-13</p></div> 
+    <div class="post-entry__tags"><a href="/blog/tags/CSS/" class="post-tags__link button"># CSS</a><a href="/blog/tags/gzip/" class="post-tags__link button"># gzip</a><a href="/blog/tags/sprites/" class="post-tags__link button"># sprites</a></div> 
+</article>
+
+
+    <div class="nav">
+        <div class="nav__prev">
+            
+                <a href="/blog/article/hoisting/" class="nav__link">
+                    <div>
+                        <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="24" height="24"><path d="M589.088 790.624L310.464 512l278.624-278.624 45.248 45.248L400.96 512l233.376 233.376z" fill="#808080"></path></svg>
+                    </div>
+                    <div>
+                        <div class="nav__label">
+                            上一篇
+                        </div>
+                        <div class="nav__title">
+                            透過範例理解 Hoisting 提升
+                        </div>
+                    </div>
+                </a>
+            
+        </div>
+        <div class="nav__next">
+            
+                <a href="/blog/article/cache-2/" class="nav__link">
+                    <div>
+                        <div class="nav__label">
+                            下一篇
+                        </div>
+                        <div class="nav__title">
+                            快取 Cache 是什麼？那些網頁後端的快取（下）
+                        </div>
+                    </div>
+                    <div>
+                        <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="24" height="24"><path d="M434.944 790.624l-45.248-45.248L623.04 512l-233.376-233.376 45.248-45.248L713.568 512z" fill="#808080"></path></svg>
+                    </div>
+                </a>
+            
+        </div>
+    </div>
+
+
+
+    <div class="post__comments post__with-toc content-card" id="comment">
+        
+    <h4>評論</h4>
+    
+    <div id="disqus_thread">無法加載 Disqus 評論系統，請確保您的網絡能夠正常訪問。</div>
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
+
+    </div>
+
+
+
+</main>
+
+            <footer class="footer">
+     
+    <a href="#" class="button" id="b2t" aria-label="回到頂部" title="回到頂部">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="32" height="32">
+            <path d="M233.376 722.752L278.624 768 512 534.624 745.376 768l45.248-45.248L512 444.128zM192 352h640V288H192z" fill="currentColor"></path>
+        </svg>
+    </a>
+
+    
+
+
+    
+     
+ 
+
+ 
+    
+        
+        <p class="footer-copyright">
+            Copyright © 2024 <a href="/blog/">Yu&#39;s Blog</a>
+        </p>
+    
+    
+    <p>Powered by <a href="https://hexo.io" target="_blank">Hexo</a> | Theme - <a href="https://github.com/ChrAlpha/hexo-theme-cards" target="_blank">Cards</a></p>
+</footer>
+
+        </div>
+         
+
+ 
+
+ 
+
+ 
+
+ 
+
+
+
+ 
+
+
+
+ 
+
+
+    
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+
+    
+    <script>
+        function loadComment() {
+            window.disqus_config = function () {
+                this.page.url = 'https://yu040419.github.io/blog/article/css-performance-optimization/';
+                this.page.identifier = 'article/css-performance-optimization/';
+            };
+            (function(){
+                var dsq = document.createElement('script');
+                dsq.type = 'text/javascript';
+                dsq.async = true;
+                dsq.src = '//' + 'yu040419' + '.disqus.com/embed.js';
+                (document.head || document.body).appendChild(dsq);
+            })();
+        }
+    
+        var runningOnBrowser = typeof window !== "undefined";
+        var isBot = runningOnBrowser && !("onscroll" in window) || typeof navigator !== "undefined" && /(gle|ing|ro|msn)bot|crawl|spider|yand|duckgo/i.test(navigator.userAgent);
+        var supportsIntersectionObserver = runningOnBrowser && "IntersectionObserver" in window;
+    
+        setTimeout(function () {
+            if (!isBot && supportsIntersectionObserver) {
+                var comment_observer = new IntersectionObserver(function(entries) {
+                    if (entries[0].isIntersecting) {
+                        loadComment();
+                        comment_observer.disconnect();
+                    }
+                }, { threshold: [0] });
+                comment_observer.observe(document.getElementById('comment'));
+            } else {
+                loadComment();
+            }
+        }, 1);
+    </script>
+
+
+    
+
+    
+    
+
+    
+    
+    
+    
+    
+
+    
+    
+    
+    
+    
+
+    
+    
+    
+
+
+
+    </body>
+</html>

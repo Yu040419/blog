@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="zh-tw">
+    <head>
+    <meta charset="utf-8">
+
+    
+
+    <!-- 渲染优化 -->
+    <meta name="renderer" content="webkit">
+    <meta name="force-rendering" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <meta name="HandheldFriendly" content="True" >
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <!--icon-->
+
+    
+    
+    
+    
+    
+
+
+    <!-- meta -->
+
+
+<title>什麼是 prototype ? | Yu&#39;s Blog</title>
+
+
+    <meta name="keywords" content="JavaScript">
+
+
+
+
+    <!-- OpenGraph -->
+ 
+    <meta name="description" content="前言在 ES5 的 JS 物件導向中，function 被當成建構子以及 class 用，因此被稱為構造函數。構造函數可透過語法 new 建造一個 instance 實體，也可以透過 prototype 做出共用的 method 方法： 123456789101112131415161718&#x2F;&#x2F; ES5function Calculator(name) &amp;#123;  &#x2F;&#x2F; 用 function">
+<meta property="og:type" content="article">
+<meta property="og:title" content="什麼是 prototype ?">
+<meta property="og:url" content="https://yu040419.github.io/blog/article/prototype/index.html">
+<meta property="og:site_name" content="Yu&#39;s Blog">
+<meta property="og:description" content="前言在 ES5 的 JS 物件導向中，function 被當成建構子以及 class 用，因此被稱為構造函數。構造函數可透過語法 new 建造一個 instance 實體，也可以透過 prototype 做出共用的 method 方法： 123456789101112131415161718&#x2F;&#x2F; ES5function Calculator(name) &amp;#123;  &#x2F;&#x2F; 用 function">
+<meta property="og:locale" content="zh_TW">
+<meta property="article:published_time" content="2021-03-09T12:52:49.000Z">
+<meta property="article:modified_time" content="2024-02-13T09:52:07.718Z">
+<meta property="article:author" content="Yu">
+<meta property="article:tag" content="JavaScript">
+<meta name="twitter:card" content="summary_large_image">
+
+
+    
+<link rel="stylesheet" href="/blog/css/style/main.css">
+ 
+
+    
+    
+        <link rel="stylesheet" id="hl-default-theme" href="https://cdn.jsdelivr.net/npm/hexo-theme-cards@1.2/dist/css/highlight/default.min.css" media="none" >
+        
+            <link rel="stylesheet" id="hl-dark-theme" href="https://cdn.jsdelivr.net/npm/hexo-theme-cards@1.2/dist/css/highlight/dark.min.css" media="none">
+        
+    
+
+    
+    
+
+    
+    
+<link rel="stylesheet" href="/blog/css/style/dark.css">
+
+    
+<script src="/blog/js/darkmode.js"></script>
+
+
+
+     
+
+    <!-- custom head -->
+
+<meta name="generator" content="Hexo 5.4.2"></head>
+
+    <body>
+        <div id="app" tabindex="-1">
+            <header class="header">
+    <div class="header__left">
+        <a href="/blog/" class="button">
+            <span class="logo__text">Yu&#39;s Blog</span>
+        </a>
+    </div>
+    <div class="header__right">
+        
+            <div class="navbar__menus">
+                
+                    <a href="/blog/" class="navbar-menu button">首頁</a>
+                
+                    <a href="/blog/archives/" class="navbar-menu button">所有文章</a>
+                
+                    <a href="/blog/tags/" class="navbar-menu button">標籤</a>
+                
+                    <a href="/blog/about/" class="navbar-menu button">關於我</a>
+                
+            </div>
+        
+        
+        
+    <a href="/blog/search/" id="btn-search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="24" height="24" fill="currentColor" stroke="currentColor" stroke-width="32"><path d="M192 448c0-141.152 114.848-256 256-256s256 114.848 256 256-114.848 256-256 256-256-114.848-256-256z m710.624 409.376l-206.88-206.88A318.784 318.784 0 0 0 768 448c0-176.736-143.264-320-320-320S128 271.264 128 448s143.264 320 320 320a318.784 318.784 0 0 0 202.496-72.256l206.88 206.88 45.248-45.248z"></path></svg>
+    </a>
+
+
+        
+        
+    <a href="javaScript:void(0);" id="btn-toggle-dark">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+    </a>
+
+
+        
+            <a class="dropdown-icon button" id="btn-dropdown" tabindex="0"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width='24' height='24' fill="none" stroke="currentColor" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round"><path fill="currentColor" d="M3.314,4.8h13.372c0.41,0,0.743-0.333,0.743-0.743c0-0.41-0.333-0.743-0.743-0.743H3.314c-0.41,0-0.743,0.333-0.743,0.743C2.571,4.467,2.904,4.8,3.314,4.8z M16.686,15.2H3.314c-0.41,0-0.743,0.333-0.743,0.743s0.333,0.743,0.743,0.743h13.372c0.41,0,0.743-0.333,0.743-0.743S17.096,15.2,16.686,15.2z M16.686,9.257H3.314c-0.41,0-0.743,0.333-0.743,0.743s0.333,0.743,0.743,0.743h13.372c0.41,0,0.743-0.333,0.743-0.743S17.096,9.257,16.686,9.257z"></path></svg></a>
+            <div class="dropdown-menus" id="dropdown-menus">
+                
+                    <a href="/blog/" class="dropdown-menu button">首頁</a>
+                
+                    <a href="/blog/archives/" class="dropdown-menu button">所有文章</a>
+                
+                    <a href="/blog/tags/" class="dropdown-menu button">標籤</a>
+                
+                    <a href="/blog/about/" class="dropdown-menu button">關於我</a>
+                
+            </div>
+        
+    </div>
+</header>
+
+
+            <main class="main">
+    
+
+<div class="post-title">
+    <h1 class="post-title__text">
+        什麼是 prototype ?
+    </h1>
+    <div class="post-title__meta">
+        <a href="/blog/archives/2021/03/" class="post-meta__date button">2021-03-09</a>
+        
+ 
+        
+    
+    
+
+
+ 
+
+ 
+    </div>
+</div>
+
+
+    <aside class="post-side">
+        <div class="post-side__toc">
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#proto"><span class="toc-text">__proto__</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A9%97%E8%AD%89"><span class="toc-text">驗證</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">&#x3D;&#x3D;&#x3D;</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#hasOwnProperty-NaN"><span class="toc-text">hasOwnProperty</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#instanceOf"><span class="toc-text">instanceOf</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#constructor-NaN"><span class="toc-text">constructor</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#new"><span class="toc-text">new</span></a></li></ol>
+        </div>
+    </aside>
+    <a class="btn-toc button" id="btn-toc" tabindex="0">
+        <svg viewBox="0 0 1024 1024" width="32" height="32" xmlns="http://www.w3.org/2000/svg">
+            <path d="M128 256h64V192H128zM320 256h576V192H320zM128 544h64v-64H128zM320 544h576v-64H320zM128 832h64v-64H128zM320 832h576v-64H320z" fill="currentColor"></path>
+        </svg>
+    </a>
+    <div class="toc-menus" id="toc-menus">
+        <div class="toc-title">文章目錄</div>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#proto"><span class="toc-text">__proto__</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A9%97%E8%AD%89"><span class="toc-text">驗證</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">&#x3D;&#x3D;&#x3D;</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#hasOwnProperty-NaN"><span class="toc-text">hasOwnProperty</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#instanceOf"><span class="toc-text">instanceOf</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#constructor-NaN"><span class="toc-text">constructor</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#new"><span class="toc-text">new</span></a></li></ol>
+    </div>
+
+
+<article class="post post__with-toc content-card">
+    <div class="post__header"></div>
+    <div class="post__content">
+        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>在 ES5 的 JS 物件導向中，function 被當成建構子以及 class 用，因此被稱為構造函數。構造函數可透過語法 <code>new</code> 建造一個 instance 實體，也可以透過 <code>prototype</code> 做出共用的 method 方法：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ES5</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Calculator</span>(<span class="params">name</span>) </span>&#123;</span><br><span class="line">  <span class="comment">// 用 function 來取代 class 名稱跟建構子</span></span><br><span class="line">  <span class="built_in">this</span>.name = name;</span><br><span class="line">  <span class="built_in">this</span>.text = <span class="string">&quot;&quot;</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 透過在剛的 Calculator function 名稱後加上 .prototype 加上.function 名稱</span></span><br><span class="line">Calculator.prototype.input = <span class="function"><span class="keyword">function</span> (<span class="params">str</span>) </span>&#123;</span><br><span class="line">  <span class="built_in">this</span>.text += str;</span><br><span class="line">&#125;;</span><br><span class="line">Calculator.prototype.getResult = <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="built_in">eval</span>(<span class="built_in">this</span>.text);</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> calculateA = <span class="keyword">new</span> Calculator(<span class="string">&quot;A&quot;</span>);</span><br><span class="line"><span class="keyword">let</span> calculateB = <span class="keyword">new</span> Calculator(<span class="string">&quot;B&quot;</span>);</span><br><span class="line"><span class="comment">// 底下是重點</span></span><br><span class="line"><span class="built_in">console</span>.log(calculateA.input === calculateB.input); <span class="comment">// true</span></span><br></pre></td></tr></table></figure>
+
+<p>不過 JS 是如何知道 <code>calculateA.input</code> 等同於 <code>calculateB.input</code> 的呢？或者可以換個問題，JS 是如何繼承 method 跟 property 的呢？</p>
+<blockquote>
+<p>透過 <code>__proto__</code></p>
+</blockquote>
+<h2 id="proto"><a href="#proto" class="headerlink" title="__proto__"></a><code>__proto__</code></h2><p>當我們建造 instance 時，JS 會自動幫我們在 instance 加上 <code>__proto__</code> 這個屬性，讓 instance 要使用該 method 找不到時，可以循著 <code>__proto__</code> 連結，往上找到有這個 method 的 <code>prototype</code>，以上面的例子來說，有點類似這個概念：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 實體 A</span></span><br><span class="line">calculateA &#123;</span><br><span class="line">  name: A,</span><br><span class="line">  text: <span class="string">&#x27;&#x27;</span>,</span><br><span class="line">  __proto__: Calculator.prototype</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 實體 B</span></span><br><span class="line">calculateB &#123;</span><br><span class="line">  name: B,</span><br><span class="line">  text: <span class="string">&#x27;&#x27;</span>,</span><br><span class="line">  __proto__: Calculator.prototype</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 構造函式的 prototype （放共用的 method &amp; property）</span></span><br><span class="line">Calculator.prototype &#123;</span><br><span class="line">  input: <span class="function"><span class="keyword">function</span>(<span class="params">str</span>) </span>&#123;</span><br><span class="line">    <span class="built_in">this</span>.text += str;</span><br><span class="line">  &#125;,</span><br><span class="line">  getResult: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">eval</span>(<span class="built_in">this</span>.text);</span><br><span class="line">  &#125;,</span><br><span class="line">  __proto__: <span class="built_in">Object</span>.prototype <span class="comment">// 構造函式的 prototype 也有 __proto__ 連結到 Object.prototype</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 最頂層是物件的 prototype</span></span><br><span class="line"><span class="built_in">Object</span>.prototype &#123;</span><br><span class="line">  __proto__: <span class="literal">null</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>像這樣不停往上找，從</p>
+<figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">            透過 calculateA.__proto__ 找到</span><br><span class="line">calculateA --------------------------------&gt; <span class="module-access"><span class="module"><span class="identifier">Calculator</span>.</span></span>prototype</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">                      透過 <span class="module-access"><span class="module"><span class="identifier">Calculator</span>.</span></span>prototype.__proto__ 找到</span><br><span class="line"><span class="module-access"><span class="module"><span class="identifier">Calculator</span>.</span></span>prototype ------------------------------------------&gt; <span class="module-access"><span class="module"><span class="identifier">Object</span>.</span></span>prototype</span><br></pre></td></tr></table></figure>
+
+
+
+<blockquote>
+<p>這個透過 <code>__proto__</code> 尋找的過程，被稱為 <strong>prototype chain 原型鍊</strong> 。</p>
+</blockquote>
+<h2 id="驗證"><a href="#驗證" class="headerlink" title="驗證"></a>驗證</h2><p>以下介紹三種方式驗證原型鍊：</p>
+<h3 id=""><a href="#" class="headerlink" title="&#x3D;&#x3D;&#x3D;"></a>&#x3D;&#x3D;&#x3D;</h3><p><strong>一、透過 <code>===</code></strong></p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">console</span>.log(calculateA.__proto__ === Calculator.prototype); <span class="comment">// true</span></span><br><span class="line"><span class="built_in">console</span>.log(calculateA.__proto__.input === Calculator.prototype.input); <span class="comment">// true</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 連接的 __proto__ 可以被省略</span></span><br><span class="line"><span class="built_in">console</span>.log(calculateA.input === Calculator.prototype.input); <span class="comment">// true</span></span><br></pre></td></tr></table></figure>
+
+<p>值得注意的是，不只有建構式的 prototype 才有 <code>__proto__</code>，建構式本身也有 <code>__proto__</code>。</p>
+<p>以上面的例子來說，Calculator 這個建構式的 <code>__proto__</code>會連接到 Function.prototype。 Function.prototype 的 <code>__proto__</code> 則連接到頂層的 Object.prototype。</p>
+<p>仔細想想其實一切都很合理，Calculator 本來就是 Function，連接到 Function 很正常；而 Function 本來就是 Object，連接到 Object 也很正常。可以想像成以下這樣</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">Calculator &#123;</span><br><span class="line">  __proto__ : <span class="built_in">Function</span>.prototype</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">Function</span>.prototype &#123;</span><br><span class="line">  __proto__: <span class="built_in">Object</span>.prototype</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 一樣都連到頂層的 Object.prototype</span></span><br><span class="line"><span class="built_in">Object</span>.prototype &#123;</span><br><span class="line">  __proto__: <span class="literal">null</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">console</span>.log(Calculator.__proto__ === <span class="built_in">Function</span>.prototype) <span class="comment">// true (1)</span></span><br><span class="line"><span class="built_in">console</span>.log(<span class="built_in">Function</span>.prototype.__proto__ === <span class="built_in">Object</span>.prototype) <span class="comment">// true (2)</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 因為 (1) 是 true 所以可以把 (2) 改寫成以下</span></span><br><span class="line"><span class="built_in">console</span>.log(Calculator.__proto__.__proto__ === <span class="built_in">Object</span>.prototype)</span><br></pre></td></tr></table></figure>
+
+<h3 id="hasOwnProperty-NaN"><a href="#hasOwnProperty-NaN" class="headerlink" title="hasOwnProperty"></a>hasOwnProperty</h3><p><strong>二、 透過 <code>hasOwnProperty</code></strong></p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">console</span>.log(calculateA.hasOwnProperty(<span class="string">&quot;input&quot;</span>)); <span class="comment">// false</span></span><br><span class="line"><span class="built_in">console</span>.log(calculateA.__proto__.hasOwnProperty(<span class="string">&quot;input&quot;</span>)); <span class="comment">// true</span></span><br><span class="line"><span class="built_in">console</span>.log(Calculator.prototype.hasOwnProperty(<span class="string">&quot;input&quot;</span>)); <span class="comment">// true</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="instanceOf"><a href="#instanceOf" class="headerlink" title="instanceOf"></a>instanceOf</h3><p><strong>三、 透過 <code>instanceOf</code></strong><br>如果 <code>A instanceOf B</code> A 是 B 的實體的話，會回傳 <code>true</code>。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">console</span>.log(calculateA <span class="keyword">instanceof</span> Calculator); <span class="comment">// true</span></span><br><span class="line"><span class="built_in">console</span>.log(calculateA <span class="keyword">instanceof</span> <span class="built_in">Object</span>); <span class="comment">// true</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 注意下面</span></span><br><span class="line"><span class="comment">// constructor 是 Function 的實體</span></span><br><span class="line"><span class="built_in">console</span>.log(Calculator <span class="keyword">instanceof</span> <span class="built_in">Function</span>); <span class="comment">// true</span></span><br><span class="line"><span class="comment">// constructor 也是是 Object 的實體</span></span><br><span class="line"><span class="built_in">console</span>.log(Calculator <span class="keyword">instanceof</span> <span class="built_in">Object</span>); <span class="comment">// true</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 底下是特別的例子</span></span><br><span class="line"><span class="built_in">console</span>.log(<span class="built_in">Function</span> <span class="keyword">instanceof</span> <span class="built_in">Object</span>); <span class="comment">// true</span></span><br><span class="line"><span class="built_in">console</span>.log(<span class="built_in">Object</span> <span class="keyword">instanceof</span> <span class="built_in">Function</span>); <span class="comment">// true</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="constructor-NaN"><a href="#constructor-NaN" class="headerlink" title="constructor"></a>constructor</h4><p>其實每個的 prototype 底下，除了共用的 method、property 以及 <code>__proto__</code> 外，還有一個叫做 <code>constructor</code> 的屬性。</p>
+<p>在前面我們透過 <code>instanceOf</code> 驗證原形鍊時，得知不只是 <code>new</code> 創建出來的 instance 才是 instance，像是 constructor 也是 Object 的 instance。</p>
+<p>所以相反的，<code>Object.prototype</code> 底下的 constructor 屬性也是 Object，因為他們自己就是建構式，可以 new 出 constructor。當然 <code>Calculator.prototype.constructor = Calculator</code> ，因為 Calculator 本身就是 constructor 拉，他的 constructor 也自然指向自己。</p>
+<p>因此任何 <code>X.prototype.constructor = X</code> 。</p>
+<h2 id="new"><a href="#new" class="headerlink" title="new"></a>new</h2><p>了解原型鍊後就容易理解 <code>new</code> 是如何運作的，其實他幫我們做的步驟如下：</p>
+<ol>
+<li>創建一個空物件（以下簡稱 O），將 O 當成是 <code>new</code> 出來的實體</li>
+<li>透過 <code>__proto__</code> 讓 O 跟建構函式產生連結</li>
+<li>將 O 當成建構函式裡的 <code>this</code> 並透過 <code>call</code> 或 <code>apply</code> 執行建構函式</li>
+<li>回傳 O</li>
+</ol>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// constructor 建構函式</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Calculator</span>(<span class="params">num</span>) </span>&#123;</span><br><span class="line">  <span class="built_in">this</span>.num = num;</span><br><span class="line">  <span class="built_in">this</span>.result = <span class="string">&quot;&quot;</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 建構函式的 prototype</span></span><br><span class="line">Calculator.prototype.calculate = <span class="function"><span class="keyword">function</span> (<span class="params">operator, num2</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> (<span class="built_in">this</span>.result = <span class="built_in">eval</span>(<span class="built_in">this</span>.num + operator + num2));</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 自己試著用函式做出類似 new 的功能 -&gt; let calA = new Calculator(5)</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">newCal</span>(<span class="params">constructor, <span class="built_in">arguments</span></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">let</span> O = &#123;&#125;; <span class="comment">// 創建類似實體的空物件</span></span><br><span class="line">  O.__proto__ = <span class="title">constructor</span>.<span class="title">prototype</span>; <span class="comment">// 透過 __proto__ 連接實體跟建構函式</span></span><br><span class="line">  <span class="title">constructor</span>.<span class="title">apply</span>(<span class="params">O, <span class="built_in">arguments</span></span>); <span class="comment">// 執行建構函式</span></span><br><span class="line">  <span class="keyword">return</span> O; <span class="comment">// 回傳類似實體的空物件</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> calA = newCal(Calculator, [<span class="number">5</span>]);</span><br><span class="line"><span class="built_in">console</span>.log(calA.calculate(<span class="string">&quot;*&quot;</span>, <span class="number">2</span>));</span><br><span class="line"><span class="comment">// 上面跟底下透過 new 的實作出來結果相同</span></span><br><span class="line"><span class="comment">// let calA = new Calculator(5);</span></span><br><span class="line"><span class="comment">// console.log(calA.calculate(&#x27;*&#x27;, 2));</span></span><br></pre></td></tr></table></figure>
+
+    </div>
+     
+    <div class="post-footer__meta"><p>更新於 2024-02-13</p></div> 
+    <div class="post-entry__tags"><a href="/blog/tags/JavaScript/" class="post-tags__link button"># JavaScript</a></div> 
+</article>
+
+
+    <div class="nav">
+        <div class="nav__prev">
+            
+                <a href="/blog/article/%E8%AE%8A%E6%95%B8%E5%AE%A3%E5%91%8A%EF%BC%8Cvar%E3%80%81let%E3%80%81const-%E7%9A%84%E5%B7%AE%E5%88%A5/" class="nav__link">
+                    <div>
+                        <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="24" height="24"><path d="M589.088 790.624L310.464 512l278.624-278.624 45.248 45.248L400.96 512l233.376 233.376z" fill="#808080"></path></svg>
+                    </div>
+                    <div>
+                        <div class="nav__label">
+                            上一篇
+                        </div>
+                        <div class="nav__title">
+                            變數宣告，var、let、const 的差別
+                        </div>
+                    </div>
+                </a>
+            
+        </div>
+        <div class="nav__next">
+            
+        </div>
+    </div>
+
+
+
+    <div class="post__comments post__with-toc content-card" id="comment">
+        
+    <h4>評論</h4>
+    
+    <div id="disqus_thread">無法加載 Disqus 評論系統，請確保您的網絡能夠正常訪問。</div>
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
+
+    </div>
+
+
+
+</main>
+
+            <footer class="footer">
+     
+    <a href="#" class="button" id="b2t" aria-label="回到頂部" title="回到頂部">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="32" height="32">
+            <path d="M233.376 722.752L278.624 768 512 534.624 745.376 768l45.248-45.248L512 444.128zM192 352h640V288H192z" fill="currentColor"></path>
+        </svg>
+    </a>
+
+    
+
+
+    
+     
+ 
+
+ 
+    
+        
+        <p class="footer-copyright">
+            Copyright © 2024 <a href="/blog/">Yu&#39;s Blog</a>
+        </p>
+    
+    
+    <p>Powered by <a href="https://hexo.io" target="_blank">Hexo</a> | Theme - <a href="https://github.com/ChrAlpha/hexo-theme-cards" target="_blank">Cards</a></p>
+</footer>
+
+        </div>
+         
+
+ 
+
+ 
+
+ 
+
+ 
+
+
+
+ 
+
+
+
+ 
+
+
+    
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+
+    
+    <script>
+        function loadComment() {
+            window.disqus_config = function () {
+                this.page.url = 'https://yu040419.github.io/blog/article/prototype/';
+                this.page.identifier = 'article/prototype/';
+            };
+            (function(){
+                var dsq = document.createElement('script');
+                dsq.type = 'text/javascript';
+                dsq.async = true;
+                dsq.src = '//' + 'yu040419' + '.disqus.com/embed.js';
+                (document.head || document.body).appendChild(dsq);
+            })();
+        }
+    
+        var runningOnBrowser = typeof window !== "undefined";
+        var isBot = runningOnBrowser && !("onscroll" in window) || typeof navigator !== "undefined" && /(gle|ing|ro|msn)bot|crawl|spider|yand|duckgo/i.test(navigator.userAgent);
+        var supportsIntersectionObserver = runningOnBrowser && "IntersectionObserver" in window;
+    
+        setTimeout(function () {
+            if (!isBot && supportsIntersectionObserver) {
+                var comment_observer = new IntersectionObserver(function(entries) {
+                    if (entries[0].isIntersecting) {
+                        loadComment();
+                        comment_observer.disconnect();
+                    }
+                }, { threshold: [0] });
+                comment_observer.observe(document.getElementById('comment'));
+            } else {
+                loadComment();
+            }
+        }, 1);
+    </script>
+
+
+    
+
+    
+    
+
+    
+    
+    
+    
+    
+
+    
+    
+    
+    
+    
+
+    
+    
+    
+
+
+
+    </body>
+</html>
