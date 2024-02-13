@@ -3,6 +3,7 @@ title: Securing Your Web Content with Content Security Policy (CSP)
 date: 2024-02-13 17:59:12
 tags:
   - 資訊安全
+  - CSP
 ---
 
 ## What is CSP
